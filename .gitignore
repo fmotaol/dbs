@@ -1,0 +1,110 @@
+# ============================================
+# DIRETÓRIOS SOLICITADOS
+# ============================================
+
+# Pasta de binários compilados
+bin/
+
+# Pasta de backups/versões antigas (se for diretório)
+old/
+
+# ============================================
+# ARQUIVOS ESPECÍFICOS DA IDE (ECLIPSE)
+# ============================================
+
+# Arquivos de projeto do Eclipse
+.classpath
+.project
+
+# Pasta de configurações do Eclipse (preferências)
+.settings/
+
+# ============================================
+# OUTRAS IDE's (caso alguém use)
+# ============================================
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# VS Code
+.vscode/
+
+# ============================================
+# DIRETÓRIOS DE BUILD E DEPENDÊNCIAS
+# ============================================
+
+# Maven
+target/
+
+# Gradle
+build/
+.gradle/
+
+# ============================================
+# ARQUIVOS COMPILADOS
+# ============================================
+
+*.class
+*.jar
+*.war
+*.ear
+
+# ============================================
+# ARQUIVOS DE LOG E TEMPORÁRIOS
+# ============================================
+
+*.log
+logs/
+*.tmp
+*.swp
+*.swo
+*.bak
+
+# ============================================
+# SISTEMA OPERACIONAL
+# ============================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# ============================================
+# ARQUIVOS SENSÍVEIS (NUNCA COMMITAR)
+# ============================================
+
+.env
+*.key
+*.pem
+*.jks
+*.keystore
+secrets.properties
+application-secrets.yml
+
+# ============================================
+# ARQUIVOS DE DEPENDÊNCIA LOCAL (NÃO GERENCIADOS)
+# ============================================
+
+lib/
+libs/
+*.zip
+*.tar.gz
+
+# ============================================
+# OUTROS ARQUIVOS COMUNS
+# ============================================
+
+# Arquivos de cobertura de testes
+coverage/
+.coveralls.yml
+
+# Arquivos de release
+*.releaseBackup

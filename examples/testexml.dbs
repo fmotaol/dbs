@@ -1,0 +1,88 @@
+#source = files
+
+	read pippetree.xml
+
+#source = xpath
+
+	$SHOW_SQL = false
+
+	**xml = @content::.
+
+	sistema_node = /node/select/node
+	sistema_type = /node/select/node/option/@type
+	sistema_value = /node/select/node/option/@value
+	sistema_label = /node/select/node/option : textcontent
+
+#target = dummy
+
+	$SHOW_SQL = true
+	$LOG_SQL = true
+
+	$LABEL = Novo sistema encontrado: @sistema_label !!!
+
+	insert sistema
+
+
+#source = xpath
+
+	$SHOW_SQL = false
+
+	**xml = @sistema_node::.
+	
+	ccr_node = /node/select/node
+	ccr_type = /node/select/node/option/@type
+	ccr_value = /node/select/node/option/@value
+	ccr_label = /node/select/node/option : textcontent
+	
+#target = dummy
+
+	$SHOW_SQL = true
+	$LOG_SQL = true
+
+	$LABEL = Nova CCR encontrada: @sistema_label - @ccr_label !!!
+
+	insert CCR
+
+
+#source = xpath
+
+	$SHOW_SQL = false
+
+	**xml = @ccr_node::.
+	
+	estacao_node = /node/select/node
+	estacao_type = /node/select/node/option/@type
+	estacao_value = /node/select/node/option/@value
+	estacao_label = /node/select/node/option : textcontent
+
+	
+#target = dummy
+
+	$SHOW_SQL = true
+	$LOG_SQL = true
+
+	$LABEL = Nova Estação encontrada: @sistema_label - @ccr_label - @estacao_label !!!
+
+	insert estacao
+
+
+#source = xpath
+
+	$SHOW_SQL = false
+
+	**xml = @estacao_node::.
+	
+	variavel_type = /node/select/option/@type
+	variavel_value = /node/select/option/@value
+	variavel_label = /node/select/option : textcontent
+
+	
+#target = dummy
+
+	$SHOW_SQL = true
+	$LOG_SQL = true
+
+	$LABEL = Nova Variável encontrada: @sistema_label - @ccr_label - @estacao_label - @variavel_label !!!
+
+	insert variavel @variavel_value @variavel_label
+	

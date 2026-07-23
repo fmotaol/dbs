@@ -1,0 +1,10 @@
+#source = files
+
+	list c:\Telemetria\*.geojson
+
+	
+#target = dummy
+
+	$LABEL = @filename @filepath @simplefilename @fileext
+
+	

@@ -1,0 +1,48 @@
+#macro
+
+	//$LOG_SQL = true
+
+#source = files
+
+	//list c:\web_projects\cdo\poligonos-setores\*dd.geojson
+	list c:\Telemetria\*dd.geojson
+
+#source = files
+
+	read @filepath
+
+#source = jsonpath
+
+	$SHOW_SQL = false
+
+	**json = @content::.
+
+	geom = $.features[*].geometry
+	nome = $.features[*].properties.Name
+	zona = $.features[*].properties.Zona
+	un = $.features[*].properties.UN
+	descricao = $.features[*].properties.description
+
+	
+#target = oper.conf
+
+	$SHOW_SQL = true
+	$LABEL = update @filename, @nome, @un, @geom
+	
+	
+	with upd as (		
+		UPDATE geo.poligono_setor 
+		SET geom = ST_Force2D(ST_GeomFromGeoJSON(@geom)),
+			descricao = @descricao,
+			zona = @zona,
+			updated = now()
+		where (nome = @nome and upper(un) = upper(@un) and filename = @filename or
+		       filename = @filename and @nome is null and @un is null)
+		returning *
+		)
+	select avoid(count(*) > 1, 'Encontrado mais de um registro para a mesma condição'),
+		   avoid(count(*) = 0, 'Não foram encontrados registros')
+	from upd
+		
+	
+	

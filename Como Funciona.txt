@@ -1,0 +1,1637 @@
+										DDDDD     BBBBB       SSSS
+										D    D    B     B   S      S
+									    D     D   B     B   S 
+									    D     D   BBBBB       SSSS 
+									    D     D   B     B          S
+									    D    D    B     B   S      S
+									    DDDDD     BBBBB       SSSS
+									    
+									    
+COMO FUNCIONA:
+  
+    O DBS tem como objetivo realizar iterações de comandos SQL por meio consultas SQL 
+  diferentes realizadas em bases de dados diferentes. Seu objetivo é permitir que um 
+  comando template seja aplicado como base para uma sequência de comandos parametrizados
+  por meio de outra(s) query(ies).
+  
+  Suas operações são definidas por meio de comando SQL de atualização, que são parametrizados
+  por conjuntos de dados obtidos por outros comandos SQL de consulta. Por exemplo, um insert de
+  todos os registros da tabela dof_usuario pode ser realizado na tabela tmp_usuario por meio de
+  duas chamadas declaradas conforme exemplo simplificado a seguir:
+  
+  #source = bd1.conf
+  select matricula, nome, localidade from dof_usuario;
+  
+  #target = bd1.conf
+  insert into tmp_usuario(@matricula, @nome, @localidade);
+  
+  Neste exemplo, o comando insert ilustrado é realizado tantas vezes quantos registros
+  existirem no resultado da consulta declarada anteriormente no comando select, coletando em
+  cada um deles as informações dos campos matricula, nome e localidade. 
+   
+  
+  NOTA:
+  
+  As diferentes consultas podem ser executadas em bases de dados diferentes, isto é permitido. Para isto
+  devem ser identificados arquivos de configuração (*.conf) onde os dados de conexão para cada 
+  base de dados devem ser declarados. No DBS, aplica-se o conceito de conexões de origem e destino
+  (source e target),  onde tipicamente a origem (source) é onde a consulta de busca de registros 
+  (select) será executada, e destino (target) é onde as operações de alteração serão realizadas.
+  
+  Os comandos que serão executados em cada uma das duas (ou mais) diferentes conexões deverão ser
+  separados em seções específicas do arquivo de comandos, identificadas por cabeçalho.
+  
+  SINTAXE DOS CABEÇALHOS DE CONTEXTO:
+  
+  Cada seção do arquivo de comandos identifica um contexto, que conterá uma consulta SQL a ser 
+  executada. O cabeçalho da seção é composto pelo caracter # seguido do tipo de seção que está sendo
+  declarada, opcionalmente um alias (ou nome) para a seção, uma atribuição pelo caracter = , e o caminho 
+  do arquivo *.conf onde estão as propriedades de conexão para esta seção. Ou formalmente: 
+  
+    #<tipo> [<alias>] = <connection.conf> [:<conn_id>] 
+  
+  Exemplo: 
+    
+    #source = db1.conf
+  
+  
+  
+  Opcionalmente, também pode ser acrescentada uma identificação interna da conexão, precedido de 
+  dois pontos (:), quando aplicável (melhor explicado a seguir).  
+  Isto pode ser útil
+  Nota: é possível especificar mais de uma conexão para um mesmo URL de base de dados. Para isto, 
+  basta especificar uma numeração (ou identificação) após o nome do arquivo, separado por ":". Útil,
+  por exemplo, quando do emprego de chamadas assíncronas.
+  
+  Exemplo:
+  
+    #source = db1.conf:A1 
+    //criará uma primeira conexão conforme db1.conf, identificada como "A1"
+    
+    #source = db1.conf:B1
+    //criará uma segunda conexão apontando para o mesmo db1.conf, porém identificada como "B1"
+    
+
+  TIPOS DE CONTEXTO:
+  
+    Contextos Básicos:
+    
+      #source: indica uma base de origem onde os dados apenas poderão ser consultados
+      #target: indica a base de destino, onde a operação de alteração será realizada
+    
+    Contextos Adicionais:
+    
+      #init: permite a execução de comandos de inicialização antes de todos os demais, por
+        exemplo, para inicialização de variáveis (para caminhos dos arquivos .conf)
+     
+        NOTA: na hipótese de haver mais de uma cláusula #init, estas serão executadas na ordem
+        em que forem apresentadas. 
+
+		NOTA 2: Tanto as seções #init quanto a #final, quando usados comandos de consulta - isto é, 
+		  comandos que produzem resultsets, tais como "select" - para cada coluna do resultset, são 
+		  atribuídos automaticamente os seus valores para variáveis globais, de nomes iguais aos nomes 
+		  das colunas do resultset.   
+		
+      #final: permite a execução de comandos de finalização após todos os demais, tendo-se
+        concluída a execução de todos os sources, targets e demais comandos opcionais.
+
+        NOTA: na hipótese de haver mais de uma cláusula #final, estas serão executadas na ordem
+        em que forem apresentadas.
+
+		NOTA 2: Tanto as seções #init quanto a #final, quando usados comandos de consulta - isto é, 
+		  comandos que produzem resultsets, tais como "select" - para cada coluna do resultset, são 
+		  atribuídos automaticamente os seus valores para variáveis globais, de nomes iguais aos nomes 
+		  das colunas do resultset.   
+
+      #error: permite a execução de comandos quando da identificação de um erro (ou exceção), antes
+        do programa ser abortado. 
+        
+        NOTA: a cláusula #error possui papel diferente da #iferror. A primeira corresponde ao programa
+          principal, e ocorre imediatamente antes do programa ser abortado, enquanto a segunda está 
+          associada a um #source ou #target. Diferentemente de #error, #iferror também possui o papel 
+          de "tratamento" do erro, permitindo a continuidade do programa.    
+        
+        NOTA 2: a implementação de uma ação na seção #error não corresponde a um tratamento do erro, e nem
+          oferece continuidade ao restante do programa. É apenas uma forma de permitir capturar a 
+          ocorrência de uma exceção e oferecer uma ação de conveniência, antes desta ser lançada ao 
+          sistema operacional, e antes do programa ser abortado.
+     
+  MÚLTIPLOS CONTEXTOS DE SOURCE
+  
+  O DBS permite múltiplos contextos de source. Neste caso, consultas do tipo "select" serão
+    executadas recursivamente, de forma aninhada, na ordem do primeiro para o último #source. Ver
+    arquivo example.sql.
+
+  MÚLTIPLOS CONTEXTOS DE TARGET
+  
+  O DBS também permite múltiplos contextos de target. Neste caso, comandos diferentes de atualização
+  podem ser declarados, que serão executados individualmente em cada target declarado, na mesma ordem
+  em que foram declarados. 
+  
+  Estes comandos de target podem, inclusive, serem executados em bases de dados diferentes.
+  
+  COMENTÁRIOS
+  
+  Os comentários são textos ignorados pelo interpretador. Eles estão disponíveis por linha, através
+  do prefixo // (duas barras), como no exemplo:
+  
+  // ESTE COMANDO ATUALIZA A CADA NOVO REGISTRO
+       
+  Assim, esta linha será ignorada pelo interpretador.
+  
+    
+  REFERÊNCIAS:
+  
+  O DBS utiliza o símbolo @ para identificar uma referência - tipicamente campo ou conjunto de campos 
+  - a ser extraído da consulta de origem no comando de destino. A cada iteração de registros em source, 
+  quando o parser do DBS encontra um símbolo, ele presume que ali está um campo que foi consultado em 
+  #source, e substitui-o pelo valor atual do campo na consulta de #source. 
+  
+  O símbolo @ também é usado para extrair argumentos da aplicação, conforme melhor explicado adiante. 
+  
+  
+  
+  REFERÊNCIAS A CAMPOS
+  
+  Exemplo:
+  
+  #source = db1.conf
+
+    select matricula from dof_usuario where localidade = 711;  
+
+  #target = db1.conf
+
+    delete from dof_fatura where matricula = @matricula;
+  
+  Neste exemplo, se a consulta em #source retornar as matrículas 123, 125 e 127, nesta ordem, então o DBS executará
+  em #target os seguintes comandos:
+  
+  delete from dof_fatura where matricula = 123;
+  delete from dof_fatura where matricula = 125;
+  delete from dof_fatura where matricula = 127;
+  
+  Nota: os comandos são sempre executados na exata ordem em que os dados foram apresentados em #source.
+  
+  Nota: em caso de múltiplos níveis de source, é permitido acessar os campos de níveis superiores ao 
+  source mais imediato. Entretanto, em caso de nome de campo referido constar no ResultSet de mais de 
+  um nível de source, o DBS entenderá que a consulta se refere ao campo do source imediatamente mais 
+  próximo.
+  
+
+
+  REFERÊNCIAS:
+  
+  Operador @:
+  
+  O operador @ estabelece a busca de uma referência existente na consulta do nível anterior. Uma referência 
+  tipicamente (mas não somente) apontam para um campo de uma query, seja por nome (@campo1) ou pelo seu 
+  número de ordem na consulta (@2). Combinações mais complexas, como por exemplotodos os campos (@*) 
+  separados por vírgula, ou atribuições sobre todos os campos homônimos (@*=), conforme melhor explicados
+  a seguir.
+  
+  OPÇÕES DE REFERÊNCIA
+  
+  Único campo (por nome):  
+  
+    @campo1 => busca o valor de campo1 na consulta em #source. O valor é apresentado em formato de
+               constante literal do SQL, construída a depender do tipo de dados do campo, conforme 
+               ele foi declarado na consulta em #source.
+               
+       Exemplo: 
+         #source
+            select matricula, ano, mes, valor from dof_fatura;  
+         #target
+            update tmp_fatura set valor = @valor
+            where matricula = @matricula and ano = @ano and mes = @mes;
+            
+  
+  Único campo (por índice):
+  
+    @<i> => busca o valor do i-ésimo campo na consulta em #source. O valor também é apresentado em 
+    			formato de constante literal do SQL, construída a depender do tipo de dados do campo, 
+    			conforme ele foi declarado na consulta em #source.
+
+				Obs.: inicia por 1, e não por 0.
+				
+	Exemplo:   
+	
+	     update dof_fatura set agua = 25.00 where matricula = @1 and seqref = @2;
+	    
+	     -- considerando que o primeiro e segundo campo no source correspondem a, respectivamente,
+	     -- o valor chave da matrícula e o do sequencial seqref.
+    
+  Alternativamente, também pode ser representado da seguinte forma:
+
+    @field[<i>] => igualmente, busca o valor do i-ésimo campo na consulta em #source. 
+    
+              
+  Todos os campos:
+               
+    @* => busca os valores de todos os campos enumerados em #source, por padrão separados por vírgula 
+          e espaço, na exata ordem em que eles foram apresentados na consulta. Válido apenas para o source 
+          imediatamente mais próximo.
+          
+       Exemplo:
+         #source
+            select * from dof_usuario;  
+         #target
+            insert into tmp_usuario values (@*);
+       Neste exemplo, todos os campos de dof_usuario serão preenchidos no insert automaticamente.
+       
+       Nota: Para usar outro separador que não seja ", ", informar o separador por entre []. Exemplo:
+       
+       @*[;] -> utiliza ponto-e-vírgula como separador.
+       @*[; ] -> utiliza ponto-e-vírgula e espaço como separador.
+       @*[\t] -> utiliza o caracter TAB como separador.
+  
+  Atribuições sobre todos os campos:  
+       
+    @*= => busca os valores de todos os campos enumerados em #source, e rearranja-os sob a forma 
+           declarativa de múltiplas atribuições por = e separadas por vírgula e espaço. A declaração
+           considera sempre os campos homônimos declarados na consulta anterior. Muito útil,
+           por exemplo, para realizar update de múltiplas colunas. Válido apenas para o source 
+          imediatamente mais próximo.
+           
+       Exemplo:
+         #source
+            select matricula, nome, localidade from dof_usuario;  
+         #target
+            update tmp_usuario set @*=
+            where matricula = @matricula;
+       
+       Neste caso, o comando gerado em #target assumirá a forma conforme exemplo abaixo:
+       
+           update tmp_usuario set matricula = 123, nome = 'FABRICIO MOTA', localidade = 900
+           where matricula = 123;
+
+       Nota: Para usar outro separador que não seja ", ", informar o separador por entre []. Exemplo:
+       
+       @*=[;] -> utiliza ponto-e-vírgula como separador.
+       @*=[; ] -> utiliza ponto-e-vírgula e espaço como separador.
+       @*=[\t] -> utiliza o caracter TAB como separador.
+           
+     @*-pk => Cumpre o mesmo papel de @*, porém, exclui da lista os campos pertencentes à chave
+     primária da tabela que está sendo atualizada (se for o caso).  
+
+     @*=-pk => Cumpre o mesmo papel de @*=, porém, exclui da lista os campos pertencentes à chave
+     primária da tabela que está sendo atualizada (se for o caso).  
+  
+  
+  NOTA: o operador @ busca o campo em todas as queries da cadeia, na ordem da última 
+  (a mais interna) para a primeira (mais externa). Caso queira forçar um campo de um query
+  específico, deve-se indexar a query (da mais interna para a mais externa) segundo a notação 
+  a seguir:
+  
+  @matricula{2}
+  
+  Neste exemplo, refere-se ao campo matricula descrito na 2a query mais externa à atual.
+    
+  ALIAS DE SOURCE NAS REFERÊNCIAS
+  
+  
+  O DBS permite que sources sejam identificados pelos seus aliases nas referências
+  a seus campos e propriedades. Um alias pode ser atribuído por duas formas: 1) na declaração
+  da seção, entre o tipo e a atribuição (Vide seção XXX). 2) Pelo atributo $ALIAS (vide definição 
+  mais a seguir), como por exemplo:
+   
+    $ALIAS = a1
+  
+  
+  Assim, a referência a campos de um determinado source fica definida de forma assertiva, sem que 
+  haja o risco de ambiguidade, ou do processador DBS confundir com sources inferiores. No exemplo 
+  acima, o acesso ao campo matrícula do source apelidado de "al" ficaria conforme a seguir:
+  
+   select * from tabela where id = @al.matricula;
+    
+    
+  Igualmente às referências a campos por nome (exemplificado acima), também é possível o uso de
+  aliases em outros tipos de referência. Tendo como exemplo o alias "src", podem-se também 
+  ter referências de:
+  
+  Índice de campo:
+  
+  @src.1 ou src.field[1] -- no caso de índice 1;
+  
+  Todos os campos:
+  
+  @src.*, @src.*=, @src.*=and, etc.
+   
+  
+  Observação: na hipótese de haver mais de um source com o mesmo alias, prevalescerá aquele mais
+  próximo da seção onde a referência ao alias foi declarada. 
+  
+  
+  REFERÊNCIAS A REGISTROS ANTERIORES
+  
+  Campos do registro anterior:
+  
+    É possível acessar os dados do registro anterior, concomitantemente o registro atual está sendo
+    lido. Para isto, valem todas as referências descritas anteriormente, porém acrescentando a string
+    [prev] após o símbolo @.
+    
+    Exemplos:
+    
+       update tmp_usuario set @[prev]*=
+       where matricula = @matricula;
+    
+       delete from dof_fatura where matricula = @[prev]matricula;
+       
+       update tabela set diferenca = @valor - @[prev]valor
+       where id = @id;
+
+    Recuperar registros salvos previamente.
+    
+    Quando registros são salvos usando o comando "save record as <name>", é possível recuperá-los
+    em referência, tal como o @[prev]. Para isto, basta utilizar o nome que foi usado para salvar
+    o registro entre os colchetes, conforme exemplo: 
+
+     update tmp_usuario set @[superuser]*=
+       where matricula = @matricula;
+    
+       delete from dof_fatura where matricula = @[1a]matricula;
+       
+       update tabela set diferenca = @valor - @[cta-ref]valor
+       where id = @id;
+
+
+  Variáveis do Usuário
+  
+    É possível ler e gravar variáveis de usuário, que serão mantidas durante a execução de uma macro
+    no DBS, para posterior referência em consultas ou comandos. As variáveis registram os valores 
+    internamente sempre como strings, e quando consultadas, presumem a substituição da referência como
+    literais (isto é, nativos).
+    
+    Gravação:
+    
+    COMANDO SET
+    
+    O comando set permite a gravação do valor da variável no momento da sua invocação, sendo
+    descartado o valor que foi anteriormente gravado nela. Este comando segue a estrutura conforme
+    a seguir:
+    
+    set <varname> = <valor>;
+    
+    Ou 
+    
+    set <varname1> = <valor1>; <varname2> = <valor2>; ... ; <varnameN> = <valorN>;
+    
+    
+    Nota: quebras de linha são aceitas como parte do valor. 
+    
+    Exemplos:
+    
+      set id = @matricula;
+    
+      set comando = select *
+      from dof_usuario limit 100;
+      
+      
+    COMANDO APPEND
+    
+    O comando append possui função de gravação semelhante ao comando set, porém com a diferença de não descartar
+    o valor anteriormente salvo na variável. No caso, um novo valor é acrescentados ao anterior,
+    tal como uma concatenação de strings. A sintaxe do comando append assume o formato a seguir:
+    
+    append <varname> = <valor>;
+    
+    Exemplo:
+    
+    append comando = select * from dof_usuario limit 100; 
+      --concatena o comando anterior com um novo select 
+     
+    
+    Nota: quebras de linha também são aceitas como parte do valor a ser acrescentado. 
+    
+    COMANDO CLEAR
+    
+    O comando clear permite limpar o valor atual de uma variável. No caso, a variável também é removida
+    da lista de variáveis ativas no programa, e o seu valor, tal como o valor inicial de qualquer
+    variável, é presumido como '' (vazio). Sintaxe:
+    
+    clear <varName>;
+    
+    Exemplo:
+    
+    clear cmd;
+
+    
+    CONSULTANDO O VALOR DA VARIÁVEL 
+
+    Para consultar o valor gravados numa variável, utilize a referência no formato @#<varName>. 
+    
+    Exemplo:
+    
+      select * from dof_usuario where matricula = @#id; 
+
+    Alternativamente, a variável pode também ser consultada como @<varName>. Entretanto, deve-se 
+      ter ciência que eventuais coincidências entre nomes de variáveis e campos farão o interpreta-
+      dor priorizar o campo, ao invés da variável, na associação.
+
+  Atributos do Registro:
+  
+    Algumas referências são dados produzidos pelo próprio sistema, em respeito ao registro
+    do Source que está sendo lido. São elas:
+
+       @#rowid - número identificador do registro da consulta source executada. Número incremental
+         que começa com 1.
+    
+       @#execution - contador de execuções do performer em questão. No caso de um source, é 
+         incrementado a cada consulta repetida (e não a cada registro!). No caso de um target,
+         é incrementado a cada comando de atualização invocado.
+    
+       @#fieldcount - quantidade de colunas presente na consulta source mais próxima.
+    
+       @#fieldname[<i>] - nome do i-ésimo campo da consulta source mais próxima.
+    
+       @#fieldnames - nome de todos os campos separados por vírgula
+
+  Atributos do Bloco #source/#target:
+  
+  	Dados de Conexão:
+  
+  	  @#connectionfile ou @connectionfile - nome do arquivo de configuração da conexão
+  	   
+  	  @#connectionurl ou @connectionurl - url da conexão
+  	   
+  	  @#connectionport ou @connectionport - porta da conexão
+  	   
+  	  @#connectionuser ou @connectionuser - usuário de acesso da conexão
+
+ 	  @#sql ou @sql - string do último comando SQL empregado pelo bloco source/target que o invocou, 
+ 	  	da forma concreta que foi enviada ao BD (isto é, com todas as referências substituídas por 
+ 	  	valores do contexto) 
+ 	  	
+ 	  @#command ou @command - idem @#sql ou @sql.
+  
+  Atributos da Tabela
+
+    Algumas referências são dados produzidos pelo próprio sistema, em respeito à tabela que está
+    sendo atualizada, inferidos pelo próprio comando SQL. São referências válidas apenas para o 
+    contexto target:
+
+      @#tablename - nome da tabela.
+  
+      @#tablefields - campos da tabela, separados por vírgula.
+
+      @#tablepk - campos que compõem a chave primária da tabela, separados por vírgula.
+
+  Variáveis do Sistema:
+  
+    Algumas variáveis estão disponíveis para leitura no sistema. São elas:
+     
+      @#macro ou @macro - Nome da macro que está em execução.
+      
+      @#dbsfile ou @dbsfile - Nome do arquivo DBS/SQL em execução (sem extensão)
+
+      @#dbsfileext ou @dbsfileext - Extensão do arquivo DBS/SQL em execução (incluindo o ".")
+
+      @#dbsfilepath ou @dbsfilepath - Caminho completo do arquivo DBS/SQL em execução
+
+      @#args ou @args - lista dos argumentos de entrada, conforme recebidos pelo programa
+      
+      @#globalaffectedrows ou @globalaffectedrows - total de registros afetados (atualizados) pelos 
+      	targets ativos no programa.
+        
+        NOTA: No caso de existirem múltiplos targets, para esta variável, não há distinção de
+          target. Os registros são somados para todos eles.
+
+      @#now ou @now - data/hora atual do relógio do computador.
+
+	  @#errorclass ou @errorclass - nome da classe de erro que foi lançada (específico para a sessão 
+	    #error)      
+
+	  @#errormsg ou @errormsg - string da mensagem de erro que foi lançada (específico para a sessão 
+	    #error)      
+
+
+  Correspondência de chave primária de tabela:
+  
+    É possível utilizar um match de correspondência de chave primária da tabela associada
+    ao comando, quando é possível inferir uma (tipicamente em comandos update e insert).
+    Para isso, usar a cláusula @*=pk e o DBS irá buscar automaticamente nos catálogos do
+    banco de dados as informações de chave primária.  
+    Na prática, o que ele faz é deduzir que o nome do campo de valor na consulta source imediatamente
+    acima, que fará associação com o campo de chave primária, possuem nomes idênticos.
+    
+    Exemplo:
+    
+    update dof_setor set @*=
+    where @*=pk;
+    
+    Se traduzirá em comandos do tipo:
+    
+    update dof_setor set localidade = 11, setor = 2, escritório = 'PITUBA'
+    where localidade = 11 and setor = 2;
+
+
+  Argumentos do programa:
+    É possível introduzir parâmetros pelos argumentos da linha de comando. No exemplo:
+    @arg[3] => É extraído o argumento de ordem 3 introduzido pela linha de comando.
+  
+  
+  REFERÊNCIA A ARGUMENTOS DA APLICAÇÃO
+  
+    O símbolo @ também é usado para extrair argumentos da aplicação. Para isso, use-o seguido da 
+  expressão arg[<index>] - onde <index> é o índice ordinal do argumento a ser utilizado.
+  
+  Exemplo:
+  
+  select * from minha_tabela where id = @arg[0]; 
+  -- @arg[0] extrai o primeiro argumento passado para a aplicação pela linha de comando
+  --(índice 0 = primeiro, 1 = segundo, e assim por diante) 
+  
+  ARGUMENTOS POR NOME
+  
+  Também é possível atribuir/solicitar argumentos por nome, onde a referência é feita usando
+  um nome de variável entre os colchetes, no lugar do índices, por exemplo:
+  
+  select * from vendas
+  where data between arg[data_inicio] and arg[data_fim].
+  
+  No caso de argumentos por nome, a passagem de argumentos para o programa deve ser feita utilizando
+  expressões do tipo <nome_arg>=<valor> (sem espaços). No exemplo anterior, ficaria:
+  
+  java -jar DBS.jar exemplo.sql data_inicio=2019-1-1 data_fim=2019-3-31
+  
+  Outra notação também admitida para argumentos por nome é a padrão de aplicações de linha de comando, 
+  como no exemplo:
+  
+  java -jar DBS.jar exemplo.sql --data_inicio 2019-1-1 --data_fim 2019-3-31
+  
+  
+  ARQUIVO DE ARGUMENTOS
+  
+  Também é possível substituir os argumentos de entrada de um programa por um arquivo de propriedades,
+  onde cada linha é uma atribuição de propriedade e cada propriedade é um argumento. O arquivo deverá,
+  neste caso, ter o mesmo nome do arquivo de programa (SQL/DBS), porém, com a extensão .args.
+  
+  A atribuição de cada argumento é feita uma por linha, e poderá ter dois formatos:
+  
+  a) Atribuição por nome do argumento <argumento>=<valor>
+  
+    Neste caso, assume-se que o que está antes do "=" é o nome do argumento, e o que sucede é o valor.
+    
+    Exemplo (conteúdo do arquivo servexec.args):
+    
+    escopo=MS
+    inicio=2021-3-1
+    final=2021-3-31
+    
+    Fica o equivalente a chamar:
+    	java -jar servexec.sql "escopo=MS" "inicio=2021-3-1" "final=2021-3-31"
+        
+  b) Assertiva <valor>
+  
+    Neste caso, assume-se o argumento por índice (as linhas devem estar na ordem dos argumentos do programa), 
+    e os argumentos não possuem nome. 
+  
+    Exemplo (conteúdo do arquivo servexec.args):
+    
+    MS
+    2021-3-1
+    2021-3-31
+    
+    Fica o equivalente a chamar:
+    	java -jar servexec.sql MS "2021-3-1" "2021-3-31"
+
+  
+  DECLARAÇÃO DE NOVA MACRO
+  
+  Quando a tag #macro é encontrada, todas as declarações encontradas após esta tag serão associadas
+  a uma nova macro de comando DBS que será executada. Todas as macros declaradas são executadas na 
+  mesma ordem em que foram declaradas.
+  
+  As macros são como se fossem programas independentes, mas que executam sempre sequencialmente, na ordem 
+  em que forem declaradas. Assim, quando não existe uma declaração de macro, todo o código descrito
+  no arquivo é entendido como uma única macro. Da mesma forma, quando não existe uma declaração de
+  #macro primeira e anterior a todos os demais comandos, é presumida uma.
+  
+  Um parâmetro opcional da macro é o seu nome. Quando declarado, o nome da macro passa a ser 
+  exibido na tela (prompt),  à esquerda de todo e qualquer código SQL executado. Este recurso
+  é útil para arquivos contendo múltiplas macros, pois ajuda a identificar que macro está sendo 
+  executada naquele momento.
+  
+  Para declarar o  nome, utilize a sintaxe a seguir:
+  
+  #macro = NOME DA MACRO
+  
+  Neste exemplo, o nome da macro exibido será NOME DA MACRO 
+  
+
+
+
+  SUBQUERIES
+  
+  
+  É possível invocar uma query de dentro de um comando SQL qualquer (inclusive outra query), 
+  mesmo (e inclusive) apontando para uma conexão diferente. Para isso, utilize a sintaxe:
+  
+    @query=db1.conf{select nome from dof_usuario where matricula = 123}
+    
+  Quando encontrado este comando, o parser irá identificar (ou criar) a conexão descrita em 
+  db.conf, executar a query interna às chaves { }, e devolver o resultado no lugar do comando 
+  inteiro, para logo em seguida executar o comando ou consulta original.
+  
+  Alternativamente, a sentença pode ser escrita da forma a seguir, caso a conexão a que se
+  refira seja a mesma do contexto atual:
+  
+    @query{select nome from dof_usuario where matricula = 123}
+  
+  Também é permitido o uso de referências a campos, como no exemplo:
+     
+    @query=db1.conf{select nome from dof_usuario where matricula = @matricula}
+  
+  Nota: também é possível transformar o conteúdo da consulta em SQL nativo, pelo sufixo ::native, 
+  ou ::., conforme exemplo abaixo:
+  
+    @query=db1.conf{select nome from dof_usuario where matricula = @matricula}::native
+
+    @query=db1.conf{select nome from dof_usuario where matricula = @matricula}::.
+  
+  NOTA 2: É possível expressar mais de um campo interno na consulta, e identificá-lo no resultado
+  que será apresentado, através da sintaxe abaixo, por exemplo:
+  
+    @query=db1.conf{select matricula, rg, cpf from dof_usuario where matricula = @matricula}[campo]
+    
+    Onde "campo" pode ser tanto o nome do campo quanto o seu índice. 
+  
+  NOTA 3: O valor de uma query solicitada também pode ser reutilizada mais adiante no mesmo código, 
+  através da referência @previousquery.
+  
+  NOTA 4: É possível, também, extrair o valor de um campo específico da consulta, pela sintaxe
+  de exemplo abaixo:
+  	
+  	@previousquery[matricula]
+  	
+  	Neste caso, será extraído o valor do campo "matricula" da subquery.
+  	
+  NOTA 5: Se a subquery contiver mais de um campo de retorno, sua cláusula não especificar qual campo 
+  extrair, o DBS irá substituir a cláusula da subquery com todos os campos devolvidos pela query, 
+  separados por vírgula.
+  	
+  	Ex.: 
+  	  select *
+  	  from tabela1
+  	  where (ident, nome, tel) = (@query=db1.conf{select id, nome, telefone 
+           from dof_usuario where matricula = @matricula})
+      
+      Será substituído por
+      
+  	  select *
+  	  from tabela1
+  	  where (ident, nome, tel) = (123, 'FABRICIO MOTA OLIVEIRA', '(71) 99157-5432')
+  
+  
+  TRADUÇÃO DE EXPRESSÕES
+  
+    O DBS permite repetir operações complexas comuns a partir de declarações simples, visando
+    reduzir a complexidade das declarações de comandos no script de SQL. São eles:
+    
+    $MULTIOP: Permite a tradução de operadores relacionais para mútiplos campos, traduzindo-o em
+    expressões elementares. Especialmente útil para bancos de dados que não possuem suporte a operadores
+    relacionais de múltiplos campos, tal como o DB2.
+    
+    A sintaxe do tradutor $MULTIOP é a seguinte:
+    
+    $MULTIOP{ (<field1>, <field2>, .... <fieldn>) <operador> (<value1>, <value2>, .... <valuen>) } 
+    
+    São suportados os seguintes operadores:
+       = (igualdade);
+       < (menor);
+       <= (menor ou igual);
+       > (maior)
+       >= (maior ou igual);
+       <> (diferente).
+    
+    Exemplos:
+
+    $MULTIOP{(matricula, ano, mes) = (@matricula, @ano, @mes)}
+    Resulta em:
+    matricula = @matricula and ano = @ano and mes = @mes
+    
+    $MULTIOP{(matricula, ano, mes) <> (@matricula, @ano, @mes)}
+    Resulta em:
+    matricula <> @matricula or ano <> @ano or mes = @mes
+  
+    $MULTIOP{(matricula, ano, mes) > (@matricula, @ano, @mes)}
+    Resulta em:
+    (matricula > @matricula) or
+    (matricula = @matricula and ano > @ano) or 
+    (matricula = @matricula and ano = @ano and mes > @mes)
+  
+    $MULTIOP{(matricula, ano, mes) < (@matricula, @ano, @mes)}
+    Resulta em:
+    (matricula < @matricula) or
+    (matricula = @matricula and ano < @ano) or 
+    (matricula = @matricula and ano = @ano and mes < @mes)
+  
+    $MULTIOP{(matricula, ano, mes) >= (@matricula, @ano, @mes)}
+    Resulta em:
+    (matricula > @matricula) or
+    (matricula = @matricula and ano > @ano) or 
+    (matricula = @matricula and ano = @ano and mes >= @mes)
+
+    $MULTIOP{(matricula, ano, mes) <= (@matricula, @ano, @mes)}
+    Resulta em:
+    (matricula < @matricula) or
+    (matricula = @matricula and ano < @ano) or 
+    (matricula = @matricula and ano = @ano and mes <= @mes)
+  
+  Nota: por padrão, valores nulos (especificamente mencionados na segunda coluna)
+
+  CONVERSÃO DE TIPOS
+  
+   ::native
+   
+   O sufixo ::native transforma o valor em SQL nativo, sem tratamento de literais (ex.: aspas, no caso de texto).
+  
+   Exemplo: @nome::native irá retornar FABRICIO MOTA, ao invés de 'FABRICIO MOTA'
+   
+   Alternativamente, o sufixo ::native pode ser substituído por ::.
+   
+   ::text
+   
+   O sufixo ::text transforma o valor em texto literal, com aspas segundo padrão SQL (no caso de texto). 
+   Se houver "aspas simples" internas ('), estas serão dobradas.
+  
+   Exemplo: @nome::text irá retornar 'DIAS D''AVILA', ao invés de DIAS D'AVILA
+
+  
+  
+  EVENTOS
+
+  Eventos são gatilhos para execução de ações associadas a condições nos dados do source. Consistem 
+  em instantes específicos da aplicação onde, a partir de determinadas ocorrências identificadas
+  nos dados do source, uma ação poderá ser disparada. As ações dos eventos tipicamente estarão associadas a targets.  
+  
+  Para disparar a ação que se pretende com a ocorrência do dado evento, basta criar um Target 
+  comum, acrescentando uma variável de configuração event, conforme exemplo:
+  
+  
+    $event=<evento>[:parametros]
+  
+
+
+  onde <evento> é o nome do evento a que o target estará associado. Neste caso, o Target sai da 
+  lista de ações sequenciais previstas, e passa a ser executado exclusivamente quando o evento
+  em questão for disparado.
+  
+  A sentença :parametros é opcional, e nem todos os eventos reconhecem (atualmente, apenas os tipos 
+  de evento newvalue e valuechanged aceitam parâmetros).
+  
+  As atuais opções de evento são:
+  
+  EVENTOS ANTERIORES AOS TARGETS:
+  - Eventos que ocorrem antes do momento padrão de disparo dos Targets: 
+  
+  beforefirst - acontece no primeiro registro lido do source, imediatamente antes do primeiro 
+  comando target ser executado. No caso, os dados referentes ao primeiro registro do resultset 
+  já estão disponíveis para leitura via referência.
+  
+  iffound - mesmo instante conforme descrito na seção posterior (contextos opcionais);
+  
+  ifnotfound - mesmo instante conforme descrito na seção posterior (contextos opcionais);
+  
+  iferror - mesmo instante conforme descrito na seção posterior (contextos opcionais);
+  
+  
+  
+  EVENTOS PADRÃO
+  
+  - Nestes casos, os eventos são disparados no momendo padrão, previsto para execução do próprio
+  Target em questão, na exata ordem em que foram declarados. Mas somente são disparados quando 
+  a condição em questão é verdadeira.
+  
+  if : <condição> - Executa a expressão em SQL descrita em <condição> (usando a mesma conexão 
+     do próprio target) e valida
+
+  newvalue : @campo1, @campo2 ... @campon - a cada novo valor encontrado em qualquer um dos campos 
+  informados com a referência @. Armazena a ocorrência para controle, e garante que apenas na primeira
+  ocorrência do valor em questão, o evento será disparado.
+  
+  valuechanged : @campo1, @campo2 ... @campon - a cada mudança de valor em qualquer um dos campos 
+  informados com a referência @. Não controla ocorrências, podendo ser disparado mais de uma vez,
+  caso o valor em questão altere e retorne ao mesmo valor.
+  
+  exceptfirst : opera em todos os registros, exceto o primeiro. Útil para se fazer operações usando
+  a referência @[prev]
+  
+  onlyfirst : opera apenas no primeiro registro. Útil para fazer a operação complementar a 
+  exceptfirst.
+
+  exceptlast : opera em todos os registros, exceto o último.
+  
+  onlylast : opera apenas no último registro.
+  
+  NOTA: parâmetros opcionais, quando usados, devem ser adicionados após ao evento pelo separdor ":",
+  conforme exemplo:
+  
+  $event=newvalue:@MATRICULA
+  
+  
+  EVENTOS POSTERIORES AOS TARGETS:
+  - Eventos que ocorrem após o momento padrão de disparo dos Targets: 
+  
+  afterlast - semelhante ao beforefirst, acontece imediatamente após o último registro ser processado,
+  inclusive com todos os targets associados.
+  
+  
+  
+  MÁSCARAS PARA EVENTOS
+  
+  Como forma de simplificar o uso de eventos em targets, é permitido o uso de máscaras (ou atalhos)
+  para sua criação, na própria declaração do contexto. Para isso, basta usar o caracter de definição
+  de contexto # seguido do nome do evento (e parâmetros adicionais seguidos de ":", se for o caso),
+  sendo acrescido ou não de identificador da conexão pelo sinal de igual "=", conforme exemplos 
+  a seguir:
+  
+  #beforefirst
+  
+  #afterlast = db1.conf
+  
+  #newvalue:@localidade,@setor
+  
+  #valuechanged:@localidade = files
+  
+  Em todos os casos, um novo target é implicitamente criado, e associado ao evento em que foi referido
+  (e os parâmetros opcionais). Se não for identificada uma conexão, é presumida a mesma conexão do
+  contexto atual.
+  
+  CONTEXTOS OPCIONAIS DE TARGET/SOURCE
+  
+  Referem-se a comandos SQL que podem ser executados quando acontecem hipóteses específicas:
+   
+     #ifnotfound [= <connection>] : indica um comando a ser executado quando o comando realizado
+               em #target não afetar nenhum registro. No caso de #source, é disparado após a 
+               execução da query, quando a consulta não trouxe registros.
+               
+               Útil por exemplo para atualizar uma tabela com base em outra - neste caso, aplica-se o update no #target e o insert no #ifnotfound
+               
+               NOTA: se não informado connection, assume a mesma do contexto de origem.
+
+     #iffound [= <connection>] : Indica um comando a ser executado quando o comando realizado
+               em #target afetar registros. No caso de #source, é disparado após a 
+               iteração da query, quando a consulta trouxe registros.
+               
+               NOTA: se não informado connection, assume a mesma do contexto de origem.
+
+     #iferror [= <connection>] : Indica um comando a ser executado na hipótese do comando realizado
+               em #target levantar erro.
+               
+     BLOCOS CONDICIONAIS DE SQL:
+     
+	 Os descritores a seguir associam o comando SQL ao source/target associado, apenas se uma determinada
+	 condição for satisfeita. Neste caso, o SQL descrito é associado dinamicamente a depender da condição.
+     
+     #if <condição> : realiza o comando SQL a seguir apenas se a condição descrita em <condição> for verdadeira
+       Tipos de condição: atualmente, apenas expressões relacionais simples, do tipo A op B, onde
+       op pertence a  {=|<>|<|<=|>|>=}, pondendo serem usadas referências (@campo) em qualquer um dos
+       operandos. 
+       NOTA: podem ser usadas referências do tipo @ também a sources anteriores, sem restrição.
+       
+       Podem ser utilizadas quantas opções de #if se fizerem necessárias (tal como o comando "case" na
+       maioria das linguagens de programação), e o teste condicional será realizado em ordem, sempre do 
+       primeiro para o último #if.
+
+     #else : realiza o comando SQL nela descrito apenas se a condição descrita para todos os comandos #if 
+     descritos anteriormente for falsa.
+     
+     NOTA: Caso não seja declarada uma seção #else num bloco condicional, e nenhuma das condições #if forem
+     satisfeitas, o string correspondente ao SQL será vazio e, portanto, DBS se comportará das seguintes 
+     formas:
+     	-> Se for um #source, levantará erro de SQL vazio.
+     	-> Se for um #target, nada será executado e o programa segue adiante.
+     
+  
+  CONTEXTOS OPCIONAIS DE SOURCE
+    
+  Referem-se a comandos específicos que podem ser executados quando acontecem hipóteses específicas.
+  Estes comandos não são SQL, e atualmente realizam apenas alterações de condição de loop no SQL que
+  é executado no Source, ou reinicia o programa.
+  
+  Os comandos disponíveis para os contextos opcionais são vistos na seção COMANDOS ESPECIAIS.
+   
+   Os contexto em que os comando supracitados podem ser empregados são:
+     #ifnotfound: invocado quando a consulta SQL do source não produziu nenhum registro;
+     #iffound: invocado quando a consulta SQL do source produziu pelo menos um registro, 
+               e após a execução de todos eles;
+     #iferror: disparado quando encontrado alguma exceção na execução do código em questão. Ver
+     Tratamento de exceções.
+
+  COMANDOS ESPECIAIS
+  
+  É possível ao DBS realizar um determinado comando que tem significado interno, ao invés de um
+  comando SQL. Para isto, basta invocar o comando na linha onde seria escrito o SQL, e ele 
+  automaticamente interpretará que se trata de um comando próprio do DBS, e não de um SQL, terminando-o
+  preferencialmente com ";".
+   
+  Atualmente, os comandos disponíveis no DBS são:
+     
+     repeat; 
+       = indica que o comando SQL do source deve ser executado novamente;
+         Obs: se for um Source, associa à sua própria repetição. Se for um target, associa à repetição
+         do source imediatamente superior. 
+     
+     stop; 
+       = indica que o loop que tenha sido associado ao comando SQL deve ser encerrado. Mesma regra
+         do repeat em relação aos sources e targets.
+
+     skip; 
+       = pula a execução do comando atual e continua a iteração.
+     
+     error <message>; 
+       = Lança uma exceção com a mensagem descrita em message.
+       
+     next;
+       = ignora a execução de todos os targets para o registro atual, no source mais próximo, e pula 
+         para o próximo registro do dataset
+
+     restart; 
+       = reinicia todo o programa, desde o começo.
+
+     reconnect and try again; 
+       = Reconecta ao servidor e tenta realizar o comando novamente. Útil especificamente para os
+         targets. (Cuidado ao usar em um source! Não foi avaliado o seu funcionamento em sources)
+     
+     save record as <name>;  
+       = permite salvar, ocasionalmente, um registro para uso posterior. Name
+       determina o nome com que o registro será salvo. Posteriormente, este registro
+       salvo pode ser recuperado utilizando referências @, através da identificação
+       entre colchetes [], como no formato @[<name>]field 
+
+     for <var> in <inicio>..<final> [step <passo>] 
+       Permite a iteração de um contador do tipo for loop, 
+       com início e final especificados, e opcionalmente o passo de contagem (step). A execução do 
+       loop é admitida no contexto #source, e ela produz como resultado um DataSet de único campo 
+       (com nome identificado em <var>, e um registro para cada passo do loop.
+
+       Exemplos:
+
+         #source
+           for i in 10..100 step 10
+           
+         #source
+           for localidade in 1 .. 2000
+       
+    for <var> in {v1, v2, ..., vn}
+       Funciona de maneira semelhante ao for loop anterior, exceto pela diferença que não há uma contagem
+         sobre uma sequência regular de valores, mas sim sobre valores aleatoriamente declarados entre
+         as chaves {...}. A ordem com que os valores serão apresentados no DataSet resultante respeitará
+         a mesma ordem em que eles foram declarados.
+  
+       Exemplo:
+
+         #source
+           for localidade in {900, 901, 902, 903}
+
+    exec <comando...>
+       Realiza uma chamada a programa ou comando externo, disponível da linha de comando do sistema 
+         operacional.
+         
+    DBS <filename.sql> <args>...
+       Permite invocar uma nova instância de DBS para um novo arquivo, passando argumentos como parâmetro.
+       Esta nova instância será executada internamente como se fosse um comando, dentro do mesmo contexto 
+       da aplicação.
+
+  TRATAMENTO DE EXCEÇÕES
+
+  Quando algum erro é identificado, este pode ser tratado através de comandos declarados no contexto
+    específico #iferror. Este contexto pode ser múltiplo, caso deseje-se tratar diferentes classes
+    de exceção. Para tanto, a cláusula #iferror admite um parâmetro opcional, que é o tipo de classe de erro ocorrida (linguagem
+  Java), determinando o nome desta classe a ser tratada. Quando declarado mais de um #iferror, cada 
+  cláusula #iferror passa a tratar exclusivamente o seu tipo de erro associado.
+  
+  Nota: não é permitido associar mais de uma cláusula #iferror para um mesmo tipo de exceção.
+  
+    
+  
+  
+  
+  
+
+
+ 
+  CONEXÃO COM ARQUIVOS
+
+  É possível usar o DBS para exportar consultas para arquivos de dados, em texto plano. Por ora, 
+  os dados de cada registro do arquivo são delimitados. O caractere padrão delimitador de colunas
+  é o ";" (ponto-e-vírgula). O caractere padrão delimitador de linhas é a quebra de linha simples <\r\n>. 
+  Por padrão, o arquivo de dados também deve conter um cabeçalho com os nomes das colunas.
+  
+  De igual forma, também é possível consultar arquivos de texto, nos mesmos moldes dos padrões 
+  estabelecidos acima, para exportação para alguma conexão JDBC.
+  
+  Em ambos os casos, especifique o source ou target com o parâmetro 'files', ao invés de onde 
+  seria informado o arquivo .conf de conexão com base de dados. O sistema entenderá que se trata
+  de acesso a arquivos no sistema operacional.
+  
+  Também é possível abrir mais de uma conexão para arquivos simultanea, usando : e uma identificação
+  posterior (semelhante à diferenciação de conexões JDBC para um mesmo arquivo de .conf).
+  
+  Exemplos:
+  
+  #source = files
+  //indica que esta consulta será realizada sobre os arquivos de dados conforme especificado 
+  nos comandos da própria seção.
+
+  #source = files:A1
+  //Cria uma nova conexão de arquivos com identificação A1.
+  
+  #target = files
+  //Indica que o performer executará exportação e/ou outros comandos que promoverão alteração nos 
+  arquivos.
+  
+  COMANDOS DISPONÍVEIS:
+   
+  Para o contexto Source (consultas):
+  
+    load <filepath.txt>
+  
+    Carrega um arquivo de dados especificado no caminho <filepath.txt> para leitura, onde a 
+    consulta dos dados é feita linha a linha (registros). Útil para processamento de arquivos CSV. 
+    O caminho <filepath.txt> pode ser absoluto ou relativo.
+    
+    O arquivo é mantido aberto enquanto estiver sob iteração pelo Source. Após a consulta do último
+    registro, o arquivo é automaticamente fechado. 
+  
+    O arquivo é mantido aberto enquanto estiver sob iteração pelo Source. Após a consulta do último
+    registro, o arquivo é automaticamente fechado. 
+  
+    read <filepath.txt>
+  
+    Abre e carrega um arquivo de dados de uma única vez, ignorando quebras de linha ou de coluna.
+    O conteúdo do arquivo é disposto por inteiro em única linha, recuperável pela coluna "content".
+    
+    list [<dir>]
+    
+    Permite listar os arquivos de um determinado diretório informado em <dir>. Produz um DataSet 
+    contendo quatro colunas, relativas a cada arquivo relacionado encontrado no diretório:
+    
+    	filename: nome do arquivo (nome simples + extensão);
+    	filepath: caminho completo do arquivo (caminho + nome + extensão);
+    	simplename: nome simples do arquivo, sem extensão;
+    	filext: extensão do arquivo.
+	
+	Caso <dir> não seja informado, presume-se o diretório atual.
+
+
+    properties <filepath>
+  
+    Extrai as propriedades do arquivo informado em filepath sob a forma de um DataSet de uma única linha.
+    O DataSet resultante possui as seguintes colunas:
+    
+    	filepath: o caminho do arquivo que foi especificado (o próprio parâmetro informado)
+    	creation: a data/hora de criação do arquivo 
+    	modified: a data/hora de modificação do arquivo 
+    	access: a data/hora que o arquivo foi acessado por último
+    	size: o tamanho do arquivo (em bytes)
+    	isdir: retorna um booleano que informa se o arquivo é um diretório.
+
+	Nota: estas informações são extraídas do Sistema de Arquivos do Sistema Operacional. Eventuais 
+		divergências, consultar as informações do seu sistema.
+    
+    O arquivo é mantido aberto enquanto estiver sob iteração pelo Source. Após a consulta do último
+    registro, o arquivo é automaticamente fechado. 
+  
+  Para o contexto Target (atualizações):
+  
+    create <filepath.txt>
+    
+    Cria um novo arquivo, de nome e local especificado em <filepath.txt>, e o mantém aberto e
+    selecionado ativamente para possíveis operações de escritas. 
+    
+    open <filepath.txt>
+    
+    Abre o arquivo especificado para edição, selecionando-o para posteriores operações de escrita. 
+    
+    choose <filepath.txt>
+    
+    Seleciona o arquivo identificado por <filepath.txt>, para posteriores operações de escrita. Presume
+    que tal arquivo já esteja aberto para escrita. 
+      
+    write <contentrow>
+    
+    Escreve no arquivo atualmente selecionado (por comando create, set ou open) o conteúdo escrito 
+    em <contentrow>, delimitando-o ao final por uma quebra de linha padrão <\r\n>. Presume que tal arquivo 
+    já esteja aberto, com permissão de escrita, e obviamente selecionado.
+    de escrita.
+    
+    rename <filepath.txt> <newname.txt>
+    
+    Renomeia o arquivo mencionado em <filepath.txt> para <newname.txt>. Requer que o arquivo não esteja aberto pelo connection para realizar a operação.
+    
+    move <filepath.txt> <destpath>
+    
+    Move o arquivo especificado em <filepath.txt> para o diretório mencionado em <destpath>. Requer 
+    que o arquivo não esteja aberto pelo connection para realizar a operação.
+    
+    close <filepath.txt>
+    
+    Fecha o arquivo <filepath.txt> para edições, e remove-o da lista de arquivos abertos. Se estiver
+    selecionado, torna a seleção nula.
+    
+    delete <filepath.txt>
+    
+    Exclui o arquivo <filepath.txt>. Requer que ele não esteja aberto.
+    
+    default import
+    
+    Procede a importação do source para dentro do arquivo, seguindo os critérios-padrão de formatação,
+    de criação, abertura e fechamento do arquivo. No caso, o target criará/abrirá o arquivo uma única
+    vez, no início do processamento, e encerrará depois de concluída toda a execução da macro em questão.
+
+
+  CONEXÃO HTTP
+  
+  	É possível que um source opere com HTTP, estabelecendo uma requisição e trazendo uma resposta,
+  	sob a forma de tabela (de única linha) para ser manipulada. Para tanto, após o "=" da declaração
+  	da seção, basta informar "http" (tal como é informado files para busca de arquivos).
+  	
+  	No lugar do comando (ou do SQL), basta inserir a URL. O Sistema processará a requisição/resposta 
+  	via HTTP, e disporá o conteúdo da resposta do servidor numa única linha. Este mesmo conteúdo está 
+  	disponível na coluna "content".
+  	
+	Nota: campos dinâmicos (@field) de sources anteriores podem ser utilizados para compor a URL, 
+	bem como toda a regra de parâmetros existentes no DBS.
+
+
+  CONEXÃO FICTÍCIA (DUMMY CONNECTION)
+  
+  	É um tipo de conexão que não faz nada, servindo apenas de fonte de dados para consumo do comando declarado
+  	no conteúdo do source, ou como destino sem efeito para um target. Ela é útil para o consumo de 
+  	comandos ou strings (multilinhas inclusive) que precisam ser declarados para serem usados por sessões 
+  	posteriores (por exemplo, um JSON), ou para depuração de execuções.
+  	
+  	#source = dummy
+  	
+  	Ao ser usada em um source, esta conexão porduz um dataset com única linha, e única coluna chamada 
+  	"content". O valor contido em "content" é o próprio comando declarado no source (lembrando que 
+  	também estará disponível, como em qualquer source, nos atributos @sql ou @command).
+	
+	Se usada em um target, a sua execução também se torna sem qualquer efeito.
+
+  DADOS ESTRUTURADOS (XML, JSON)
+  
+  Algumas abordagens permitem interpretar, extrair e processar dados estruturados em formatos de documentos
+  tais como XML ou JSON (ou ainda HTML, se estiver muito bem formado).
+
+  JSONPATH (INTERPRETAÇÃO DE JSON)
+  
+  Este recurso é particularmente útil para fazer a interpretação de um json, especialmente para fazer
+  a tradução para um formato de dataset. É utilizado o mecanismo JsonPath (consulte: www.jsonpath.com),
+  por meio do framework jayway, e as suas expressões.
+
+  	#source = jsonpath
+  	
+  O source do tipo jsonpath admite, ao invés do SQL, uma série de comandos declarativos, um por linha
+  do tipo:
+  	
+  	<target> = <expression> [: <property>]
+  	
+  Onde:
+  	
+  		<target> é o destino para onde a informação extraída será enviada. As opções disponíveis são:
+  		
+  			**json - a declaração do json a ser analisado (tipicamente associado a uma referência @campo).
+  				Também pode ser descrito como um json literal multilinha.
+
+  			<fieldname> - tipicamente um campo que receberá um valor ou uma lista de valores extraídos do json
+
+  			**dataset - quando o processo de extração produz um dataset por meio de uma lista contendo tanto
+  				os nomes de campos quando os registros de valores (tipicamente List<Map<String, Object>>).
+  				Neste caso, todos os atributos declarados nesta lista serão automaticamente convertidos em 
+  				campos do dataset, enquanto os registros serão formados pelos elementos, capturando os valores 
+  				desses atributos.
+  			
+  		<expression> é a expressão de navegação/leitura do json, segundo definições do jsonpath (consulte documentação)
+  			No caso particular de **json, se espera a referência que contém a estrutura do json, ou a própria
+  			estrutura declarada (de forma estática)
+  		
+  		O parâmetro opcional <property> indica uma propriedade a ser extraída do objeto de retorno, quando o 
+  		objetivo seja atribuir à coluna não o objeto diretamente, mas uma propriedade específica deste objeto.
+  			
+  			Exemplos:
+  			
+  				Para o json a seguir:
+  				
+			{
+				"store": {
+					"book": [
+						{
+							"category": "reference",
+							"author": "Nigel Rees",
+							"title": "Sayings of the Century",
+							"price": 8.95
+						},{
+							"category": "fiction",
+							"author": "Herman Melville",
+							"title": "Moby Dick",
+							"price": 8.99
+						},{
+							"category": "self-help",
+							"author": "Ronda Byrne",
+							"title": "The Secret",
+							"price": 4.90
+						}
+					]
+				}
+			}
+  				
+  			Exemplo 1:
+  			
+  			**json = @content::native
+  			author = $.store.book[0].author
+  			category = $.store.book[1].category
+  					
+  Neste caso, cria no dataset uma coluna "author", com única linha contendo "Nigel Rees"
+  como author, e "fiction" como category
+  			
+  			Exemplo 2:
+  			
+  				**json = @content::native
+  				category = $.store.book[*].category
+  				author = $.store.book[*].author
+  				title = $.store.book[*].title
+  				price = $.store.book[*].price
+  					
+  Neste segundo exemplo, cria um dataset contendo as quatro colunas, e os valores são extraídos
+  e ordenados em registros, conforme todos os books declarados no json:
+  			  			   			
+  				category	author				title					price
+  				--------------------------------------------------------------
+  				reference	Nigel Rees			Sayings of the Century	8.95
+  				fiction		Herman Melville		Moby Dick				8.99
+  				self-help	Ronda Byrne			The Secret				4.90
+  			
+
+  			Exemplo 3:
+  			
+  				**json = @content::native
+  				**dataset = $.store.book[*]
+
+  Como a expressão retorna um List<Map<String, Object>>, o DBS presume que a lista contém os registros
+  em ordem, e que cada Map<String, Object> contém os nomes dos campos (chave) e os valores dos registros
+  (nos objects). Assim, cada property será convertida em um campo no dataset. O dataset resultante
+  será igual ao do exemplo 2.
+
+  NOTA: ele faz a associação entre os diferentes elementos pelos nomes dos campos (propriedades).
+  Caso haja divergência de nomes nas properties declaradas em cada objeto, campos diferentes serão
+  criados.
+  			
+  NOTA 2: a correspondência entre as propriedades de um mesmo objeto é sempre mantida como valores
+  de um mesmo registro. Caso algum elemento não possua uma propriedade que existe em outro elemento,
+  a coluna será preenchida com null.
+  			
+  			Exemplo 4:
+  			
+  				**json = @content::native
+  				props = $.store.book[0] : keyset
+  				
+  Neste caso, a expressão $.store.book[0] retorna um Map<String, Object> contendo as propriedades.
+  A diretiva "keyset" ao final indica que deverá ser extraída a propriedade keyset do Map, ou seja,
+  Uma lista contendo os nomes associados à propriedades.
+  			
+  O resultado deste dataset será a coluna props, contendo 4 linhas, com os valores de cada registro:
+  				
+  				props
+  				-----------
+  				category
+  				author
+  				title
+  				price
+  			
+  XPATH (INTERPRETAÇÃO DE XML)
+  
+  De maneira equivalente ao JSONPATH, o XPath permite a interpretação, navegação e processamento de 
+  uma estrutura XML através de expressões de comandos. A sintaxe, a forma de operação e as lista de 
+  expressões funcionam da mesma forma que o JSONPATH: 
+  
+    	<target> = <expression> [: <property>]
+
+  
+  A única diferença é que a referência ao conteúdo XML é feita usando uma target **xml, ao invés de 
+  **json:
+  
+  				**xml = @content::native
+  				props = /store/book[0] : keyset
+    
+    Para detalhes específicos sobre a sintaxe e significados das expressões de navegação em XML, 
+    consulte documentações sobre XPath (nativo do Java).
+    
+    
+  ATRIBUTOS DE UMA SESSÃO
+  
+  Algumas sessões admitem variáveis de configuração específicas, que trarão tratamentos 
+  específicos na sua execução. Para inserir variáveis de configuração, utilize a sintaxe $ 
+  seguida do nome da variável, conforme no exemplo:
+  
+  $RECURSIVE_REFERENCE = true
+  
+  São elas:
+ 
+  sessões #source, #target e #macro
+  
+  Nota: no caso de declaradas em #macro, valem para todas as outras sessões.
+
+    $RECURSIVE_REFERENCE: permite que valores internos de campos, sobretudo do tipo texto, contenham
+    novas referências que serão interpretadas pelo DBS (@campos, @argumentos, etc.)
+    
+    $CASCADE_REFERENCE: Permite que uma referência seja transformada em valor em cascata através do uso
+    de duplos (ou múltiplos) sinais de referência: @@campo. Este recurso é potencialmente útil, especialmente
+    se na 1a transformação (ou nas transformações intermediárias) o valor resultante refere-se 
+    ao nome de uma nova referência, tal como um campo, variável, etc. 
+    
+    Ex.: @@pk, cujo valor contido em source1 é localidade, setor, é transformado em @localidade, @setor; 
+    Na sequência, @localidade, @setor é por sua vez traduzido para os respectivos valores 900, 41 constantes 
+    em source2. Ou seja: 
+    	@@pk -> "localidade, setor" (valor da coluna pk em source1) 
+    	@localidade, @setor -> 900, 41 (valor das colunas localidade e setor em source2)
+    	Logo, a tradução será @@pk -> "@localidade, @setor" -> "900, 41"
+    
+    Por padrão, o valor de CASCADE_REFERENCE é true. (deve ser mudado para false para desabilitar esta conversão)
+
+    $IGNORE_UNKNOWN_FIELDS: Durante o processo de atualização (insert ou update), ao se usar 
+    referências a listas de campos - tais como @*, @*= e @*and - ignora aqueles campos trazidos 
+    do source que não estão presentes na tabela a ser atualizada. 
+
+    $SHOW_SQL: Define se o comando SQL que é enviado para o SGBD é exibido no console ou não (true/false). 
+ 
+    $SHOW_SCENE: (true/false) exibe ou não o cenário atual (variáveis e valores). 
+
+    $SHOW_STATUS: (true/false) exibe ou não o status do comando em execução (início e conclusão, sobretudo). 
+
+    $LOG_SQL: Idem SHOW_SQL, porém em exportação para arquivo de log. 
+ 
+    $LOG_SCENE: Idem SHOW_SCENE, porém em exportação para arquivo de log.
+
+    $LOG_STATUS: Idem SHOW_STATUS, porém em exportação para arquivo de log.
+    
+  
+  Especificamente da sessão #macro:
+  
+    $ARG_LABEL: Associa um "Label", ou um nome mais "amigável", a um determinado argumento do programa, 
+    que será apresentado se e quando o argumento for inquirido ao usuário. Não altera a referência interna
+    do argumento.
+    
+    Ex.:
+    
+    	$ARG_LABEL dbsource = Database de Origem
+
+    $ARG_DEFAULT_VALUE: Associa um valor default para o argumento, de modo a ser assumido quando não informado
+      por qualquer das vias de entrada de argumentos (arquivo *.args, argumentos de programa ou entrada por
+      teclado). Caso o usuário seja inquirido sobre o argumento (vide XXXXX), o DBS informa ao usuário qual
+      é o valor default sugerido - de modo que se este simplesmente digitar ENTER ao ser inquirido, esse 
+      valor default é automaticamente assumido.
+
+	Ex.:
+    	$ARG_DEFAULT_VALUE dbsource = Maya-P
+    	$ARG_DEFAULT_VALUE dbdest = Maya-R1
+  
+   	$ARG_USE_DEFAULT_VALUE: determina que o valor default seja usado caso o argumento não seja informado
+   	  pelas vias de entrada automática de dados (arquivo *.args ou argumentos do programa). Neste caso,
+   	  o DBS não perguntará o argumento ao usuário, e assumirá o valor default, que foi declarado pela
+   	  diretiva $ARG_DEFAULT_VALUE.
+   	
+   	Ex.:
+   		$ARG_USE_DEFAULT_VALUE dbdest = true
+  
+    $ARG_VALUE_LIST: Associa uma lista de valores permitidos para um determinado argumento, de modo a não 
+      permitir a introdução de outros valores fora da lista neste argumento. Se o argumento for passado
+      na chamada ao programa, a aplicação lança o erro e finaliza. Se o argumento for requisitado ao usuário,
+      a requisição será repetida até que o usuário digite o valor correto.
+
+	Ex.:
+    	$ARG_VALUE_LIST dbsource = Maya-P, Maya-R1, Maya-R2
+
+    $FORCE_ARG: Força um valor a um argumento, de modo a não precisar digitá-lo toda vez que o programa
+      for executado. Útil para depuração, por exemplo.
+
+	Ex.:
+    	$FORCE_ARG dbsource = Maya-P
+    	$FORCE_ARG ano = 2020
+    	$FORCE_ARG regiao = IS
+    
+    $DISABLE_COMMANDS: permite desabilitar a execução efetiva dos comandos de todos os #target  
+    	
+	$THREAD_POOL_SIZE: atribui o tamanho do pool de threads, para o caso de chamadas assíncronas 
+		(processamento paralelo). O valor default é 4.     	
+
+
+
+  Exclusivamente das sessões #source e #target:
+
+    $LABEL: define um rótulo ou mensagem a ser exibida no console. Admite também as referências 
+    do tipo @.
+  
+    $AUTOCOMMIT: estabelece a condição de autocommit da conexão associada ao contexto;
+  
+    $CONDITION: Estabelece uma condição para ativação do bloco (source/target) em questão, por 
+    meio de uma expressão cuja resolução produza um resultado booleano (true/false). O bloco 
+    somente será executado se tal expressão resultar verdadeiro.
+    
+    	NOTA: São admitidos múltiplas cláuculas $CONDITION para um mesmo bloco. Na hipótese de haver 
+    	mais de uma CONDITION no mesmo bloco, a sua execução dependerá de serem confirmados os 
+    	resultados de todas elas (isto é, uma conjunção "AND" entre elas)
+
+    	NOTA 2: Também é admitido o uso de CONDITION para tratamento de exceções, no caso de cláusulas
+    	#iferror. Um bom exemplo de uso é a verificação de detalhes da exceção, como por exemplo, dados
+    	da mensagem de erro (contidas em @errormsg) para decisão de tratá-la ou não. Caso a CONDITION 
+    	não seja satisfeita, o erro será considerado não tratado.
+
+    $OUTPUT_FILE: Caminho do arquivo de saída em que serão escritos os dados. No caso de um target,
+    é aplicável à sua própria manipulação de arquivos. No caso de um source, cria um target implícito
+    que fará esta manipulação. 
+
+    $COLUMN_SEPARATOR: Caracter ou string separador de colunas a ser usado no arquivo de saída. 
+    Valem também os separadores \n, \t, \s, \b, \f e \ (barra invertida pura). Quando não 
+    informado, assume-se \t (tab). Mesma regra de sources e targets da seção anterior. 
+
+    $ROW_SEPARATOR: Caracter ou string separador/quebra de linhas a ser usado no arquivo de saída. 
+    Valem também os separadores \n, \t, \s, \b, \f e \ (barra invertida pura). Quando não 
+    informado, assume-se \r\n (quebra seguida de retorno). Mesma regra de sources e targets da 
+    seção anterior. 
+    
+    $SUBQUERY_ROW_SEPARATOR: Caracter ou string separador de linhas a ser usado no resultado de uma 
+    subquery (no padrão @query{}), valendo também os caracteres especiais precedidos de "\". 
+    Por default é definida a vírgula (,) como separador de linhas, na hipótese de retorno de mais
+    de uma linha.  
+
+    $SUBQUERY_COLUMN_SEPARATOR: Caracter ou string separador de colunas a ser usado no resultado de 
+    uma subquery (padrão @query{}), valendo também os caracteres especiais precedidos de "\". 
+    Por default é definida a vírgula (,) como separador de colunas.
+    NOTA: na hipótese de $SUBQUERY_ROW_SEPARATOR coincidir com $SUBQUERY_COLUMN_SEPARATOR (como no
+    próprio esquema default), o parser automaticamente "empacotará" todas as colunas de uma mesma 
+    linha entre parenteses, na hipótese de haver mais de uma coluna com múltiplas linhas. Ex.:
+    
+    A query @query{select id, descricao from dof_tipo_rastreavel} retornará:
+    
+    	(1, 'HIDRÔMETRO'), (2, 'CAIXA'), (3, 'BOMBA')
+
+    $DECIMAL_SEPARATOR: Caracter ou string usado para representação de valores decimais, para 
+    exportação para arquivos de texto. Por padrão é usado o "." (ponto). 
+
+    $INCLUDE_HEADER: Decide se o cabeçalho (contendo os nomes dos campos) será incluído no arquivo
+    de saída, ou na tela se for o caso. Mesma regra de sources e targets da seção anterior. 
+
+    $DELAY_TIME_BEFORE: define o tempo de espera (em milissegundos) antes de iniciar a execução;
+
+    $DELAY_TIME_AFTER: define o tempo de espera (em milissegundos) após a conclusão da execução;
+  
+    $CLEAR_UNKNOWN_VAR_REFERENCES: (true/false). Determina que referências a nomes de variáveis 
+    desconhecidos, no ato da tradução do SQL, sejam substituídos por '' (vazio).
+
+    $PARSE_CONTROL_CHARS: Permite que referências literais a \n, \t, \b e \f sejam interpretadas
+    e convertidas como carateres de controle dentro do código SQL.
+    
+    $IGNORE_ERRORS: Define se o performer (target ou source) deve continuar executando os comandos
+    conseguintes quando identificado um erro na execução de um comando. Este comando deverá conter:
+        
+        a) A lista dos nomes de exceção (em java) que o performer deverá ignorar, separados por 
+        vírgula; ou:
+        b) true, para qualquer tipo de erro;
+        c) false, ou null, para não ignorar nenhum erro. Esta é a opção padrão, quando não informada.
+    	
+    	Ex.:
+    	$IGNORER_ERRORS = IOException, DivisionByZeroException
+
+    $PRINT: exibe uma mensagem na tela. Para efeito prático, possui o mesmo resultado do atributo $LABEL
+
+  Especificamente da sessão #source:
+  
+    $FOUND_RECORDS_THRESHOLD: Determina o limiar de registros encontrados no DataSet para que seja 
+    disparada a ação #iffound, ao invés da #ifnotfound. Quando não informado, é assumido o valor 1;
+
+    $REPEAT: Define a condição inicial de repetição (a priori, indefinida) de execução da consulta
+    ou comando descrito;
+
+    $REPEAT_WHILE_FOUND: se associado a true, estabelece a repetição indefinida do comando enquanto
+    a query encontrar registros;
+
+    $REPEAT_WHILE_SUB_FOUND: equivalente a $REPEAT_WHILE_FOUND, porém, condiciona a repetição à 
+    existência de registros encontrados nas operações não deste source, mas sim dos comandos slaves 
+    (source ou targets) aninhados a este source (no nível imediatamente inferior);
+   
+    $SAVEPOINT: permite gerenciar um ponto de continuidade para o caso de interrupção de processamento,
+    através de um arquivo de extensão .sav. Deve(m) ser informada(s) a(s) coluna(s) cujo(s) valor(es) 
+    será(ão) armazenados no arquivo .sav, e a próxima execução partirá do último ponto ainda não 
+    processado.
+       Sintaxe: $SAVEPOINT = matricula
+                $SAVEPOINT = localidade, setor
+                
+	    NOTA: Existem dois padrões de nome de arquvo .sav em que o DBS carrega os dados de SAVEPOINT: no 
+	    primeiro momento, ele tenta carregar propriedades do arquivo savepoint genérgico, de nome <filename>.sav, 
+	    em que <filename> corresponde ao mesmo nome do arquivo SQL que está sendo processado. Na sequência, ele 
+	    tenta carregar os dados de savepoint nde um arquivo específico <filename#param1#value1#param2#value2...>.sav, 
+	    onde paramN e valueN correspondem aos nomes e valores dos parâmetros do programa DBS em questão. Em caso 
+	    de conflito de valores de SAVEPOINT, prevalescerão os valores descritos no arquivo específico.
+	    
+	    NOTA 2: As definições de savepoint dentro do arquivo .sav são descritas da forma <campo> = <valor>, que 
+	    correspondem respectivamente ao nome do campo e ao valor de savepoint a ser restaurado. O nome do campo
+	    pode ser descrito com o caminho completo do source a ser restaurado (s1.s3.cls.def.localidade), mas também
+	    pode ser abreviado a apenas o nome da coluna a ser restaurada, caso não haja ambiguidade de nome com outro
+	    source do programa que contenha coluna homômima. 
+                
+	$SAVEPOINT_WRITE: Quando habilitado (true), faz com que as colunas descritas em SAVEPOINT (vide $SAVEPOINT, 
+	em source) sejam gravadas periodicamente no arquivo .sav. Caso desativado (false), o sistema faz a 
+	carga dos dados de SAVEPOINT constantes no arquivo .sav antes da execução, mas não os grava no arquivo 
+	de volta. Por padrão, quando existem colunas de savepoint declaradas, esta propriedade será iniciada 
+	como "true".
+
+
+    $ALIAS: associa um alias (ou apelido) à sessão, permitindo fazer referências (e diferenciação)
+    a campos de sessões específicas (Ex.: com $ALIAS=s1, pode-se acessar @s1.matricula, diferentemente
+    de @s2.matricula)
+   
+    $ASYNC_ITERATION: permite que as as iterações relacionadas aos comandos internos (targets ou sources 
+    associados) sejam executadas assincronamente em relação à query. Na prática, esta condição faz com 
+    que a próxima chamada da query seja enviada enquanto os comandos internos em iteração ainda não foram
+    concluídos.
+    
+    	NOTA: Ao usar a opção ASYNC_ITERATION, o usuário deve estar seguro de seus impactos, sobretudo em
+    	relação à causalidade entre os estados do(s) banco(s) de dados. visto que novas chamadas à query
+    	podem ser realizadas antes de serem concluídas todas as alterações da query anterior. Se a chamada
+    	à query, para o seu adequado funcionamento, depender da conclusão de todas as iterações da query
+    	anterior, então a opção ASYNC_ITERATION não deverá ser usada.
+
+    $ASYNC_LOADING: permite que as queries que resultam em datasets sejam disparadas de forma assíncrona,
+    o que é especialmente útil quando processadas por bases de dados independentes.
+
+    	NOTA: Ao usar a opção ASYNC_LOADING, o usuário deve estar seguro de seus impactos, sobretudo em
+    	relação à causalidade entre os estados do(s) banco(s) de dados. visto que novas chamadas à query
+    	podem ser realizadas antes de serem concluídas todas as alterações da query anterior. Se a chamada
+    	à query, para o seu adequado funcionamento, depender da conclusão de todas as iterações da query
+    	anterior, então a opção ASYNC_LOADINGnão deverá ser usada.
+   
+    $JOIN: define o tipo de junção que o Source adotará em relação aos dados do Source superior. Esta 
+	definição do tipo de junção impactará diretamente no comportamento de iteração dos registros dos datasets
+	de cada source, bem como poderá produzir eventos específicos de cada tipo. Atualmente, são suportados
+	os tipos a seguir:
+    
+      CARTESIAN (Cartesiano) - realiza uma nova query no source para cada registro do source superior,
+        e perfaz a iteração para cada combinação cartesiana de registro entre os dois sources. Por padrão,
+        este é o tipo adotado caso a propriedade não seja declarada.
+
+      FOLLOWER (Seguidor) - Carrega de início os datasets correspondentes aos dois sources (o declarado
+	  e o superior). O mecanismo de iteração tentará, na medida do possível, fazer com que os dois datasets 
+	  sejam rolados da forma mais síncrona possível - isto é, no mesmo sentido, e equiparando os valores dos
+	  registros na chave de junção (consulte a variável de configuração JOIN_KEY. Desta forma, a idéia 
+	  é que o segundo source seja um "seguidor" do primeiro, tentando fazer "match" entre os registros
+	  dos dois iteradores.
+	  
+	  Ao longo do percurso, alguns eventos serão produzidos, em função das possibilidades de presença
+	  e ausência de registros específicos entre os datasets dos dois sources iteradores, com correspondência
+	  identificada por meio da chave de junção. São eles:
+	  
+		#match: evento disparado quando o registro é identificado em ambos os sources, presumindo assim
+		a sua correspondência nos dois datasets por meio da chave de junção. 
+		
+		#miss: evento disparado quando um determinado registro do primeiro source (upper) não foi localizado
+		no segundo source. Ou seja, o registro existe no primeiro dataset, mas não no segundo.
+
+		#outer: evento disparado quando um determinado registro do segundo source (lower) não foi localizado
+		no primeiro source. Isto significa que foi encontrado um registro no segundo dataset que não existe 
+		no primeiro.
+	  
+	  NOTA: para o adequado funcionamento da junção do tipo FOLLOWER, é fundamental que os dois datasets
+	  estejam ordenados pelo mesmo critério (crescente ou decrescente).
+
+	$JOIN_KEY (chave de junção): define a chave (correspondencia entre tuplas de colunas) que unirá os 
+	datasets em um join (vide $JOIN). Por padrão, as quantidades, ordem e tipos de dados das colunas
+	devem ser equivalentes nos dois sources.
+	
+    
+  Especificamente da sessão #target:
+  
+    $BATCH_SIZE: Ativa o modo de comando por Batch, e estabelece o tamanho máximo do lote a ser
+    enviado para o SGBD. Neste caso, os comandos são enviados de uma única vez, com lotes do tamanho
+    especificado, ao invés de serem enviados um a um - o que em alguns casos, pode acelerar o processo
+    de atualização ou inserção de registros na base destino. Utiliza o recurso Batch do JDBC.
+  	
+  	  NOTA: nem todos os SGBD oferecem suporte a esta abordagem. Atualmente, somente foi implementado
+  	  este recurso para o PosgreSQL.
+
+    $DISABLE_COMMANDS: permite desabilitar a execução efetiva dos comandos (true/false)  
+
+    $SHOW_PERFORMANCE: Define se será exibido o relatório de performance, onde constam as taxas
+    de operações e de registros atualizados por segundo.  Por padrão, o valor é true para os targets. 
+ 
+  
+  
+    
+  CONTAGEM DE REGISTROS
+  
+  O DBS conta os registros que sofreram alteração automaticamente, para cada iteração e também
+  de forma acumulada, utilizando a API AffectedRows, que está associada, no banco de dados, 
+  aos comandos padrão que promovem alteração de registros (insert, update, delete, etc.). 
+  O número de registros alterados (atual e total) são apresentados ao final de cada iteração 
+  do target.
+  
+  Também é possível "informar" ao DBS a quantidade de registros alterados, para o caso de uso de
+  comandos que não influenciam a API affectedRows, como por exemplo, o uso de selects que provoquem
+  alterações nas linhas (chamadas de funções ou procedures, por exemplo). Para isto, entretanto,
+  é necessário que o comando produza um conjunto de dados de resultado por meio de uma
+  tabela de consulta (ResultSet). Basta, para isto, incluir uma coluna do tipo int com o
+  nome _affectedrows. O DBS irá, portanto, percorrer todas as linhas deste ResultSet, 
+  somando os valores inteiros encontrados em cada linha para esta coluna, assumindo que eles 
+  correspondem ao total de registros afetados pelo comando.
+  

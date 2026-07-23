@@ -1,0 +1,986 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<node>
+<select id="sistema" onchange="Carregar(this.value)">
+    <node>
+	<option type="sistema" value="rms">Água: RMS</option>
+	<select id="ccr" onchange="CarregarEst(this.value)">
+		<node>
+		<option type="ccr" value="CCM (MPP)">CCM (MPP)</option>
+		<select id="estacao" onchange="VariavelCCM(this.value)">
+			<node>
+			<option type="estacao" value="510 - Vieira de Mello">510 - Vieira de Mello</option>
+			<select id="variavel">
+				<option type="variavel" value="MPP_SAA_510_INST_AI05_I">CLORO ÁGUA FILTRADA (mg/l)</option>
+				<option type="variavel" value="MPP_SAA_510_INST_AI06_I">FLÚOR ÁGUA FILTRADA (mg/l)</option>
+				<option type="variavel" value="MPP_SAA_510-51_INST_LI57_I">NÍVEL DO RESERVATÓRIO ELEVADO</option>
+				<option type="variavel" value="MPP_SAA_510-51_INST_LI73_I">NÍVEL ENTRADA DE ÁCIDO FLUOSÍLICICO</option>
+				<option type="variavel" value="MPP_SAA_510-51_INST_LI71_I">NÍVEL ENTRADA DE SULFATO FÉRRICO</option>
+				<option type="variavel" value="MPP_SAA_510_INST_LI02_I">NÍVEL RESERVATÓRIO ÁGUA FILTRADA (m)</option>
+				<option type="variavel" value="MPP_SAA_510-51_INST_LI74_I">NÍVEL SAÍDA DE ÁCIDO FLUOSÍLICICO</option>
+				<option type="variavel" value="MPP_SAA_510-51_INST_LI72_I">NÍVEL SAÍDA DE SULFATO FÉRRICO</option>
+				<option type="variavel" value="MPP_SAA_510_INST_AI01_I">pH ÁGUA BRUTA</option>
+				<option type="variavel" value="MPP_SAA_510_INST_AI03_I">pH ÁGUA FILTRADA</option>
+				<option type="variavel" value="MPP_SAA_510_INST_AI01A_I">pH COAGULAÇÃO</option>
+				<option type="variavel" value="MPP_SAA_510_INST_AI01B_I">pH FLOCULAÇÃO</option>
+				<option type="variavel" value="MPP_SAA_510-51_INST_PI312_I">PRESSÃO DA LINHA 2 CLORO LÍQUIDO</option>
+				<option type="variavel" value="MPP_SAA_510_INST_AI09_I">TURBIDEZ ÁGUA DECANTADA (NTU)</option>
+				<option type="variavel" value="MPP_SAA_510_INST_AI04_I">TURBIDEZ ÁGUA FILTRADA (NTU)</option>
+			</select>
+			</node>
+
+			<node>
+			<option type="estacao" value="511 - Teodoro Sampaio">511 - Teodoro Sampaio</option>
+			<select id="variavel">
+				<option type="variavel" value="MPP_SAA_511_INST_AI05_I">CLORO (mg/l)</option>
+				<option type="variavel" value="MPP_SAA_511_INST_AI06_I">FLÚOR (mg/l)</option>
+				<option type="variavel" value="MPP_SAA_511_INST_LI01_I">NÍVEL DO RESERVATÓRIO DE ÁGUA FILTRADA (m)</option>
+				<option type="variavel" value="MPP_SAA_511-51_INST_LI57_I">NÍVEL DO RESERVATÓRIO ELEVADO</option>
+				<option type="variavel" value="MPP_SAA_511_INST_AI01_I">pH ÁGUA BRUTA</option>
+				<option type="variavel" value="MPP_SAA_511_INST_AI03_I">pH ÁGUA FILTRADA</option>
+				<option type="variavel" value="MPP_SAA_511_INST_AI01A_I">pH COAGULAÇÃO</option>
+				<option type="variavel" value="MPP_SAA_511_INST_AI01B_I">pH FLOCULAÇÃO</option>
+				<option type="variavel" value="MPP_SAA_511_INST_FQI01_I">TOTALIZADOR DA VAZÃO DE ENTRADA - IPITANGA I TS (m³)</option>
+				<option type="variavel" value="MPP_SAA_511_INST_FQI08_I">TOTALIZADOR DA VAZÃO DE SAÍDA - LINHA NOVA ORLA (m³)</option>
+				<option type="variavel" value="MPP_SAA_511_INST_FQI02_I">TOTALIZADOR DA VAZÃO DE SAÍDA - ORLA (m³)</option>
+				<option type="variavel" value="MPP_SAA_511_INST_AI09_I">TURBIDEZ ÁGUA DECANTADA (NTU)</option>
+				<option type="variavel" value="MPP_SAA_511_INST_AI04_I">TURBIDEZ ÁGUA FILTRADA (NTU)</option>
+				<option type="variavel" value="MPP_SAA_511_INST_FI01_I">VAZÃO DE ENTRADA - IPITANGA I TS (l/s)</option>
+				<option type="variavel" value="MPP_SAA_511_INST_FI02_I">VAZÃO DE SAÍDA - ORLA (l/s)</option>
+				<option type="variavel" value="MPP_SAA_511_INST_FI08_I">VAZÃO DE SAÍDA LINHA NOVA - ORLA (l/s)</option>
+			</select>			
+			</node>
+
+			<node>
+			<option type="estacao" value="512 - Alta/Baixa Carga">512 - Alta/Baixa Carga</option>
+			<select id="variavel">
+				<option type="variavel" value="MPP_SAA_512_BC01_STS_I">BOMBA SUCÇÃO 512-B-01 STATUS</option>
+				<option type="variavel" value="MPP_SAA_512_BC02_STS_I">BOMBA SUCÇÃO 512-B-02 STATUS</option>
+				<option type="variavel" value="MPP_SAA_512_BC03_STS_I">BOMBA SUCÇÃO 512-B-03 STATUS</option>
+				<option type="variavel" value="MPP_SAA_512_BC04_STS_I">BOMBA SUCÇÃO 512-B-04 STATUS</option>
+				<option type="variavel" value="MPP_SAA_512_BC01_IIR_I">CMB01 - CORRENTE FASE R(A)</option>
+				<option type="variavel" value="MPP_SAA_512_BC01_IIS_I">CMB01 - CORRENTE FASE S(A)</option>
+				<option type="variavel" value="MPP_SAA_512_BC01_IIT_I">CMB01 - CORRENTE FASE T(A)</option>
+				<option type="variavel" value="MPP_SAA_512_BC01_JRI_I">CMB01 - FATOR DE POTÊNCIA</option>
+				<option type="variavel" value="MPP_SAA_512_BC01_JIS_I">CMB01 - POTÊNCIA APARENTE TOTAL (KVA)</option>
+				<option type="variavel" value="MPP_SAA_512_BC01_JIP_I">CMB01 - POTÊNCIA ATIVA TOTAL (KW)</option>
+				<option type="variavel" value="MPP_SAA_512_BC01_JIQ_I">CMB01 - POTÊNCIA REATIVA TOTAL (KVAR)</option>
+				<option type="variavel" value="MPP_SAA_512_BC01_EIRS_I">CMB01 - TENSÃO LINHA RS (V)</option>
+				<option type="variavel" value="MPP_SAA_512_BC01_EIRT_I">CMB01 - TENSÃO LINHA RT (V)</option>
+				<option type="variavel" value="MPP_SAA_512_BC01_EITS_I">CMB01 - TENSÃO LINHA TS (V)</option>
+				<option type="variavel" value="MPP_SAA_512_BC02_IIR_I">CMB02 - CORRENTE FASE R(A)</option>
+				<option type="variavel" value="MPP_SAA_512_BC02_IIS_I">CMB02 - CORRENTE FASE R(A)</option>
+				<option type="variavel" value="MPP_SAA_512_BC02_IIT_I">CMB02 - CORRENTE FASE T(A)</option>
+				<option type="variavel" value="MPP_SAA_512_BC02_JRI_I">CMB02 - FATOR DE POTÊNCIA</option>
+				<option type="variavel" value="MPP_SAA_512_BC02_JIS_I">CMB02 - POTÊNCIA APARENTE TOTAL (KVA)</option>
+				<option type="variavel" value="MPP_SAA_512_BC02_JIQ_I">CMB02 - POTÊNCIA REATIVA TOTAL (KVAR)</option>
+				<option type="variavel" value="MPP_SAA_512_BC02_EIRS_I">CMB02 - TENSÃO LINHA RS (V)</option>
+				<option type="variavel" value="MPP_SAA_512_BC02_EIRT_I">CMB02 - TENSÃO LINHA RT (V)</option>
+				<option type="variavel" value="MPP_SAA_512_BC02_EITS_I">CMB02 - TENSÃO LINHA TS (V)</option>
+				<option type="variavel" value="MPP_SAA_512_BC02_JIP_I">CMB02- POTÊNCIA ATIVA TOTAL (KW)</option>
+				<option type="variavel" value="MPP_SAA_512_INST_LI02_I">NÍVEL DO RESERVATÓRIO ALTA CARGA (m)</option>
+				<option type="variavel" value="MPP_SAA_512_INST_LI01_I">NÍVEL DO RESERVATÓRIO BAIXA CARGA (m)</option>
+				<option type="variavel" value="MPP_SAA_512_FCV15_ZI01_I">POSIÇÃO DA VÁLVULA 512FCV15 (%)</option>
+				<option type="variavel" value="MPP_SAA_512_FV02_ZI01_I">POSIÇÃO DA VÁLVULA 512FV02 (%) - CMB01</option>
+				<option type="variavel" value="MPP_SAA_512_FV05_ZI01_I">POSIÇÃO DA VÁLVULA 512FV05 (%) - CMB02</option>
+				<option type="variavel" value="MPP_SAA_512_FV08_ZI01_I">POSIÇÃO DA VÁLVULA 512FV08 (%) - CMB03</option>
+				<option type="variavel" value="MPP_SAA_512_FV11_ZI01_I">POSIÇÃO DA VÁLVULA 512FV11 (%) - CMB04</option>
+				<option type="variavel" value="MPP_SAA_512_HV01_ZI01_I">POSIÇÃO DA VÁLVULA 512HV01 (%) - CMB01</option>
+				<option type="variavel" value="MPP_SAA_512_HV04_ZI01_I">POSIÇÃO DA VÁLVULA 512HV04 (%) - CMB02</option>
+				<option type="variavel" value="MPP_SAA_512_HV07_ZI01_I">POSIÇÃO DA VÁLVULA 512HV07 (%) - CMB03</option>
+				<option type="variavel" value="MPP_SAA_512_INST_PI02_I">PRESSÃO SAÍDA BOMBA 1 (mca)</option>
+				<option type="variavel" value="MPP_SAA_512_INST_PI03_I">PRESSÃO SAÍDA BOMBA 2 (mca)</option>
+				<option type="variavel" value="MPP_SAA_512_INST_PI04_I">PRESSÃO SAÍDA BOMBA 3 (mca)</option>
+				<option type="variavel" value="MPP_SAA_512_INST_PI05_I">PRESSÃO SAÍDA BOMBA 4 (mca)</option>
+				<option type="variavel" value="MPP_SAA_512_INST_PI01_I">PRESSÃO SAÍDA DUNA-R1 (mca)</option>
+				<option type="variavel" value="MPP_SAA_512_INST_FQI02_I">TOTALIZADOR DA VAZÃO DE SAÍDA - R7/CABULA (m³)</option>
+				<option type="variavel" value="MPP_SAA_512_INST_FI02_I">VAZÃO DE SAÍDA - R7/CABULA (l/s)</option>
+			</select>
+			</node>
+
+			<node>
+			<option type="estacao" value="513 - Caixa de Reunião">513 - Caixa de Reunião</option>
+			<select id="variavel">
+				<option type="variavel" value="MPP_SAA_513_INST_LI01_I">NÍVEL DA CAIXA DE REUNIÃO MAIOR (m)</option>
+				<option type="variavel" value="MPP_SAA_513_INST_FQI03_I">TOTALIZADOR DA VAZÃO DE ENTRADA - IPITANGA I TOTAL (m³)</option>
+				<option type="variavel" value="MPP_SAA_513_INST_FQI01_I">TOTALIZADOR DA VAZÃO DE ENTRADA - JOANES AÇO (m³)</option>
+				<option type="variavel" value="MPP_SAA_513_INST_FQI02_I">TOTALIZADOR DA VAZÃO DE ENTRADA - JOANES GRAVIDADE (m³)</option>
+				<option type="variavel" value="MPP_SAA_513_INST_FI03_I">VAZÃO DE ENTRADA - IPITANGA I TOTAL (l/s)</option>
+				<option type="variavel" value="MPP_SAA_513_INST_FI01_I">VAZÃO DE ENTRADA - JOANES AÇO (l/s)</option>
+				<option type="variavel" value="MPP_SAA_513_INST_FI02_I">VAZÃO DE ENTRADA - JOANES GRAVIDADE (l/s)</option>
+			</select>
+			</node>
+
+			<node>
+			<option type="estacao" value="520 - Booster de Joanes">520 - Booster de Joanes</option>
+			<select id="variavel">
+				<option type="variavel" value="MPP_SAA_520_INST_FQI01_I">TOTALIZADOR DA VAZÃO DE SAÍDA DO BOOSTER DE JOANES (m³)</option>
+				<option type="variavel" value="MPP_SAA_520_INST_FI01_I">VAZÃO DE SAÍDA DO BOOSTER DE JOANES (l/s)</option>
+			</select>
+			</node>
+			
+			<node>
+			<option type="estacao" value="530 - Ipitanga I">530 - Ipitanga I</option>
+			<select id="variavel">
+				<option type="variavel" value="MPP_SAA_530_INST_LI02_I">NÍVEL BARRAGEM (m)</option>
+				<option type="variavel" value="MPP_SAA_530_INST_PI02_I">PRESSÃO ENTRADA DE IPITANGA I (mca)</option>
+			</select>
+			</node>
+		</select>
+		</node>		
+
+		<node>
+		<option type="ccr" value="CCR-1 (MPP)">CCR-1 (MPP)</option>
+		<select id="estacao" onchange="VariavelCCM(this.value)">
+			<node>
+			<option type="estacao" value="110 - ETA Principal">110 - ETA Principal</option>
+			<select id="variavel">
+				<option type="variavel" value="MPP_SAA_110_INST_AI07_I">ANALISADOR DE C.O.T. ÁGUA BRUTA (mg/l)</option>
+				<option type="variavel" value="MPP_SAA_110_INST_AI08_I">ANALISADOR DE C.O.T. ÁGUA TRATADA (mg/l)</option>
+				<option type="variavel" value="MPP_SAA_110_INST_AI01A_I">ANALISADOR DE CLORO ÁGUA TRATADA (mg/l)</option>
+				<option type="variavel" value="MPP_SAA_110_INST_AI06_I">ANALISADOR DE COAGULAÇÃO ÁGUA FLOCULADA (SCU)</option>
+				<option type="variavel" value="MPP_SAA_110_INST_AI05_I">ANALISADOR DE FLÚOR (mg/l)</option>
+				<option type="variavel" value="MPP_SAA_110_INST_AI01_I">ANALISADOR DE pH ÁGUA BRUTA</option>
+				<option type="variavel" value="MPP_SAA_110_INST_AI01C_I">ANALISADOR DE pH ÁGUA TRATADA</option>
+				<option type="variavel" value="MPP_SAA_110_INST_AI01B_I">ANALISADOR DE pH FLOCULAÇÃO</option>
+				<option type="variavel" value="MPP_SAA_110_INST_AI02_I">ANALISADOR DE TURBIDEZ ÁGUA BRUTA (NTU)</option>
+				<option type="variavel" value="MPP_SAA_110_INST_AI04_I">ANALISADOR DE TURBIDEZ ÁGUA TRATADA (NTU)</option>
+				<option type="variavel" value="MPP_SAA_110_INST_AI03_I">ANALISADOR DE TURBIDEZ DECANTAÇÃO (NTU)</option>
+				<option type="variavel" value="MPP_SAA_110_BC01_YI01_I">CMB01 - STATUS DE LIGADO</option>
+				<option type="variavel" value="MPP_SAA_110_BC02_YI01_I">CMB02 - STATUS DE LIGADO</option>
+				<option type="variavel" value="MPP_SAA_110_BC03_YI01_I">CMB03 - STATUS DE LIGADO</option>
+				<option type="variavel" value="MPP_SAA_110_BC04_YI01_I">CMB04 - STATUS DE LIGADO</option>
+				<option type="variavel" value="MPP_SAA_110_INST_LI01_I">NÍVEL DO RESERVATÓRIO DE CONTATO DE ÁGUA FILTRADA (m)</option>
+				<option type="variavel" value="MPP_SAA_110_INST_LI02_I">NÍVEL DO RESERVATÓRIO DE DISTRIBUIÇÃO STAND-PIPE (m)</option>
+				<option type="variavel" value="MPP_SAA_110_INST_LI03_I">NÍVEL DO RESERVATORIO DE LAVAGEM DOS FILTROS (m)</option>
+				<option type="variavel" value="MPP_SAA_110_FCV11_ZI01_I">POSIÇÃO DA VÁLVULA 110FCV11 (%)</option>
+				<option type="variavel" value="MPP_SAA_110_INST_PI01_I">PRESSÃO DO BARRILETE DE RECALQUE (mca)</option>
+				<option type="variavel" value="MPP_SAA_110_INST_FQI01_I">TOTALIZADOR DA VAZÃO DE ENTRADA DE ÁGUA BRUTA - CANAL (m³)</option>
+				<option type="variavel" value="MPP_SAA_110_INST_FQI06_I">TOTALIZADOR DA VAZÃO DE ENTRADA DE ÁGUA BRUTA - JOANES II (m³)</option>
+				<option type="variavel" value="MPP_SAA_110_INST_FQI03_I">TOTALIZADOR DA VAZÃO DE RECALQUE - STAND PIPE (m³)</option>
+				<option type="variavel" value="MPP_SAA_110_INST_FQI05_I">TOTALIZADOR DA VAZÃO DE SAÍDA - CANDEIAS (m³)</option>
+				<option type="variavel" value="MPP_SAA_110_INST_FQI09_I">TOTALIZADOR DA VAZÃO DE SAÍDA - SALVADOR LINHA NOVA (m³)</option>
+				<option type="variavel" value="MPP_SAA_110_INST_FQI04_I">TOTALIZADOR DA VAZÃO DE SAÍDA - SALVADOR LINHA VELHA (m³)</option>
+				<option type="variavel" value="MPP_SAA_110_INST_AI61_I">TURBIDEZ DA CAIXA E DESCARGA DO FILTRO 1</option>
+				<option type="variavel" value="MPP_SAA_110_INST_FI08_I">VAZÃO CALCULADA - RECIRCULAÇÃO STAND PIPE (l/s)</option>
+				<option type="variavel" value="MPP_SAA_110_INST_FI02_I">VAZÃO DE ÁGUA BRUTA PARA FLOCULADORES (l/s)</option>
+				<option type="variavel" value="MPP_SAA_110_INST_FI01_I">VAZÃO DE ENTRADA DE ÁGUA BRUTA - CANAL (l/s)</option>
+				<option type="variavel" value="MPP_SAA_110_INST_FI06_I">VAZÃO DE ENTRADA DE ÁGUA BRUTA - JOANESII (l/s)</option>
+				<option type="variavel" value="MPP_SAA_110_INST_FI03_I">VAZÃO DE RECALQUE - STAND PIPE (l/s)</option>
+				<option type="variavel" value="MPP_SAA_110_INST_FI05_I">VAZÃO DE SAÍDA - CANDEIAS (l/s)</option>
+				<option type="variavel" value="MPP_SAA_110_INST_FI09_I">VAZÃO DE SAÍDA - SALVADOR LINHA NOVA (l/s)</option>
+				<option type="variavel" value="MPP_SAA_110_INST_FI04_I">VAZÃO DE SAÍDA - SALVADOR LINHA VELHA (l/s)</option>
+			</select>
+			</node>
+		
+			<node>
+			<option type="estacao" value="120 - Pedra do Cavalo">120 - Pedra do Cavalo</option>
+			<select id="variavel">
+				<option type="variavel" value="MPP_SAA_120_BC01_IIR_I">CMB01 - CORRENTE FASE R (A)</option>
+				<option type="variavel" value="MPP_SAA_120_BC01_IIS_I">CMB01 - CORRENTE FASE S (A)</option>
+				<option type="variavel" value="MPP_SAA_120_BC01_IIT_I">CMB01 - CORRENTE FASE T (A)</option>
+				<option type="variavel" value="MPP_SAA_120_BC01_JRI_I">CMB01 - FATOR DE POTÊNCIA</option>
+				<option type="variavel" value="MPP_SAA_120_BC01_JIP_I">CMB01 - POTÊNCIA ATIVA TOTAL (kW)</option>
+				<option type="variavel" value="MPP_SAA_120_BC01_JIQ_I">CMB01 - POTÊNCIA REATIVA TOTAL (kVAR)</option>
+				<option type="variavel" value="MPP_SAA_120_BC01_YI01_I">CMB01 - STATUS DE LIGADO</option>
+				<option type="variavel" value="MPP_SAA_120_BC01_TI01_I">CMB01 - TEMPERATURA 01 ENROL. MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC01_TI02_I">CMB01 - TEMPERATURA 02 ENROL. MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC01_TI03_I">CMB01 - TEMPERATURA 03 ENROL. MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC01_TI04_I">CMB01 - TEMPERATURA 04 ENROL. MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC01_TI05_I">CMB01 - TEMPERATURA 05 ENROL. MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC01_TI06_I">CMB01 - TEMPERATURA 06 ENROL. MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC01_TI07_I">CMB01 - TEMPERATURA 07 NÚCLEO MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC01_TI08_I">CMB01 - TEMPERATURA 08 NÚCLEO MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC01_TI09_I">CMB01 - TEMPERATURA 09 NÚCLEO MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC01_TI10_I">CMB01 - TEMPERATURA 10 NÚCLEO MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC01_TI11_I">CMB01 - TEMPERATURA 11 NÚCLEO MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC01_TI12_I">CMB01 - TEMPERATURA 12 NÚCLEO MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC01_TI13_I">CMB01 - TEMPERATURA 13 MANC. INFERIOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC01_TI14_I">CMB01 - TEMPERATURA 14 MANC. SUPERIOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC01_TI15_I">CMB01 - TEMPERATURA 15 GUIA (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC01_EIR_I">CMB01 - TENSÃO FASE R (kV)</option>
+				<option type="variavel" value="MPP_SAA_120_BC01_EIS_I">CMB01 - TENSÃO FASE S (kV)</option>
+				<option type="variavel" value="MPP_SAA_120_BC01_EIT_I">CMB01 - TENSÃO FASE T (kV)</option>
+				<option type="variavel" value="MPP_SAA_120_BC02_IIR_I">CMB02 - CORRENTE FASE R (A)</option>
+				<option type="variavel" value="MPP_SAA_120_BC02_IIS_I">CMB02 - CORRENTE FASE S (A)</option>
+				<option type="variavel" value="MPP_SAA_120_BC02_IIT_I">CMB02 - CORRENTE FASE T (A)</option>
+				<option type="variavel" value="MPP_SAA_120_BC02_JRI_I">CMB02 - FATOR DE POTÊNCIA</option>
+				<option type="variavel" value="MPP_SAA_120_BC02_JIP_I">CMB02 - POTÊNCIA ATIVA TOTAL (kW)</option>
+				<option type="variavel" value="MPP_SAA_120_BC02_JIQ_I">CMB02 - POTÊNCIA REATIVA TOTAL (kVAR)</option>
+				<option type="variavel" value="MPP_SAA_120_BC02_YI01_I">CMB02 - STATUS DE LIGADO</option>
+				<option type="variavel" value="MPP_SAA_120_BC02_TI01_I">CMB02 - TEMPERATURA 01 ENROL. MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC02_TI02_I">CMB02 - TEMPERATURA 02 ENROL. MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC02_TI03_I">CMB02 - TEMPERATURA 03 ENROL. MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC02_TI04_I">CMB02 - TEMPERATURA 04 ENROL. MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC02_TI05_I">CMB02 - TEMPERATURA 05 ENROL. MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC02_TI06_I">CMB02 - TEMPERATURA 06 ENROL. MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC02_TI07_I">CMB02 - TEMPERATURA 07 NÚCLEO MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC02_TI08_I">CMB02 - TEMPERATURA 08 NÚCLEO MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC02_TI09_I">CMB02 - TEMPERATURA 09 NÚCLEO MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC02_TI10_I">CMB02 - TEMPERATURA 10 NÚCLEO MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC02_TI11_I">CMB02 - TEMPERATURA 11 NÚCLEO MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC02_TI12_I">CMB02 - TEMPERATURA 12 NÚCLEO MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC02_TI13_I">CMB02 - TEMPERATURA 13 MANC. INFERIOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC02_TI14_I">CMB02 - TEMPERATURA 14 MANC. SUPERIOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC02_TI15_I">CMB02 - TEMPERATURA 15 GUIA (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC02_EIR_I">CMB02 - TENSÃO FASE R (kV)</option>
+				<option type="variavel" value="MPP_SAA_120_BC02_EIS_I">CMB02 - TENSÃO FASE S (kV)</option>
+				<option type="variavel" value="MPP_SAA_120_BC02_EIT_I">CMB02 - TENSÃO FASE T (kV)</option>
+				<option type="variavel" value="MPP_SAA_120_BC03_IIR_I">CMB03 - CORRENTE FASE R (A)</option>
+				<option type="variavel" value="MPP_SAA_120_BC03_IIS_I">CMB03 - CORRENTE FASE S (A)</option>
+				<option type="variavel" value="MPP_SAA_120_BC03_IIT_I">CMB03 - CORRENTE FASE T (A)</option>
+				<option type="variavel" value="MPP_SAA_120_BC03_JRI_I">CMB03 - FATOR DE POTÊNCIA</option>
+				<option type="variavel" value="MPP_SAA_120_BC03_JIP_I">CMB03 - POTÊNCIA ATIVA TOTAL (kW)</option>
+				<option type="variavel" value="MPP_SAA_120_BC03_JIQ_I">CMB03 - POTÊNCIA REATIVA TOTAL (kVAR)</option>
+				<option type="variavel" value="MPP_SAA_120_BC03_YI01_I">CMB03 - STATUS DE LIGADO</option>
+				<option type="variavel" value="MPP_SAA_120_BC03_TI01_I">CMB03 - TEMPERATURA 01 ENROL. MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC03_TI02_I">CMB03 - TEMPERATURA 02 ENROL. MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC03_TI03_I">CMB03 - TEMPERATURA 03 ENROL. MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC03_TI04_I">CMB03 - TEMPERATURA 04 ENROL. MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC03_TI05_I">CMB03 - TEMPERATURA 05 ENROL. MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC03_TI06_I">CMB03 - TEMPERATURA 06 ENROL. MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC03_TI07_I">CMB03 - TEMPERATURA 07 NÚCLEO MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC03_TI08_I">CMB03 - TEMPERATURA 08 NÚCLEO MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC03_TI09_I">CMB03 - TEMPERATURA 09 NÚCLEO MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC03_TI10_I">CMB03 - TEMPERATURA 10 NÚCLEO MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC03_TI11_I">CMB03 - TEMPERATURA 11 NÚCLEO MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC03_TI12_I">CMB03 - TEMPERATURA 12 NÚCLEO MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC03_TI13_I">CMB03 - TEMPERATURA 13 MANC. INFERIOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC03_TI14_I">CMB03 - TEMPERATURA 14 MANC. SUPERIOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC03_TI15_I">CMB03 - TEMPERATURA 15 GUIA (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC03_EIR_I">CMB03 - TENSÃO FASE R (kV)</option>
+				<option type="variavel" value="MPP_SAA_120_BC03_EIS_I">CMB03 - TENSÃO FASE S (kV)</option>
+				<option type="variavel" value="MPP_SAA_120_BC03_EIT_I">CMB03 - TENSÃO FASE T (kV)</option>
+				<option type="variavel" value="MPP_SAA_120_BC04_IIR_I">CMB04 - CORRENTE FASE R (A)</option>
+				<option type="variavel" value="MPP_SAA_120_BC04_IIS_I">CMB04 - CORRENTE FASE S (A)</option>
+				<option type="variavel" value="MPP_SAA_120_BC04_IIT_I">CMB04 - CORRENTE FASE T (A)</option>
+				<option type="variavel" value="MPP_SAA_120_BC04_JRI_I">CMB04 - FATOR DE POTÊNCIA</option>
+				<option type="variavel" value="MPP_SAA_120_BC04_JIP_I">CMB04 - POTÊNCIA ATIVA TOTAL (kW)</option>
+				<option type="variavel" value="MPP_SAA_120_BC04_JIQ_I">CMB04 - POTÊNCIA REATIVA TOTAL (kVAR)</option>
+				<option type="variavel" value="MPP_SAA_120_BC04_YI01_I">CMB04 - STATUS DE LIGADO</option>
+				<option type="variavel" value="MPP_SAA_120_BC04_TI01_I">CMB04 - TEMPERATURA 01 ENROL. MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC04_TI02_I">CMB04 - TEMPERATURA 02 ENROL. MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC04_TI03_I">CMB04 - TEMPERATURA 03 ENROL. MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC04_TI04_I">CMB04 - TEMPERATURA 04 ENROL. MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC04_TI05_I">CMB04 - TEMPERATURA 05 ENROL. MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC04_TI06_I">CMB04 - TEMPERATURA 06 ENROL. MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC04_TI07_I">CMB04 - TEMPERATURA 07 NÚCLEO MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC04_TI08_I">CMB04 - TEMPERATURA 08 NÚCLEO MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC04_TI09_I">CMB04 - TEMPERATURA 09 NÚCLEO MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC04_TI10_I">CMB04 - TEMPERATURA 10 NÚCLEO MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC04_TI11_I">CMB04 - TEMPERATURA 11 NÚCLEO MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC04_TI12_I">CMB04 - TEMPERATURA 12 NÚCLEO MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC04_TI13_I">CMB04 - TEMPERATURA 13 MANC. INFERIOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC04_TI14_I">CMB04 - TEMPERATURA 14 MANC. SUPERIOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC04_TI15_I">CMB04 - TEMPERATURA 15 GUIA (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC04_EIR_I">CMB04 - TENSÃO FASE R (kV)</option>
+				<option type="variavel" value="MPP_SAA_120_BC04_EIS_I">CMB04 - TENSÃO FASE S (kV)</option>
+				<option type="variavel" value="MPP_SAA_120_BC04_EIT_I">CMB04 - TENSÃO FASE T (kV)</option>
+				<option type="variavel" value="MPP_SAA_120_BC06_YI01_I">CMB06 - STATUS DE LIGADO</option>
+				<option type="variavel" value="MPP_SAA_120_BC06_TI01_I">CMB06 - TEMPERATURA 01 ENROL. MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC06_TI02_I">CMB06 - TEMPERATURA 02 ENROL. MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC06_TI03_I">CMB06 - TEMPERATURA 03 ENROL. MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC06_TI04_I">CMB06 - TEMPERATURA 04 ENROL. MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC06_TI05_I">CMB06 - TEMPERATURA 05 ENROL. MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC06_TI06_I">CMB06 - TEMPERATURA 06 ENROL. MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC06_TI07_I">CMB06 - TEMPERATURA 07 MANC. DIANTEIRO (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC06_TI08_I">CMB06 - TEMPERATURA 08 MANC. DIANTEIRO (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC06_TI09_I">CMB06 - TEMPERATURA 09 MANC. TRASEIRO (ºC)</option>
+				<option type="variavel" value="MPP_SAAD120_BC06_EIS_I">CMB06 - TENSÃO FASE S (kV)</option>
+				<option type="variavel" value="MPP_SAA_120_BC07_YI01_I">CMB07 - STATUS DE LIGADO</option>
+				<option type="variavel" value="MPP_SAA_120_BC07_TI01_I">CMB07 - TEMPERATURA 01 ENROL. MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC07_TI02_I">CMB07 - TEMPERATURA 02 ENROL. MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC07_TI03_I">CMB07 - TEMPERATURA 03 ENROL. MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC07_TI04_I">CMB07 - TEMPERATURA 04 ENROL. MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC07_TI05_I">CMB07 - TEMPERATURA 05 ENROL. MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC07_TI06_I">CMB07 - TEMPERATURA 06 ENROL. MOTOR (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC07_TI07_I">CMB07 - TEMPERATURA 07 MANC. DIANTEIRO (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC07_TI08_I">CMB07 - TEMPERATURA 08 MANC. DIANTEIRO (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_BC07_TI09_I">CMB07 - TEMPERATURA 09 MANC. TRASEIRO (ºC)</option>
+				<option type="variavel" value="MPP_SAA_120_INST_PDI01_I">DIFERENÇA DE PRESSÃO LINHA DE ALIMENTAÇÃO CMB01 (mca)</option>
+				<option type="variavel" value="MPP_SAA_120_INST_PDI02_I">DIFERENÇA DE PRESSÃO LINHA DE ALIMENTAÇÃO CMB02 (mca)</option>
+				<option type="variavel" value="MPP_SAA_120_INST_PDI03_I">DIFERENÇA DE PRESSÃO LINHA DE ALIMENTAÇÃO CMB03 (mca)</option>
+				<option type="variavel" value="MPP_SAA_120_INST_PDI04_I">DIFERENÇA DE PRESSÃO LINHA DE ALIMENTAÇÃO CMB04 (mca)</option>
+				<option type="variavel" value="MPP_SAA_120_INST_LI02_I">NÍVEL DA REPRESA - PEDRA DO CAVALO (m)</option>
+				<option type="variavel" value="MPP_SAA_120_INST_LI01_I">NÍVEL DO RESERVATÓRIO ELEVADO (m)</option>
+				<option type="variavel" value="MPP_SAA_120_INST_PI05_I">PRESSÃO A JUSANTE CMB01 (bar)</option>
+				<option type="variavel" value="MPP_SAA_120_INST_PI08_I">PRESSÃO A JUSANTE CMB04 (bar)</option>
+				<option type="variavel" value="MPP_SAA_120_INST_PI01_I">PRESSÃO A MONTANTE CMB01 (mca)</option>
+				<option type="variavel" value="MPP_SAA_120_INST_PI02_I">PRESSÃO A MONTANTE CMB02 (mca)</option>
+				<option type="variavel" value="MPP_SAA_120_INST_PI03_I">PRESSÃO A MONTANTE CMB03 (mca)</option>
+				<option type="variavel" value="MPP_SAA_120_INST_PI04_I">PRESSÃO A MONTANTE CMB04 (mca)</option>
+				<option type="variavel" value="MPP_SAA_120_INST_FQI01_I">TOTALIZADOR DA VAZÃO DE SAÍDA DE ÁGUA BRUTA - CANAL (m³)</option>
+				<option type="variavel" value="MPP_SAA_120_INST_FI01_I">VAZÃO DE SAÍDA DE ÁGUA BRUTA - CANAL (l/s)</option>
+			</select>
+			</node>
+		
+			<node>
+			<option type="estacao" value="121 - Canal SAPC">121 - Canal SAPC</option>
+			<select id="variavel">
+				<option type="variavel" value="MPP_SAA_121_INST_LI01_I">NÍVEL DO CANAL (m)</option>			
+			</select>
+			</node>
+			
+			<node>
+			<option type="estacao" value="140 - Captação de Santa Helena">140 - Captação de Santa Helena</option>
+			<select id="variavel">
+				<option type="variavel" value="MPP_SAA_140_INST_LI01_I">NÍVEL DA BARRAGEM DE SANTA HELENA (m)</option>
+			</select>
+			</node>
+			
+			<node>
+			<option type="estacao" value="141 - Captação de Joanes II">141 - Captação de Joanes II</option>
+			<select id="variavel">
+				<option type="variavel" value="MPP_SAA_141_INV02_II01_I">INV02 - Corrente de Saída (A)</option>
+				<option type="variavel" value="MPP_SAA_141_INV02_SI02_I">INV02 - Frequência de Saída (Hz)</option>
+				<option type="variavel" value="MPP_SAA_141_INV02_JI01_I">INV02 - Potência de Saída (kW)</option>
+				<option type="variavel" value="MPP_SAA_141_INV02_EI01_I">INV02 - Tensão de Saída (V)</option>
+				<option type="variavel" value="MPP_SAA_141_INV02_MI01_I">INV02 - Torque de Saída (Nm)</option>
+				<option type="variavel" value="MPP_SAA_141_INV02_SI01_I">INV02 - Velocidade da Bomba (RPM)</option>
+				<option type="variavel" value="MPP_SAA_141_INV03_II01_I">INV03 - Corrente de Saída (A)</option>
+				<option type="variavel" value="MPP_SAA_141_INV03_SI02_I">INV03 - Frequência de Saída (Hz)</option>
+				<option type="variavel" value="MPP_SAA_141_INV03_JI01_I">INV03 - Potência de Saída (kW)</option>
+				<option type="variavel" value="MPP_SAA_141_INV03_EI01_I">INV03 - Tensão de Saída (V)</option>
+				<option type="variavel" value="MPP_SAA_141_INV03_MI01_I">INV03 - Torque de Saída (Nm)</option>
+				<option type="variavel" value="MPP_SAA_141_INV03_SI01_I">INV03 - Velocidade da Bomba (RPM)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP01_YI05_I">RLP01 - Contador de Partidas do Motor</option>
+				<option type="variavel" value="MPP_SAA_141_RLP01_II01_I">RLP01 - Corrente da fase A (A) </option>
+				<option type="variavel" value="MPP_SAA_141_RLP01_II02_I">RLP01 - Corrente da fase B (A) </option>
+				<option type="variavel" value="MPP_SAA_141_RLP01_II03_I">RLP01 - Corrente da fase C (A) </option>
+				<option type="variavel" value="MPP_SAA_141_RLP01_II04_I">RLP01 - Corrente média das fases (A) </option>
+				<option type="variavel" value="MPP_SAA_141_RLP01_II05_I">RLP01 - Desbalanceamento de corrente (%) </option>
+				<option type="variavel" value="MPP_SAA_141_RLP01_JI04_I">RLP01 - Fator de potência</option>
+				<option type="variavel" value="MPP_SAA_141_RLP01_YI06_I">RLP01 - Horímetro do Motor (h)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP01_YI04_I">RLP01 - Palavra de Código de Erro</option>
+				<option type="variavel" value="MPP_SAA_141_RLP01_YI02_I">RLP01 - Palavra de Estado das Saídas</option>
+				<option type="variavel" value="MPP_SAA_141_RLP01_YI03_I">RLP01 - Palavra de Estado do Motor</option>
+				<option type="variavel" value="MPP_SAA_141_RLP01_YI01_I">RLP01 - Palavra de Estado Geral</option>
+				<option type="variavel" value="MPP_SAA_141_RLP01_JI03_I">RLP01 - Potência aparente (kVA)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP01_JI01_I">RLP01 - Potência ativa (kW)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP01_JI02_I">RLP01 - Potência reativa (kvar)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP01_TI01_I">RLP01 - Temperatura do RTD 01 (°C)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP01_TI02_I">RLP01 - Temperatura do RTD 02 (°C)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP01_TI03_I">RLP01 - Temperatura do RTD 03 (°C)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP01_TI04_I">RLP01 - Temperatura do RTD 04 (°C)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP01_TI05_I">RLP01 - Temperatura do RTD 05 (°C)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP01_TI06_I">RLP01 - Temperatura do RTD 06 (°C)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP01_TI07_I">RLP01 - Temperatura do RTD 07 (°C)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP01_TI08_I">RLP01 - Temperatura do RTD 08 (°C)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP01_TI09_I">RLP01 - Temperatura do RTD 09 (°C)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP01_EI01_I">RLP01 -Tensão de  linha VAB (V)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP01_EI02_I">RLP01 -Tensão de linha VBC (V)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP01_EI03_I">RLP01 -Tensão de linha VCA (V)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP01_EI04_I">RLP01 -Tensão média de linha (V)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP02_YI05_I">RLP02 - Contador de Partidas do Motor</option>
+				<option type="variavel" value="MPP_SAA_141_RLP02_II01_I">RLP02 - Corrente da fase A (A) </option>
+				<option type="variavel" value="MPP_SAA_141_RLP02_II02_I">RLP02 - Corrente da fase B (A) </option>
+				<option type="variavel" value="MPP_SAA_141_RLP02_II03_I">RLP02 - Corrente da fase C (A) </option>
+				<option type="variavel" value="MPP_SAA_141_RLP02_II04_I">RLP02 - Corrente média das fases (A) </option>
+				<option type="variavel" value="MPP_SAA_141_RLP02_II05_I">RLP02 - Desbalanceamento de corrente (%) </option>
+				<option type="variavel" value="MPP_SAA_141_RLP02_JI04_I">RLP02 - Fator de potência</option>
+				<option type="variavel" value="MPP_SAA_141_RLP02_YI06_I">RLP02 - Horímetro do Motor (h)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP02_YI04_I">RLP02 - Palavra de Código de Erro</option>
+				<option type="variavel" value="MPP_SAA_141_RLP02_YI02_I">RLP02 - Palavra de Estado das Saídas</option>
+				<option type="variavel" value="MPP_SAA_141_RLP02_YI03_I">RLP02 - Palavra de Estado do Motor</option>
+				<option type="variavel" value="MPP_SAA_141_RLP02_YI01_I">RLP02 - Palavra de Estado Geral</option>
+				<option type="variavel" value="MPP_SAA_141_RLP02_JI03_I">RLP02 - Potência aparente (kVA)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP02_JI01_I">RLP02 - Potência ativa (kW)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP02_JI02_I">RLP02 - Potência reativa (kvar)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP02_TI01_I">RLP02 - Temperatura do RTD 01 (°C)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP02_TI02_I">RLP02 - Temperatura do RTD 02 (°C)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP02_TI03_I">RLP02 - Temperatura do RTD 03 (°C)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP02_TI04_I">RLP02 - Temperatura do RTD 04 (°C)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP02_TI05_I">RLP02 - Temperatura do RTD 05 (°C)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP02_TI06_I">RLP02 - Temperatura do RTD 06 (°C)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP02_TI07_I">RLP02 - Temperatura do RTD 07 (°C)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP02_TI08_I">RLP02 - Temperatura do RTD 08 (°C)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP02_TI09_I">RLP02 - Temperatura do RTD 09 (°C)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP02_EI01_I">RLP02 -Tensão de  linha VAB (V)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP02_EI02_I">RLP02 -Tensão de linha VBC (V)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP02_EI03_I">RLP02 -Tensão de linha VCA (V)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP02_EI04_I">RLP02 -Tensão média de linha (V)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP03_YI05_I">RLP03 - Contador de Partidas do Motor</option>
+				<option type="variavel" value="MPP_SAA_141_RLP03_II01_I">RLP03 - Corrente da fase A (A) </option>
+				<option type="variavel" value="MPP_SAA_141_RLP03_II02_I">RLP03 - Corrente da fase B (A) </option>
+				<option type="variavel" value="MPP_SAA_141_RLP03_II03_I">RLP03 - Corrente da fase C (A) </option>
+				<option type="variavel" value="MPP_SAA_141_RLP03_II04_I">RLP03 - Corrente média das fases (A) </option>
+				<option type="variavel" value="MPP_SAA_141_RLP03_II05_I">RLP03 - Desbalanceamento de corrente (%) </option>
+				<option type="variavel" value="MPP_SAA_141_RLP03_JI04_I">RLP03 - Fator de potência</option>
+				<option type="variavel" value="MPP_SAA_141_RLP03_YI06_I">RLP03 - Horímetro do Motor (h)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP03_YI04_I">RLP03 - Palavra de Código de Erro</option>
+				<option type="variavel" value="MPP_SAA_141_RLP03_YI02_I">RLP03 - Palavra de Estado das Saídas</option>
+				<option type="variavel" value="MPP_SAA_141_RLP03_YI03_I">RLP03 - Palavra de Estado do Motor</option>
+				<option type="variavel" value="MPP_SAA_141_RLP03_YI01_I">RLP03 - Palavra de Estado Geral</option>
+				<option type="variavel" value="MPP_SAA_141_RLP03_JI03_I">RLP03 - Potência aparente (kVA)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP03_JI01_I">RLP03 - Potência ativa (kW)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP03_JI02_I">RLP03 - Potência reativa (kvar)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP03_TI01_I">RLP03 - Temperatura do RTD 01 (°C)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP03_TI02_I">RLP03 - Temperatura do RTD 02 (°C)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP03_TI03_I">RLP03 - Temperatura do RTD 03 (°C)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP03_TI04_I">RLP03 - Temperatura do RTD 04 (°C)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP03_TI05_I">RLP03 - Temperatura do RTD 05 (°C)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP03_TI06_I">RLP03 - Temperatura do RTD 06 (°C)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP03_TI07_I">RLP03 - Temperatura do RTD 07 (°C)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP03_TI08_I">RLP03 - Temperatura do RTD 08 (°C)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP03_TI09_I">RLP03 - Temperatura do RTD 09 (°C)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP03_EI01_I">RLP03 -Tensão de  linha VAB (V)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP03_EI02_I">RLP03 -Tensão de linha VBC (V)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP03_EI03_I">RLP03 -Tensão de linha VCA (V)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP03_EI04_I">RLP03 -Tensão média de linha (V)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP04_YI05_I">RLP04 - Contador de Partidas do Motor</option>
+				<option type="variavel" value="MPP_SAA_141_RLP04_II01_I">RLP04 - Corrente da fase A (A) </option>
+				<option type="variavel" value="MPP_SAA_141_RLP04_II02_I">RLP04 - Corrente da fase B (A) </option>
+				<option type="variavel" value="MPP_SAA_141_RLP04_II03_I">RLP04 - Corrente da fase C (A) </option>
+				<option type="variavel" value="MPP_SAA_141_RLP04_II04_I">RLP04 - Corrente média das fases (A) </option>
+				<option type="variavel" value="MPP_SAA_141_RLP04_II05_I">RLP04 - Desbalanceamento de corrente (%) </option>
+				<option type="variavel" value="MPP_SAA_141_RLP04_JI04_I">RLP04 - Fator de potência</option>
+				<option type="variavel" value="MPP_SAA_141_RLP04_YI06_I">RLP04 - Horímetro do Motor (h)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP04_YI04_I">RLP04 - Palavra de Código de Erro</option>
+				<option type="variavel" value="MPP_SAA_141_RLP04_YI02_I">RLP04 - Palavra de Estado das Saídas</option>
+				<option type="variavel" value="MPP_SAA_141_RLP04_YI03_I">RLP04 - Palavra de Estado do Motor</option>
+				<option type="variavel" value="MPP_SAA_141_RLP04_YI01_I">RLP04 - Palavra de Estado Geral</option>
+				<option type="variavel" value="MPP_SAA_141_RLP04_JI03_I">RLP04 - Potência aparente (kVA)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP04_JI01_I">RLP04 - Potência ativa (kW)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP04_JI02_I">RLP04 - Potência reativa (kvar)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP04_TI01_I">RLP04 - Temperatura do RTD 01 (°C)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP04_TI02_I">RLP04 - Temperatura do RTD 02 (°C)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP04_TI03_I">RLP04 - Temperatura do RTD 03 (°C)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP04_TI04_I">RLP04 - Temperatura do RTD 04 (°C)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP04_TI05_I">RLP04 - Temperatura do RTD 05 (°C)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP04_TI06_I">RLP04 - Temperatura do RTD 06 (°C)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP04_TI07_I">RLP04 - Temperatura do RTD 07 (°C)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP04_TI08_I">RLP04 - Temperatura do RTD 08 (°C)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP04_TI09_I">RLP04 - Temperatura do RTD 09 (°C)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP04_EI01_I">RLP04 -Tensão de  linha VAB (V)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP04_EI02_I">RLP04 -Tensão de linha VBC (V)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP04_EI03_I">RLP04 -Tensão de linha VCA (V)</option>
+				<option type="variavel" value="MPP_SAA_141_RLP04_EI04_I">RLP04 -Tensão média de linha (V)</option>
+			</select>
+			</node>
+			
+			<node>
+			<option type="estacao" value="160 - ETA Suburbana">160 - ETA Suburbana</option>
+			<select id="variavel">
+				<option type="variavel" value="MPP_SAA_160_INST_FQI02_I">TOTALIZADOR DA VAZÃO DA PALESTINA/VALÉRIA (m³)</option>
+				<option type="variavel" value="MPP_SAA_160_INST_FQI04_I">TOTALIZADOR DA VAZÃO DE ENTRADA - CIA SUL (m³)</option>
+				<option type="variavel" value="MPP_SAA_160_INST_FQI05_I">TOTALIZADOR DA VAZÃO DE ENTRADA - REDE DISTR. SIMÕES FILHO (m³)</option>
+				<option type="variavel" value="MPP_SAA_160_INST_FQI01_I">TOTALIZADOR DA VAZÃO DE ENTRADA DA ETA SUBURBANA - ÁGUA BRUTA IPITANGA II (m³)</option>
+				<option type="variavel" value="MPP_SAA_160_INST_FQI06_I">TOTALIZADOR DA VAZÃO DE ENTRADA DA ETA SUBURBANA - ETA PRINCIPAL (m³)</option>
+				<option type="variavel" value="MPP_SAA_160_INST_FQI03_I">TOTALIZADOR DA VAZÃO DE RIO DAS PEDRAS Z-83 (m³)</option>
+				<option type="variavel" value="MPP_SAA_160_INST_FI02_I">VAZÃO DA PALESTINA/VALÉRIA (l/s)</option>
+				<option type="variavel" value="MPP_SAA_160_INST_FI04_I">VAZÃO DE ENTRADA - CIA SUL (l/s)</option>
+				<option type="variavel" value="MPP_SAA_160_INST_FI05_I">VAZÃO DE ENTRADA - REDE DISTR. SIMÕES FILHO (l/s)</option>
+				<option type="variavel" value="MPP_SAA_160_INST_FI01_I">VAZÃO DE ENTRADA DA ETA SUBURBANA - ÁGUA BRUTA IPITANGA II (l/s)</option>
+				<option type="variavel" value="MPP_SAA_160_INST_FI06_I">VAZÃO DE ENTRADA DA ETA SUBURBANA - ETA PRINCIPAL (l/s)</option>
+				<option type="variavel" value="MPP_SAA_160_INST_FI03_I">VAZÃO DE RIO DAS PEDRAS Z-83 (l/s)</option>
+			</select>
+			</node>
+		</select>
+		</node>
+
+		<node>
+		<option type="ccr" value="CCR-5 (UMB)">CCR-5 (UMB)</option>
+		<select id="estacao" onchange="VariavelCCM(this.value)">
+			<node>
+			<option value="550 - Cajazeiras">550 - Cajazeiras</option>
+			<select id="variavel">
+				<option type="variavel" value="UMB_SAA_550_INST_LI01_I">NÍVEL DO RESERVATÓRIO (m)</option>
+				<option type="variavel" value="UMB_SAA_550_INST_PI01_I">PRESSÃO À JUSANTE DA VRP (mca)</option>
+				<option type="variavel" value="UMB_SAA_550_INST_PI02_I">PRESSÃO À MONTANTE DA VRP (mca)</option>
+				<option type="variavel" value="UMB_SAA_550_INST_FQI01_I">TOTALIZADOR ACUMULADO DA VAZÃO DE ENTRADA</option>
+				<option type="variavel" value="UMB_SAA_550_INST_FI01_I">VAZÃO DE ENTRADA - ETA PRINCIPAL (l/s)</option>
+			</select>
+			</node>
+			
+			<node>
+			<option value="560 - Duna">560 - Duna</option>
+			<select id="variavel">
+				<option type="variavel" value="UMB_SAA_560_INST_LI02_I">NÍVEL RESERVATÓRIO B (m)</option>
+				<option type="variavel" value="UMB_SAA_560_INST_FQI01_I">TOTALIZADOR ACUMULADO DA VAZÃO DE ENTRADA</option>
+				<option type="variavel" value="UMB_SAA_560_INST_FI01_I">VAZÃO DE ENTRADA NO RESERVATÓRIO (l/s)</option>
+				<option type="variavel" value="UMB_SAA_560_INST_FI08_I">VAZÃO DE SAÍDA TEODORO SAMPAIO LINHA NOVA - ORLA (l/s) </option>
+			</select>
+			</node>
+			
+			<node>
+			<option value="570 - Caji">570 - Caji</option>
+			<select id="variavel">
+				<option type="variavel" value="UMB_SAA_570_INST_LI01_I">NÍVEL DO RESERVATÓRIO A (m)</option>
+				<option type="variavel" value="UMB_SAA_570_INST_FQI05_I">TOTALIZADOR ACUMULADO DA VAZÃO LD DN 500</option>
+				<option type="variavel" value="UMB_SAA_570_INST_FQI06_I">TOTALIZADOR ACUMULADO DA VAZÃO SUB 1 DN 700</option>
+				<option type="variavel" value="UMB_SAA_570_INST_FI01_I">VAZÃO DE ENTRADA - ETA PRINCIPAL (l/s)</option>
+				<option type="variavel" value="UMB_SAA_570_INST_FI05_I">VAZÃO LD DN 500 (l/s)</option>
+				<option type="variavel" value="UMB_SAA_570_INST_FI06_I">VAZÃO SUB 1 DN 700 (l/s)</option>
+				<option type="variavel" value="UMB_SAA_570_INST_FI07_I">VAZÃO TOTAL - SUBSETOR HIDRÁULICO R23 (l/s)</option>
+			</select>
+			</node>
+			
+			<node>
+			<option value="590 - Ceasa">590 - Ceasa</option>
+			<select id="variavel">
+				<option type="variavel" value="UMB_SAA_590_INST_LI01_I">NÍVEL DO RESERVATÓRIO A (m)</option>
+				<option type="variavel" value="UMB_SAA_590_INST_LI02_I">NÍVEL DO RESERVATÓRIO B (m)</option>
+				<option type="variavel" value="UMB_SAA_590_INST_FQI01_I">TOTALIZAÇÃO DA VAZÃO DE ENTRADA - ETA PRINCIPAL (m³)</option>
+				<option type="variavel" value="UMB_SAA_590_INST_FI01_I">VAZÃO DE ENTRADA - ETA PRINCIPAL (l/s)</option>
+			</select>
+			</node>
+		</select>
+		</node>
+		
+		<node>
+		<option type="ccr" value="CCR-6 (UMJ)">CCR-6 (UMJ)</option>
+		<select id="estacao" onchange="VariavelCCM(this.value)">
+			<node>
+			<option type="estacao" value="610 - Pirajá">610 - Pirajá</option>
+			<select id="variavel">
+				<option type="variavel" value="MPP_SAA_610_BC01_IIR_I">CMB01 - CORRENTE DA FASE R (A)</option>
+				<option type="variavel" value="MPP_SAA_610_BC01_IIS_I">CMB01 - CORRENTE DA FASE S(A)</option>
+				<option type="variavel" value="MPP_SAA_610_BC01_IIT_I">CMB01 - CORRENTE DA FASE T (A)</option>
+				<option type="variavel" value="MPP_SAA_610_BC01_JRI_I">CMB01 - FATOR DE POTÊNCIA</option>
+				<option type="variavel" value="MPP_SAA_610_BC01_JIS_I">CMB01 - POTÊNCIA APARENTE TOTAL (kVA)</option>
+				<option type="variavel" value="MPP_SAA_610_BC01_JIP_I">CMB01 - POTÊNCIA ATIVA TOTAL (KW)</option>
+				<option type="variavel" value="MPP_SAA_610_BC01_JIQ_I">CMB01 - POTÊNCIA REATIVA TOTAL (KVAR)</option>
+				<option type="variavel" value="MPP_SAA_610_BC01_EIRS_I">CMB01 - TENSÃO DE LINHA RS (V)</option>
+				<option type="variavel" value="MPP_SAA_610_BC01_EIRT_I">CMB01 - TENSÃO DE LINHA RT (V)</option>
+				<option type="variavel" value="MPP_SAA_610_BC01_EITS_I">CMB01 - TENSÃO DE LINHA TS (V)</option>
+				<option type="variavel" value="MPP_SAA_610_BC02_IIR_I">CMB02 - CORRENTE DA FASE R (A)</option>
+				<option type="variavel" value="MPP_SAA_610_BC02_IIS_I">CMB02 - CORRENTE DA FASE S(A)</option>
+				<option type="variavel" value="MPP_SAA_610_BC02_IIT_I">CMB02 - CORRENTE DA FASE T (A)</option>
+				<option type="variavel" value="MPP_SAA_610_BC02_JRI_I">CMB02 - FATOR DE POTÊNCIA</option>
+				<option type="variavel" value="MPP_SAA_610_BC02_JIS_I">CMB02 - POTÊNCIA APARENTE TOTAL (kVA)</option>
+				<option type="variavel" value="MPP_SAA_610_BC02_JIP_I">CMB02 - POTÊNCIA ATIVA TOTAL (KW)</option>
+				<option type="variavel" value="MPP_SAA_610_BC02_JIQ_I">CMB02 - POTÊNCIA REATIVA TOTAL (KVAR)</option>
+				<option type="variavel" value="MPP_SAA_610_BC02_EIRS_I">CMB02 - TENSÃO DE LINHA RS (V)</option>
+				<option type="variavel" value="MPP_SAA_610_BC02_EIRT_I">CMB02 - TENSÃO DE LINHA RT (V)</option>
+				<option type="variavel" value="MPP_SAA_610_BC02_EITS_I">CMB02 - TENSÃO DE LINHA TS (V)</option>
+				<option type="variavel" value="MPP_SAA_610_BC03_IIR_I">CMB03 - CORRENTE DA FASE R (A)</option>
+				<option type="variavel" value="MPP_SAA_610_BC03_IIS_I">CMB03 - CORRENTE DA FASE S (A)</option>
+				<option type="variavel" value="MPP_SAA_610_BC03_IIT_I">CMB03 - CORRENTE DA FASE T (A)</option>
+				<option type="variavel" value="MPP_SAA_610_BC03_JRI_I">CMB03 - FATOR DE POTÊNCIA</option>
+				<option type="variavel" value="MPP_SAA_610_BC03_JIS_I">CMB03 - POTÊNCIA APARENTE TOTAL (kVA)</option>
+				<option type="variavel" value="MPP_SAA_610_BC03_JIP_I">CMB03 - POTÊNCIA ATIVA TOTAL (KW)</option>
+				<option type="variavel" value="MPP_SAA_610_BC03_JIQ_I">CMB03 - POTÊNCIA REATIVA TOTAL (KVAR)</option>
+				<option type="variavel" value="MPP_SAA_610_BC03_EIRS_I">CMB03 - TENSÃO DE LINHA RS (V)</option>
+				<option type="variavel" value="MPP_SAA_610_BC03_EIRT_I">CMB03 - TENSÃO DE LINHA RT (V)</option>
+				<option type="variavel" value="MPP_SAA_610_BC03_EITS_I">CMB03 - TENSÃO DE LINHA TS (V)</option>
+				<option type="variavel" value="UMJ_SAA_610_INST_LI01_I">NÍVEL DO RESERVATÓRIO APOIADO (m)</option>
+				<option type="variavel" value="UMJ_SAA_610_INST_LI02_I">NÍVEL DO RESERVATÓRIO ELEVADO (m)</option>
+				<option type="variavel" value="UMJ_SAA_610_FCV03_ZI01_I">POSIÇÃO DA VÁLVULA 610FCV03 (%)</option>
+				<option type="variavel" value="UMJ_SAA_610_LCV16_ZI01_I">POSIÇÃO DA VÁLVULA 610LCV16 (%)</option>
+				<option type="variavel" value="UMJ_SAA_610_LCV19_ZI01_I">POSIÇÃO DA VÁLVULA 610LCV19 (%)</option>
+				<option type="variavel" value="UMJ_SAA_610_INST_PI01_I">PRESSÃO BARRILETE (mca)</option>
+				<option type="variavel" value="UMJ_SAA_610_INST_FQI03_I">TOTALIZADOR DA VAZÃO DE ENTRADA - ETA PRINCIPAL (CALCULADO) (m³)</option>
+				<option type="variavel" value="UMJ_SAA_610_INST_FQI01_I">TOTALIZADOR DA VAZÃO DE ENTRADA - RESERVATÓRIO ELEVADO (CALCULADO) (m³)</option>
+				<option type="variavel" value="UMJ_SAA_610_INST_FQI04_I">TOTALIZADOR DA VAZÃO DE SAÍDA - ZONA BAIXA (CALCULADO) (m³)</option>
+				<option type="variavel" value="UMJ_SAA_610_INST_FI03_I">VAZÃO DE ENTRADA - ETA PRINCIPAL (l/s)</option>
+				<option type="variavel" value="UMJ_SAA_610_INST_FI01_I">VAZÃO DE ENTRADA - RESERVATÓRIO ELEVADO (l/s)</option>
+				<option type="variavel" value="UMJ_SAA_610_INST_FI04_I">VAZÃO DE SAÍDA - ZONA BAIXA (l/s)</option>
+			</select>
+			</node>
+			
+			<node>
+			<option type="estacao" value="620 - Águas Claras">620 - Águas Claras</option>
+			<select id="variavel">
+				<option type="variavel" value="UMJ_SAA_620_INST_LI01_I">NÍVEL DO RESERVATÓRIO APOIADO (m)</option>
+				<option type="variavel" value="UMJ_SAA_620_INST_LI03_I">NÍVEL DO RESERVATÓRIO APOIADO LIT 03(m)</option>
+				<option type="variavel" value="UMJ_SAA_620_INST_LI02_I">NÍVEL DO RESERVATÓRIO ELEVADO (m)</option>
+				<option type="variavel" value="UMJ_SAA_620_FCV06_ZI01_I">POSIÇÃO DA VÁLVULA 620FCV06 (%)</option>
+				<option type="variavel" value="UMJ_SAA_620_FCV15_ZI01_I">POSIÇÃO DA VÁLVULA 620FCV08 (%)</option>
+				<option type="variavel" value="UMJ_SAA_620_LV01_ZI01_I">POSIÇÃO DA VÁLVULA 620LV01 (%)</option>
+				<option type="variavel" value="UMJ_SAA_620_INST_PI03_I">PRESSÃO À JUSANTE DA VCVP ZA 73 (mca)</option>
+				<option type="variavel" value="UMJ_SAA_620_INST_PI02_I">PRESSÃO À MONTANTE DA VCVP ZA 73 (mca)</option>
+				<option type="variavel" value="UMJ_SAA_620_INST_PI01_I">PRESSÃO BARRILETE (mca)</option>
+				<option type="variavel" value="UMJ_SAA_620_INST_PI04_I">PRESSÃO DE ENTRADA DA ZONA 62 (mca)</option>
+				<option type="variavel" value="UMJ_SAA_620_INST_FQI01_I">TOTALIZADOR DA VAZÃO DE ENTRADA - ETA PRINCIPAL (m³)</option>
+				<option type="variavel" value="UMJ_SAA_620_INST_FQI08_I">TOTALIZADOR DA VAZÃO DE ENTRADA DA ZONA 62 (m³)</option>
+				<option type="variavel" value="UMJ_SAA_620_INST_FQI06_I">TOTALIZADOR DA VAZÃO DE ENTRADA DA ZONA 63 DN 600 (m³)</option>
+				<option type="variavel" value="UMJ_SAA_620_INST_FQI07_I">TOTALIZADOR DA VAZÃO DE ENTRADA DA ZONA 63 DN 700 (m³)</option>
+				<option type="variavel" value="UMJ_SAA_620_INST_FQI05_I">TOTALIZADOR DA VAZÃO DE ENTRADA DA ZONA 73 (m³)</option>
+				<option type="variavel" value="UMJ_SAA_620_INST_FQI02_I">TOTALIZADOR DA VAZÃO DE SAÍDA - ZONA ALTA (m³)</option>
+				<option type="variavel" value="UMJ_SAA_620_INST_FQI04_I">TOTALIZADOR DA VAZÃO DE SAÍDA - ZONA BAIXA (CALCULADO) (m³)</option>
+				<option type="variavel" value="UMJ_SAA_620_INST_FI08_I">VAZÃO DE ENTRADA DA ZONA 62 (l/s)</option>
+				<option type="variavel" value="UMJ_SAA_620_INST_FI06_I">VAZÃO DE ENTRADA DA ZONA 63 DN 600 (l/s)</option>
+				<option type="variavel" value="UMJ_SAA_620_INST_FI07_I">VAZÃO DE ENTRADA DA ZONA 63 DN 700 (l/s)</option>
+				<option type="variavel" value="UMJ_SAA_620_INST_FI05_I">VAZÃO DE ENTRADA DA ZONA 73 (l/s)</option>
+				<option type="variavel" value="UMJ_SAA_620_INST_FI01_I">VAZÃO DE ENTRADA DO R14 - ETA PRINCIPAL (l/s)</option>
+				<option type="variavel" value="UMJ_SAA_620_INST_FI04_I">VAZÃO DE SAÍDA - ZONA BAIXA (l/s)</option>
+				<option type="variavel" value="UMJ_SAA_620_INST_FI02_I">VAZÃO DE SAÍDA DO R14 - ZONA ALTA (l/s)</option>
+			</select>
+			</node>
+			
+			<node>
+			<option type="estacao" value="630 - Valéria">630 - Valéria</option>
+			<select id="variavel">
+				<option type="variavel" value="UMJ_SAA_630_INST_LI01_I">NÍVEL DO RESERVATÓRIO APOIADO (m)</option>
+				<option type="variavel" value="UMJ_SAA_630_LCV01_ZI01_I">POSIÇÃO DA VÁLVULA 630LCV01 (%)</option>
+				<option type="variavel" value="UMJ_SAA_630_INST_PI06_I">PRESSÃO À JUSANTE DA VCVP ZA 58 (mca)</option>
+				<option type="variavel" value="UMJ_SAA_630_INST_PI07_I">PRESSÃO À JUSANTE DA VCVP ZA 67 (mca)</option>
+				<option type="variavel" value="UMJ_SAA_630_INST_PI05_I">PRESSÃO À JUSANTE DA VCVP ZA 68 (mca)</option>
+				<option type="variavel" value="UMJ_SAA_630_INST_PI08_I">PRESSÃO À JUSANTE DA VCVP ZA 78 (mca)</option>
+				<option type="variavel" value="UMJ_SAA_630_INST_PI11_I">PRESSÃO À MONTANTE DA VCVP ZA 58-67 (mca)</option>
+				<option type="variavel" value="UMJ_SAA_630_INST_PI10_I">PRESSÃO À MONTANTE DA VCVP ZA 68 (mca)</option>
+				<option type="variavel" value="UMJ_SAA_630_INST_PI09_I">PRESSÃO À MONTANTE DA VCVP ZA 78 (mca)</option>
+				<option type="variavel" value="UMJ_SAA_630_INST_FQI06_I">TOTALIZADOR DA VAZÃO DE ENTRADA DA ZONA 58 (m³)</option>
+				<option type="variavel" value="UMJ_SAA_630_INST_FQI04_I">TOTALIZADOR DA VAZÃO DE ENTRADA DA ZONA 64 (m³)</option>
+				<option type="variavel" value="UMJ_SAA_630_INST_FQI09_I">TOTALIZADOR DA VAZÃO DE ENTRADA DA ZONA 64/77 (m³)</option>
+				<option type="variavel" value="UMJ_SAA_630_INST_FQI07_I">TOTALIZADOR DA VAZÃO DE ENTRADA DA ZONA 67 (m³)</option>
+				<option type="variavel" value="UMJ_SAA_630_INST_FQI05_I">TOTALIZADOR DA VAZÃO DE ENTRADA DA ZONA 68 (m³)</option>
+				<option type="variavel" value="UMJ_SAA_630_INST_FQI08_I">TOTALIZADOR DA VAZÃO DE ENTRADA DA ZONA 78 (m³)</option>
+				<option type="variavel" value="UMJ_SAA_630_INST_FQI03_I">TOTALIZADOR DA VAZÃO DE ENTRADA DO R18 - ETA PRINCIPAL (m³)</option>
+				<option type="variavel" value="UMJ_SAA_630_INST_FQI10_I">TOTALIZADOR DA VAZÃO DE ENTRADA DO R18 - ETA SUBURBANA (m³)</option>
+				<option type="variavel" value="UMJ_SAA_630_INST_FQI02_I">TOTALIZADOR DA VAZÃO DE SAÍDA DA ZONA BAIXA A (m³)</option>
+				<option type="variavel" value="UMJ_SAA_630_INST_FQI01_I">TOTALIZADOR DA VAZÃO DE SAÍDA DA ZONA BAIXA B (m³)</option>
+				<option type="variavel" value="UMJ_SAA_630_INST_FI06_I">VAZÃO DE ENTRADA DA ZONA 58 (l/s)</option>
+				<option type="variavel" value="UMJ_SAA_630_INST_FI12_I">VAZÃO DE ENTRADA DA ZONA 59 - CALCULADA (l/s)</option>
+				<option type="variavel" value="UMJ_SAA_630_INST_FI04_I">VAZÃO DE ENTRADA DA ZONA 64 (l/s)</option>
+				<option type="variavel" value="UMJ_SAA_630_INST_FI09_I">VAZÃO DE ENTRADA DA ZONA 64/77 (l/s)</option>
+				<option type="variavel" value="UMJ_SAA_630_INST_FI07_I">VAZÃO DE ENTRADA DA ZONA 67 (l/s)</option>
+				<option type="variavel" value="UMJ_SAA_630_INST_FI05_I">VAZÃO DE ENTRADA DA ZONA 68 (l/s)</option>
+				<option type="variavel" value="UMJ_SAA_630_INST_FI08_I">VAZÃO DE ENTRADA DA ZONA 78 (l/s)</option>
+				<option type="variavel" value="UMJ_SAA_630_INST_FI03_I">VAZÃO DE ENTRADA DO R18 - ETA PRINCIPAL (l/s)</option>
+				<option type="variavel" value="UMJ_SAA_630_INST_FI10_I">VAZÃO DE ENTRADA DO R18 - ETA SUBURBANA (l/s)</option>
+				<option type="variavel" value="UMJ_SAA_630_INST_FI11_I">VAZÃO DE SAÍDA DO R18 - CALCULADA (l/s)</option>
+				<option type="variavel" value="UMJ_SAA_630_INST_FI02_I">VAZÃO DE SAÍDA DO R18 - COUTOS E PERIPERI (l/s)</option>
+				<option type="variavel" value="UMJ_SAA_630_INST_FI01_I">VAZÃO DE SAÍDA DO R18 - ZONA BAIXA B (l/s)</option>
+			</select>
+			</node>
+			
+			<node>
+			<option type="estacao" value="640 - Coutos">640 - Coutos</option>
+			<select id="variavel">
+				<option type="variavel" value="UMJ_SAA_640_INST_PI05_I">PRESSÃO À JUSANTE DA Z-68 PARTE ALTA (mca)</option>
+				<option type="variavel" value="UMJ_SAA_640_INST_PI02_I">PRESSÃO À JUSANTE DA Z-74 COUTOS (mca)</option>
+				<option type="variavel" value="UMJ_SAA_640_INST_PI04_I">PRESSÃO À MONTANTE DA Z-68 PARTE ALTA  (mca)</option>
+				<option type="variavel" value="UMJ_SAA_640_INST_PI01_I">PRESSÃO À MONTANTE DA Z-74 COUTOS (mca)</option>
+				<option type="variavel" value="UMJ_SAA_640_INST_PI03_I">PRESSÃO ENTRE VRP's DA Z-74 Coutos (mca)</option>
+				<option type="variavel" value="UMJ_SAA_640_INST_FQI02_I">TOTALIZADOR DA VAZÃO DA Z-68 PARTE ALTA  (m³)</option>
+				<option type="variavel" value="UMJ_SAA_640_INST_FQI01_I">TOTALIZADOR DA VAZÃO DE ENTRADA DA Z-74 COUTOS (m³)</option>
+				<option type="variavel" value="UMJ_SAA_640_INST_FI02_I">VAZÃO DA Z-68 PARTE ALTA (l/s)</option>
+				<option type="variavel" value="UMJ_SAA_640_INST_FI01_I">VAZÃO DE ENTRADA DA Z-74 COUTOS (l/s)</option>
+			</select>
+			</node>
+			
+			<node>
+			<option type="estacao" value="650 - Periperi">650 - Periperi</option>
+			<select id="variavel">
+				<option type="variavel" value="UMJ_SAA_650_INST_LI01_I">NÍVEL DO RESERVATÓRIO APOIADO (m)</option>
+				<option type="variavel" value="UMJ_SAA_650_INST_FQI02_I">TOTALIZADOR DA VAZÃO DE ENTRADA - VALÉRIA (m³)</option>
+				<option type="variavel" value="UMJ_SAA_650_INST_FI02_I">VAZÃO DE ENTRADA - VALÉRIA (l/s)</option>
+				<option type="variavel" value="UMJ_SAA_650_INST_FI01_I">VAZÃO DE SAÍDA - PARTE BAIXA PERIPERI (l/s)</option>
+			</select>
+			</node>
+			
+			<node>
+			<option type="estacao" value="660 - Ilha Amarela">660 - Ilha Amarela</option>
+			<select id="variavel">			
+				<option type="variavel" value="UMJ_SAA_660_INV01_SI01_I">INV01 - Velocidade da Bomba (RPM)</option>
+				<option type="variavel" value="UMJ_SAA_660_INV02_SI01_I">INV02 - Velocidade da Bomba (RPM)</option>
+				<option type="variavel" value="UMJ_SAA_660_INV03_SI01_I">INV03 - Velocidade da Bomba (RPM)</option>
+				<option type="variavel" value="UMJ_SAA_660_INST_LI01_I">NÍVEL DO RESERVATÓRIO APOIADO (m)</option>
+				<option type="variavel" value="UMJ_SAA_660_INST_LI02_I">NÍVEL DO RESERVATÓRIO ELEVADO (m)</option>
+				<option type="variavel" value="UMJ_SAA_660_FCV07_ZI01_I">POSIÇÃO DA VÁLVULA 660FCV07 (%)</option>
+				<option type="variavel" value="UMJ_SAA_660_LCV04_ZI01_I">POSIÇÃO DA VÁLVULA 660LCV04 (%)</option>
+				<option type="variavel" value="UMJ_SAA_660_INST_PI03_I">PRESSÃO À JUSANTE DA VCVP ZA 70 FERROVIÁRIOS (mca)</option>
+				<option type="variavel" value="UMJ_SAA_660_INST_PI04_I">PRESSÃO À JUSANTE DA VCVP ZA 70 LOBATO (mca)</option>
+				<option type="variavel" value="UMJ_SAA_660_INST_PI05_I">PRESSÃO À MONTANTE DO PONTO DE DERIVAÇÃO ZA 70 (mca)</option>
+				<option type="variavel" value="UMJ_SAA_660_INST_PI01_I">PRESSÃO BARRILETE (mca)</option>
+				<option type="variavel" value="UMJ_SAA_660_INST_FQI01_I">TOTALIZADOR DA VAZÃO DE ENTRADA - ETA PRINCIPAL (m³)</option>
+				<option type="variavel" value="UMJ_SAA_660_INST_FQI03_I">TOTALIZADOR DA VAZÃO DE ENTRADA - ZONA 70 FERROVIÁRIOS (m³)</option>
+				<option type="variavel" value="UMJ_SAA_660_INST_FQI04_I">TOTALIZADOR DA VAZÃO DE ENTRADA - ZONA 70 LOBATO (m³)</option>
+				<option type="variavel" value="UMJ_SAA_660_INST_FQI02_I">TOTALIZADOR DA VAZÃO DE ENTRADA DO RESERVATÓRIO ELEVADO (m³)</option>
+				<option type="variavel" value="UMJ_SAA_660_INST_FQI07_I">TOTALIZADOR DA VAZÃO DE SAÍDA - ZONA BAIXA (CALCULADO) (l/s)</option>
+				<option type="variavel" value="UMJ_SAA_660_INST_FI01_I">VAZÃO DE ENTRADA - ETA PRINCIPAL (l/s)</option>
+				<option type="variavel" value="UMJ_SAA_660_INST_FI05_I">VAZÃO DE ENTRADA DA ZONA 70 CALCULADA (l/s)</option>
+				<option type="variavel" value="UMJ_SAA_660_INST_FI03_I">VAZÃO DE ENTRADA DA ZONA 70 FERROVIÁRIOS (l/s)</option>
+				<option type="variavel" value="UMJ_SAA_660_INST_FI04_I">VAZÃO DE ENTRADA DA ZONA 70 LOBATO (l/s)</option>
+				<option type="variavel" value="UMJ_SAA_660_INST_FI02_I">VAZÃO DE ENTRADA DO RESERVATÓRIO ELEVADO (l/s)</option>
+				<option type="variavel" value="UMJ_SAA_660_INST_FI07_I">VAZÃO DE SAÍDA - ZONA BAIXA (l/s)</option>
+			</select>
+			</node>
+			
+			<node>
+			<option type="estacao" value="670 - Simões Filho">670 - Simões Filho</option>
+			<select id="variavel">			
+				<option type="variavel" value="UMJ_SAA_670_INST_LI01_I">NÍVEL DO RESERVATÓRIO APOIADO (m)</option>
+				<option type="variavel" value="UMJ_SAA_670_INST_PI01_I">PRESSÃO À JUSANTE  DA VCVP ZA 80 (mca)</option>
+				<option type="variavel" value="UMJ_SAA_670_INST_PI08_I">PRESSÃO À JUSANTE DA VCVN 01 (mca)</option>
+				<option type="variavel" value="UMJ_SAA_670_INST_PI05_I">PRESSÃO À JUSANTE DA VCVP ZONA ALTA(mca)</option>
+				<option type="variavel" value="UMJ_SAA_670_INST_PI03_I">PRESSÃO À JUSANTE DA VCVP ZONA BAIXA (mca)</option>
+				<option type="variavel" value="UMJ_SAA_670_INST_PI02_I">PRESSÃO À MONTANTE DA VCVP ZA 80 (mca)</option>
+				<option type="variavel" value="UMJ_SAA_670_INST_PI06_I">PRESSÃO À MONTANTE DA VCVP ZONA ALTA (mca)</option>
+				<option type="variavel" value="UMJ_SAA_670_INST_PI04_I">PRESSÃO À MONTANTE DA VCVP ZONA BAIXA(mca)</option>
+				<option type="variavel" value="UMJ_SAA_670_INST_PI07_l">PRESSÃO DE ENTRADA DO RESERVATÓRIO - ETA PRINCIPAL (mca)</option>
+				<option type="variavel" value="UMJ_SAA_670_INST_FQI04_I">TOTALIZADOR DA VAZÃO DE ENTRADA DA ZONA 80 (m³)</option>
+				<option type="variavel" value="UMJ_SAA_670_INST_FQI01_I">TOTALIZADOR DA VAZÃO DE ENTRADA DO R21 ETA PRINCIPAL (m³)</option>
+				<option type="variavel" value="UMJ_SAA_670_INST_FQI06_I">TOTALIZADOR DA VAZAO DE SAÍDA - PITANGA DOS PALMARES  (m³)</option>
+				<option type="variavel" value="UMJ_SAA_670_INST_FQI03_I">TOTALIZADOR DA VAZÃO DE SAÍDA - ZONA ALTA (m³)</option>
+				<option type="variavel" value="UMJ_SAA_670_INST_FQI05_I">TOTALIZADOR DA VAZAO DE SAÍDA - ZONA ALTA CRISTO REI E JD RENATÃO  (m³)</option>
+				<option type="variavel" value="UMJ_SAA_670_INST_FQI02_I">TOTALIZADOR DA VAZÃO DE SAÍDA - ZONA BAIXA (m³)</option>
+				<option type="variavel" value="UMJ_SAA_670_INST_FI04_I">VAZÃO DE ENTRADA DA ZONA 80 (l/s)</option>
+				<option type="variavel" value="UMJ_SAA_670_INST_FI01_I">VAZÃO DE ENTRADA NO RESERVATÓRIO (l/s)</option>
+				<option type="variavel" value="UMJ_SAA_670_INST_FI06_I">VAZÃO DE SAÍDA - PITANGA DOS PALMARES (l/s)</option>
+				<option type="variavel" value="UMJ_SAA_670_INST_FI03_I">VAZÃO DE SAÍDA - ZONA ALTA (l/s)</option>
+				<option type="variavel" value="UMJ_SAA_670_INST_FI05_I">VAZÃO DE SAÍDA - ZONA ALTA CRISTO REI E JD RENATÃO (l/s)</option>
+				<option type="variavel" value="UMJ_SAA_670_INST_FI02_I">VAZÃO DE SAÍDA - ZONA BAIXA (l/s)</option>
+			</select>
+			</node>
+			
+			<node>
+			<option type="estacao" value="680 - Pitanga de Palmares">680 - Pitanga de Palmares</option>
+			<select id="variavel">
+				<option type="variavel" value="UMJ_SAA_680_INST_LI01_l">NÍVEL DO RESERVATORIO ELEVADO (m)</option>
+				<option type="variavel" value="UMJ_SAA_680_INST_PI02_I">PRESSÃO À JUSANTE VCVP 01 (mca)</option>
+				<option type="variavel" value="UMJ_SAA_680_INST_PI01_I">PRESSÃO DE ENTRADA DO RESERVATÓRIO ELEVADO (mca)</option>
+				<option type="variavel" value="UMJ_SAA_680_INST_PI03_I">PRESSÃO DE SAÍDA DO RESERVATÓRIO ELEVADO (mca)</option>
+				<option type="variavel" value="UMJ_SAA_680_INST_FI02_I">VAZÃO DE SAÍDA (l/s)</option>
+			</select>
+			</node>
+			
+			<node>
+			<option type="estacao" value="Boosters de Distribuição">Boosters de Distribuição</option>
+			<select id="variavel">
+				<option type="variavel" value="UMJ_SAA_ZA_INV01_SI01_I">BOOSTER VIVENDAS DO MAR - INV01 - Velocidade da Bomba (RPM)</option>
+				<option type="variavel" value="UMJ_SAA_ZA_INV02_SI01_I">BOOSTER VIVENDAS DO MAR - INV02 - Velocidade da Bomba (RPM)</option>
+				<option type="variavel" value="UMJ_SAA_ZA_INST_PI02_I">BOOSTER VIVENDAS DO MAR - PRESSÃO À JUSANTE (mca)</option>
+				<option type="variavel" value="UMJ_SAA_ZA_INST_PI01_I">BOOSTER VIVENDAS DO MAR - PRESSÃO À MONTANTE (mca)</option>
+			</select>
+			</node>
+		</select>
+		</node>
+		
+		<node>
+		<option type="ccr" value="CCR-7 (UMF)">CCR-7 (UMF)</option>
+		<select id="estacao" onchange="VariavelCCM(this.value)">
+			<node>
+			<option type="estacao" value="710 - Federação">710 - Federação</option>
+			<select id="variavel">
+				<option type="variavel" value="UMF_SAA_710_INV03_SI01_I">INV03 - Velocidade da Bomba (RPM)</option>
+				<option type="variavel" value="UMF_SAA_710_INV04_SI01_I">INV04 - Velocidade da Bomba (RPM)</option>
+				<option type="variavel" value="UMF_SAA_710_INST_LI01_I">NÍVEL DO RESERVATÓRIO APOIADO (m)</option>
+				<option type="variavel" value="UMF_SAA_710_INST_LI02_I">NÍVEL DO RESERVATÓRIO ELEVADO (m)</option>
+				<option type="variavel" value="UMF_SAA_710_FCV02_ZI01_I">POSIÇÃO DA VÁLVULA 710FCV02 (%)</option>
+				<option type="variavel" value="UMF_SAA_710_LCV01_ZI01_I">POSIÇÃO DA VÁLVULA 710LCV01 (%)</option>
+				<option type="variavel" value="UMF_SAA_710_INST_PI01_I">PRESSÃO BARRILETE (mca)</option>
+				<option type="variavel" value="UMF_SAA_710_INST_FQI09_I">TOTALIZADOR 810FIT09 - SAÍDA DO CABULA</option>
+				<option type="variavel" value="UMF_SAA_710_INST_FI09_I">VAZÃO 810FIT09 - SAÍDA DO CABULA (l/s)</option>
+				<option type="variavel" value="UMF_SAA_710_INST_FI01_I">VAZÃO DE ENTRADA - CABULA (l/s)</option>
+				<option type="variavel" value="UMF_SAA_710_INST_FI03_I">VAZÃO DE ENTRADA DO RESERVATÓRIO ELEVADO (l/s)</option>
+				<option type="variavel" value="UMF_SAA_710_INST_FI02_I">VAZÃO DE SAÍDA - BARRA (l/s)</option>
+			</select>
+			</node>
+			
+			<node>
+			<option type="estacao" value="740 - Caixa DÁgua">740 - Caixa DÁgua</option>
+			<select id="variavel">
+				<option type="variavel" value="UMF_SAA_740_INST_LI01_I">NÍVEL DO RESERVATÓRIO APOIADO A (m)</option>
+				<option type="variavel" value="UMF_SAA_740_INST_LI02_I">NÍVEL DO RESERVATÓRIO APOIADO B (m)</option>
+				<option type="variavel" value="UMF_SAA_740_INST_LI03_I">NÍVEL DO RESERVATÓRIO ELEVADO (m)</option>
+				<option type="variavel" value="UMF_SAA_740_INST_PI01_I">PRESSÃO LINHA DE RECALQUE PIT01 (mca)</option>
+				<option type="variavel" value="UMB_SAA_740_INST_FQI12_I">TOTALIZADO DA VAZÃO DE ENTRADADA ZONA 12 (m³)</option>
+				<option type="variavel" value="UMF_SAA_740_INST_FQI01_I">TOTALIZADOR DA VAZÃO DE ENTRADA - CABULA (m³)</option>
+				<option type="variavel" value="UMF_SAA_740_INST_FQI03_I">TOTALIZADOR DA VAZÃO DE SAÍDA - 7 PORTAS (m³)</option>
+				<option type="variavel" value="UMF_SAA_740_INST_FQI11_I">TOTALIZADOR DA VAZÃO DE SAÍDA - CIDADE NOVA (m³)</option>
+				<option type="variavel" value="UMF_SAA_740_INST_FQI06_I">TOTALIZADOR DA VAZÃO DE SAÍDA - NAZARÉ/BARBALHO (m³)</option>
+				<option type="variavel" value="UMF_SAA_740_INST_FQI08_I">TOTALIZADOR DA VAZÃO DE SAÍDA - PERU (m³)</option>
+				<option type="variavel" value="UMF_SAA_740_INST_FQI05_I">TOTALIZADOR DA VAZÃO DE SAÍDA - STO. ANTONIO (m³)</option>
+				<option type="variavel" value="UMF_SAA_740_INST_FI01_I">VAZÃO DE ENTRADA - CABULA (l/s)</option>
+				<option type="variavel" value="UMB_SAA_740_INST_FI12_I">VAZÃO DE ENTRADADA ZONA 12 (l/s)</option>
+				<option type="variavel" value="UMF_SAA_740_INST_FI03_I">VAZÃO DE SAÍDA - 7 PORTAS (l/s)</option>
+				<option type="variavel" value="UMF_SAA_740_INST_FI11_I">VAZÃO DE SAÍDA - CIDADE NOVA (l/s)</option>
+				<option type="variavel" value="UMF_SAA_740_INST_FI02_I">VAZÃO DE SAÍDA - COMÉRCIO (l/s)</option>
+				<option type="variavel" value="UMF_SAA_740_INST_FI06_I">VAZÃO DE SAÍDA - NAZARÉ/BARBALHO (l/s)</option>
+				<option type="variavel" value="UMF_SAA_740_INST_FI08_I">VAZÃO DE SAÍDA - PERU (l/s)</option>
+				<option type="variavel" value="UMF_SAA_740_INST_FI05_I">VAZÃO DE SAÍDA - STO. ANTONIO (l/s)</option>
+			</select>
+			</node>
+			
+			<node>
+			<option type="estacao" value="760 - Garcia">760 - Garcia</option>
+			<select id="variavel">
+				<option type="variavel" value="UMF_SAA_760_INV02_II01_I">INV02 - Corrente de Saída (A)</option>
+				<option type="variavel" value="UMF_SAA_760_INV02_SI02_I">INV02 - Frequência de Saída (Hz)</option>
+				<option type="variavel" value="UMF_SAA_760_INV02_JI01_I">INV02 - Potência de Saída (kW)</option>
+				<option type="variavel" value="UMF_SAA_760_INV02_TI02_I">INV02 - Temperatura da Placa de Controle (°C)</option>
+				<option type="variavel" value="UMF_SAA_760_INV02_TI01_I">INV02 - Temperatura do Dissipador (°C)</option>
+				<option type="variavel" value="UMF_SAA_760_INV02_TI03_I">INV02 - Temperatura do Sistema (°C)</option>
+				<option type="variavel" value="UMF_SAA_760_INV02_EI01_I">INV02 - Tensão de Saída (V)</option>
+				<option type="variavel" value="UMF_SAA_760_INV02_MI01_I">INV02 - Torque de Saída (Nm)</option>
+				<option type="variavel" value="UMF_SAA_760_INV02_SI01_I">INV02 - Velocidade da Bomba (RPM)</option>
+				<option type="variavel" value="UMF_SAA_760_INV03_II01_I">INV03 - Corrente de Saída (A)</option>
+				<option type="variavel" value="UMF_SAA_760_INV03_SI02_I">INV03 - Frequência de Saída (Hz)</option>
+				<option type="variavel" value="UMF_SAA_760_INV03_JI01_I">INV03 - Potência de Saída (kW)</option>
+				<option type="variavel" value="UMF_SAA_760_INV03_TI02_I">INV03 - Temperatura da Placa de Controle (°C)</option>
+				<option type="variavel" value="UMF_SAA_760_INV03_TI01_I">INV03 - Temperatura do Dissipador (°C)</option>
+				<option type="variavel" value="UMF_SAA_760_INV03_TI03_I">INV03 - Temperatura do Sistema (°C)</option>
+				<option type="variavel" value="UMF_SAA_760_INV03_EI01_I">INV03 - Tensão de Saída (V)</option>
+				<option type="variavel" value="UMF_SAA_760_INV03_MI01_I">INV03 - Torque de Saída (Nm)</option>
+				<option type="variavel" value="UMF_SAA_760_INV03_SI01_I">INV03 - Velocidade da Bomba (RPM)</option>
+				<option type="variavel" value="UMF_SAA_760_INST_LI01_I">NÍVEL DO RESERVATÓRIO APOIADO A (m)</option>
+				<option type="variavel" value="UMF_SAA_760_INST_LI03_I">NÍVEL DO RESERVATÓRIO ELEVADO (m)</option>
+				<option type="variavel" value="UMF_SAA_760_INST_PI01_I">PRESSÃO LINHA DE RECALQUE PIT01 (mca)</option>
+				<option type="variavel" value="UMF_SAA_760_INST_FQI01_I">TOTALIZADOR DA VAZÃO DE ENTRADA - CABULA (m³)</option>
+				<option type="variavel" value="UMF_SAA_760_INST_FI01_I">VAZÃO DE ENTRADA - CABULA (l/s)</option>
+			</select>
+			</node>
+			
+			<node>
+			<option type="estacao" value="580 - Campinas de Brotas">580 - Campinas de Brotas</option>
+			<select id="variavel">
+				<option type="variavel" value="UMF_SAA_580_INV01_SI01_I">INV01 - Velocidade da Bamba (RPM)</option>
+				<option type="variavel" value="UMF_SAA_580_INV02_SI01_I">INV02 - Velocidade da Bomba (RPM)</option>
+				<option type="variavel" value="UMF_SAA_580_INV03_SI01_I">INV03 - Velocidade da Bomba (RPM)</option>
+				<option type="variavel" value="UMF_SAA_580_INST_LI01_I">NÍVEL DO RESERVATÓRIO A (m)</option>
+				<option type="variavel" value="UMF_SAA_580_INST_LI02_I">NÍVEL DO RESERVATÓRIO B (m)</option>
+				<option type="variavel" value="UMF_SAA_580_INST_LI03_I">NÍVEL DO RESERVATÓRIO ELEVADO (m)</option>
+				<option type="variavel" value="UMF_SAA_580_FCV02_ZI01_I">POSIÇÃO DA VÁLVULA 580FCV02 (%)</option>
+				<option type="variavel" value="UMF_SAA_580_LCV01_ZI01_I">POSIÇÃO DA VÁLVULA 580LCV01 (%)</option>
+				<option type="variavel" value="UMF_SAA_580_INST_FQI04_I">TOTALIZADOR DA VAZÃO DE ENTRADA DA ZONA 08 (m³)</option>
+				<option type="variavel" value="UMF_SAA_580_INST_FQI06_I">TOTALIZADOR DA VAZÃO DE SAÍDA - ZA14 (m³)</option>
+				<option type="variavel" value="UMF_SAA_580_INST_FQI05_I">TOTALIZADOR DA VAZÃO DE SAÍDA ZONA 13 (m³)</option>
+				<option type="variavel" value="UMF_SAA_580_INST_FQI01_I">TOTALIZADOR DE ENTRADA</option>
+				<option type="variavel" value="UMF_SAA_580_INST_FI01_I">VAZÃO DE ENTRADA - CABULA (l/s)</option>
+				<option type="variavel" value="UMF_SAA_580_INST_FI04_I">VAZÃO DE ENTRADA DA ZONA 08 (l/s)</option>
+				<option type="variavel" value="UMF_SAA_580_INST_FI06_I">VAZÃO DE SAÍDA - ZA14 (l/s)</option>
+				<option type="variavel" value="UMF_SAA_580_INST_FI05_I">VAZÃO DE SAÍDA DA ZONA 13 (l/s)</option>
+			</select>
+			</node>
+		</select>
+		</node>
+		
+		<node>
+		<option type="ccr" value="CCR-8 (UML)">CCR-8 (UML)</option>
+		<select id="estacao" onchange="VariavelCCM(this.value)">
+			<node>
+			<option type="estacao" value="810 - Cabula">810 - Cabula</option>
+			<select id="variavel">			
+				<option type="variavel" value="UML_SAA_810_BC01_STS_I">BOMBA SUCÇÃO 810-B-01 LIGADO</option>
+				<option type="variavel" value="UML_SAA_810_BC02_STS_I">BOMBA SUCÇÃO 810-B-02 LIGADO</option>
+				<option type="variavel" value="UML_SAA_810_BC03_STS_I">BOMBA SUCÇÃO 810-B-03 LIGADO</option>
+				<option type="variavel" value="UML_SAA_810_BC04_STS_I">BOMBA SUCÇÃO 810-B-04 LIGADO</option>
+				<option type="variavel" value="UML_SAA_810_INV01_II01_I">INV01 - Corrente de Saída (A)</option>
+				<option type="variavel" value="UML_SAA_810_INV01_SI02_I">INV01 - Frequência de Saída (Hz)</option>
+				<option type="variavel" value="UML_SAA_810_INV01_JI01_I">INV01 - Potência de Saída (kW)</option>
+				<option type="variavel" value="UML_SAA_810_INV01_EI01_I">INV01 - Tensão de Saída (V)</option>
+				<option type="variavel" value="UML_SAA_810_INV01_EI02_I">INV01 - Tensão do Barramento CC (V)</option>
+				<option type="variavel" value="UML_SAA_810_INV01_MI01_I">INV01 - Torque de Saída (%)</option>
+				<option type="variavel" value="UML_SAA_810_INV01_SI01_I">INV01 - Velocidade da Bomba (RPM)</option>
+				<option type="variavel" value="UML_SAA_810_INV02_II01_I">INV02 - Corrente de Saída (A)</option>
+				<option type="variavel" value="UML_SAA_810_INV02_SI02_I">INV02 - Frequência de Saída (Hz)</option>
+				<option type="variavel" value="UML_SAA_810_INV02_JI01_I">INV02 - Potência de Saída (kW)</option>
+				<option type="variavel" value="UML_SAA_810_INV02_EI01_I">INV02 - Tensão de Saída (V)</option>
+				<option type="variavel" value="UML_SAA_810_INV02_EI02_I">INV02 - Tensão do Barramento CC (V)</option>
+				<option type="variavel" value="UML_SAA_810_INV02_MI01_I">INV02 - Torque de Saída (%)</option>
+				<option type="variavel" value="UML_SAA_810_INV02_SI01_I">INV02 - Velocidade da Bomba (RPM)</option>
+				<option type="variavel" value="UML_SAA_810_INV03_II01_I">INV03 - Corrente de Saída (A)</option>
+				<option type="variavel" value="UML_SAA_810_INV03_SI02_I">INV03 - Frequência de Saída (Hz)</option>
+				<option type="variavel" value="UML_SAA_810_INV03_JI01_I">INV03 - Potência de Saída (kW)</option>
+				<option type="variavel" value="UML_SAA_810_INV03_EI01_I">INV03 - Tensão de Saída (V)</option>
+				<option type="variavel" value="UML_SAA_810_INV03_EI02_I">INV03 - Tensão do Barramento CC (V)</option>
+				<option type="variavel" value="UML_SAA_810_INV03_MI01_I">INV03 - Torque de Saída (%)</option>
+				<option type="variavel" value="UML_SAA_810_INV03_SI01_I">INV03 - Velocidade da Bomba (RPM)</option>
+				<option type="variavel" value="UML_SAA_810_INST_LI02_I">NÍVEL DO RESERVATÓRIO ELEVADO (m)</option>
+				<option type="variavel" value="UML_SAA_810_INST_LI01_I">NÍVEL DOS RESERVATÓRIOS APOIADOS (m)</option>
+				<option type="variavel" value="UML_SAA_810_LCV06_ZI01_I">POSIÇÃO DA VÁLVULA 810LCV06 (%)</option>
+				<option type="variavel" value="UML_SAA_810_INST_PI01_I">PRESSÃO BARRILETE (mca)</option>
+				<option type="variavel" value="UML_SAA_810_INST_FQI03_I">TOTALIZADOR DA VAZÃO DE ENTRADA - ALTA/BAIXA CARGA (m³)</option>
+				<option type="variavel" value="UML_SAA_810_INST_FQI04_I">TOTALIZADOR DA VAZÃO DE ENTRADA - ETA PRINCIPAL (m³)</option>
+				<option type="variavel" value="UML_SAA_810_INST_FQI51_I">TOTALIZADOR DA VAZÃO DE SAÍDA - ANEL DA LIBERDADE (m³)</option>
+				<option type="variavel" value="UML_SAA_810_INST_FQI09_I">TOTALIZADOR DA VAZÃO DE SAÍDA - FEDERAÇÃO (m³)</option>
+				<option type="variavel" value="UML_SAA_810_INST_FQI10_I">TOTALIZADOR DA VAZÃO DE SAÍDA - PERNAMBUÉS (m³)</option>
+				<option type="variavel" value="UML_SAA_810_INST_FQI13_I">TOTALIZADOR DA VAZÃO DE SAÍDA - REFORCO DA ESTRADA DAS BARREIRAS (m³)</option>
+				<option type="variavel" value="UML_SAA_810_INST_FQI08_I">TOTALIZADOR DA VAZÃO DE SAÍDA - SÃO GONÇALO DN 1000 (m³)</option>
+				<option type="variavel" value="UML_SAA_810_INST_FI03_I">VAZÃO DE ENTRADA - ALTA/BAIXA CARGA (l/s)</option>
+				<option type="variavel" value="UML_SAA_810_INST_FI04_I">VAZÃO DE ENTRADA - ETA PRINCIPAL (l/s)</option>
+				<option type="variavel" value="UML_SAA_810_INST_FI01_I">VAZÃO DE ENTRADA - ETA T.SAMPAIO LINHA NOVA (l/s)</option>
+				<option type="variavel" value="UML_SAA_810_INST_FI02_I">VAZÃO DE ENTRADA - ETA T.SAMPAIO LINHA VELHA (l/s)</option>
+				<option type="variavel" value="UML_SAA_810_INST_FI51_I">VAZÃO DE SAÍDA - ANEL DA LIBERDADE (l/s)</option>
+				<option type="variavel" value="UML_SAA_810_INST_FI09_I">VAZÃO DE SAÍDA - FEDERAÇÃO (l/s)</option>
+				<option type="variavel" value="UML_SAA_810_INST_FI12_I">VAZÃO DE SAÍDA - JOSÉ MARCELINO (l/s)</option>
+				<option type="variavel" value="UML_SAA_810_INST_FI10_I">VAZÃO DE SAÍDA - PERNAMBUÉS (l/s)</option>
+				<option type="variavel" value="UML_SAA_810_INST_FI13_I">VAZÃO DE SAÍDA - REFORCO DA ESTRADA DAS BARREIRAS (l/s)</option>
+				<option type="variavel" value="UML_SAA_810_INST_FI08_I">VAZÃO DE SAÍDA - SÃO GONÇALO DN 1000 (l/s)</option>
+				<option type="variavel" value="UML_SAA_810_INST_FI11_I">VAZÃO DE SAÍDA - SILVEIRA MARTINS (l/s)</option>
+			</select>
+			</node>
+			
+			<node>
+			<option type="estacao" value="830 - São Caetano">830 - São Caetano</option>
+			<select id="variavel">
+				<option type="variavel" value="UML_SAA_830_BC01_STS_I">BOMBA SUCÇÃO 830-B-01 STATUS</option>
+				<option type="variavel" value="UML_SAA_830_BC02_STS_I">BOMBA SUCÇÃO 830-B-02 STATUS</option>
+				<option type="variavel" value="UML_SAA_830_BC03_STS_I">BOMBA SUCÇÃO 830-B-03 STATUS</option>
+				<option type="variavel" value="UML_SAA_830_BC04_STS_I">BOMBA SUCÇÃO 830-B-04 STATUS</option>
+				<option type="variavel" value="UML_SAA_830_INV01_SI01_I">INV01 - Velocidade da Bomba (RPM)</option>
+				<option type="variavel" value="UML_SAA_830_INV02_SI01_I">INV02 - Velocidade da Bomba (RPM)</option>
+				<option type="variavel" value="UML_SAA_830_INV03_SI01_I">INV03 - Velocidade da Bomba (RPM)</option>
+				<option type="variavel" value="UML_SAA_830_INV04_SI01_I">INV04 - Velocidade da Bomba (RPM)</option>
+				<option type="variavel" value="UML_SAA_830_INST_LI01_I">NÍVEL DO RESERVATÓRIO APOIADO (m)</option>
+				<option type="variavel" value="UML_SAA_830_INST_LI02_I">NÍVEL DO RESERVATÓRIO ELEVADO (m)</option>
+				<option type="variavel" value="UML_SAA_830_INST_PI03_I">PRESSÃO À JUSANTE DA VCVP ZA 21 (mca)</option>
+				<option type="variavel" value="UML_SAA_830_INST_PI02_I">PRESSÃO À MONTANTE DA VCVP ZA 21 (mca)</option>
+				<option type="variavel" value="UML_SAA_830_INST_PI01_I">PRESSÃO BARRILETE (mca)</option>
+				<option type="variavel" value="UML_SAA_830_INST_FQI01_I">TOTALIZADOR DA VAZÃO DE ENTRADA - ETA PRINCIPAL (m³)</option>
+				<option type="variavel" value="UML_SAA_830_INST_FQ05_I">TOTALIZADOR DA VAZÃO DE ENTRADA DA ZONA 21 </option>
+				<option type="variavel" value="UML_SAA_830_INST_FQI02_I">TOTALIZADOR DA VAZÃO DE SAÍDA - ZA22 (m³)</option>
+				<option type="variavel" value="UML_SAA_830_INST_FQI03_I">TOTALIZADOR DA VAZÃO DE SAÍDA - ZA24 (m³)</option>
+				<option type="variavel" value="UML_SAA_830_INST_FQI04_I">TOTALIZADOR DA VAZÃO DE SAÍDA - ZA28 (m³)</option>
+				<option type="variavel" value="UML_SAA_830_INST_FI01_I">VAZÃO DE ENTRADA - ETA PRINCIPAL (l/s)</option>
+				<option type="variavel" value="UML_SAA_830_INST_FI05_I">VAZÃO DE ENTRADA DA ZONA 21</option>
+				<option type="variavel" value="UML_SAA_830_INST_FI02_I">VAZÃO DE SAÍDA - ZA22 (l/s)</option>
+				<option type="variavel" value="UML_SAA_830_INST_FI04_I">VAZÃO DE SAÍDA - ZA28 (l/s)</option>
+				<option type="variavel" value="UML_SAA_830_INST_FI03_I">VAZÃO DE SAÍDA - ZONA BAIXA (l/s)</option>
+			</select>
+			</node>
+		</select>
+		</node>
+		
+	</select>
+    </node>
+	
+    <node>
+	<option type="sistema"	value="eta">Água: ETAs VM e TS (MPPT)</option>
+	<select id="ccr">
+		<node>
+		<select id="estacao" onchange="VariavelCCM(this.value)">
+			<node>
+			<option type="estacao" value="ETA Vieira de Mello">ETA Vieira de Mello</option>
+			<select id="variavel"><option disabled=""> Selecione uma opção   </option><option type="variavel" value="MPP_SAA_510-51_INST_LI57_I">NÍVEL DO RESERVATÓRIO ELEVADO</option><option type="variavel" value="MPP_SAA_510-51_INST_LI73_I">NÍVEL ENTRADA DE ÁCIDO FLUOSÍLICICO</option><option type="variavel" value="MPP_SAA_510-51_INST_LI71_I">NÍVEL ENTRADA DE SULFATO FÉRRICO</option><option type="variavel" value="MPP_SAA_510-51_INST_LI74_I">NÍVEL SAÍDA DE ÁCIDO FLUOSÍLICICO</option><option type="variavel" value="MPP_SAA_510-51_INST_LI72_I">NÍVEL SAÍDA DE SULFATO FÉRRICO</option><option type="variavel" value="MPP_SAA_510-51_INST_PI312_I">PRESSÃO DA LINHA 2 CLORO LÍQUIDO</option></select>
+			</node>	
+			
+			<node>
+			<option type="estacao" value="ETA Teodoro Sampaio">ETA Teodoro Sampaio</option>
+			<select id="variavel"><option disabled=""> Selecione uma opção   </option><option type="variavel" value="MPP_SAA_511-51_INST_LI57_I">NÍVEL DO RESERVATÓRIO ELEVADO</option></select>
+			</node>
+				
+		</select>
+		</node>		
+	</select>
+	</node>
+
+	<node>
+	<option type="sistema"	value="tok">Água: Zonas de Abastecimento</option>
+	<select id="ccr" onchange="CarregarEst(this.value)">
+		
+		<option value="UMB - Bolandeira">UMB - Bolandeira</option>
+		<option value="UMF - Federação">UMF - Federação</option>
+		<option value="UMJ - Pirajá">UMJ - Pirajá</option>
+		<option value="UML - Cabula">UML - Cabula</option>
+		<option value="UMC - Camaçari">UMC - Camaçari</option>
+		<option value="UMS - Candeias">UMS - Candeias</option>
+	</select>
+	</node>
+	
+
+    <node><option type="sistema"	value="eta">Água: ETAs VM e TS (MPPT)</option></node>
+    <node><option type="sistema"	value="siaa">Água: SIAA Barra do Pojuca (UMC)</option></node>
+    <node><option type="sistema"	value="siaaj">Água: SIAA Jordão (UMC)</option></node>
+    <node><option type="sistema"	value="ums">Água: SIAA Recôncavo (UMS)</option></node>
+	<node><option type="sistema"	value="int">Água: Diretoria de Operação do Interior</option></node>
+    <node><option type="sistema"	value="tok">Água: Zonas de Abastecimento</option></node>
+    <node><option type="sistema"	value="ecp">Esgoto: Estações de Condicionamento Prévio (MPE)</option></node>
+	<node><option type="sistema"	value="ses">Esgoto: SES Salvador (MPE)</option></node>
+	<!-- <option value="sesbpj">Esgoto: SES Litoral Norte (UMC)</option>    Retirado por não ter mais link com a UMS aguardar restabelecer link -->
+	
+</select>
+</node>
+
+	
