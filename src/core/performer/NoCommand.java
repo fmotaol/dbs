@@ -8,7 +8,7 @@ public class NoCommand extends TemplateCommand {
 
 	@Override
 	public String getCommand(Context context) {
-		throw new RuntimeException("Não foi definido template command para este performer");
+		throw new RuntimeException("NÃ£o foi definido template command para este performer");
 	}
 
 	@Override

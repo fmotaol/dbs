@@ -645,7 +645,7 @@ public class SourcePerformer extends Performer implements SavePointRestoreable {
 //	public void setSortDirection(int sortDirection) {
 //
 //		if ((sortDirection != FORWARD) && (sortDirection != BACKWARD))
-//			throw new RuntimeException("Sentido inv�lido");
+//			throw new RuntimeException("Sentido inválido");
 //		this.sortDirection = sortDirection;
 //	}
 

@@ -24,13 +24,13 @@ public class DefaultConnection extends DBSConnection {
 
 	@Override
 	public void setAutoCommit(Boolean autoCommit) throws SQLException {
-		throw new RuntimeException("ainda n„o implementado");
+		throw new RuntimeException("ainda n√£o implementado");
 	}
 
 	@Override
 	public Result execute(String commands, Performer invoker, Context context) {
 		if (commands == null)
-			throw new RuntimeException("AÁ„o nula");
+			throw new RuntimeException("A√ß√£o nula");
 		commands = commands.replace("\r", "");
 
 		String[] rows = commands.split("\n");
@@ -54,7 +54,7 @@ public class DefaultConnection extends DBSConnection {
 			throw new RuntimeException("Invoker nulo");
 
 		if (!parseDBSAction(invoker, action, true, context))
-			throw new RuntimeException("[DBS DefaultConnection] Comando n„o reconhecido: " + action);
+			throw new RuntimeException("[DBS DefaultConnection] Comando n√£o reconhecido: " + action);
 	}
 
 	static boolean parseDBSAction(Performer invoker, String action, boolean perform, Context context) {
@@ -94,9 +94,9 @@ public class DefaultConnection extends DBSConnection {
 		if (action.equalsIgnoreCase("next")) {
 			if (perform) {
 				if (invoker == null)
-					throw new RuntimeException("Invoker n„o localizado");
+					throw new RuntimeException("Invoker n√£o localizado");
 				if (!(invoker instanceof SourcePerformer))
-					throw new RuntimeException("Invoker n„o È SourcePerformer");
+					throw new RuntimeException("Invoker n√£o √© SourcePerformer");
 
 				((SourcePerformer) invoker).jumpToNextRecord();
 			}
@@ -107,7 +107,7 @@ public class DefaultConnection extends DBSConnection {
 		if (action.equalsIgnoreCase("reconnect and try again")) {
 			if (perform) {
 				if (invoker.isDynamicConnection())
-					throw new RuntimeException("Reconex„o autom·tica n„o permitida para conexıes din‚micas");
+					throw new RuntimeException("Reconex√£o autom√°tica n√£o permitida para conex√µes din√¢micas");
 				invoker.getConnection().reconnect();
 				invoker.tryAgain = true;
 			}
@@ -165,27 +165,27 @@ public class DefaultConnection extends DBSConnection {
 
 	@Override
 	public Batch createBatch(Performer performer) {
-		throw new RuntimeException("ainda n„o implementado");
+		throw new RuntimeException("ainda n√£o implementado");
 	}
 
 	@Override
 	public void defaultStartImportingData(TargetPerformer target) {
-		throw new RuntimeException("ainda n„o implementado");
+		throw new RuntimeException("ainda n√£o implementado");
 	}
 
 	@Override
 	public void defaultImportRow(TargetPerformer target, Context context) {
-		throw new RuntimeException("ainda n„o implementado");
+		throw new RuntimeException("ainda n√£o implementado");
 	}
 
 	@Override
 	public void defaultEndImportingData(TargetPerformer target) {
-		throw new RuntimeException("ainda n„o implementado");
+		throw new RuntimeException("ainda n√£o implementado");
 	}
 
 	@Override
 	public void reconnect() {
-		throw new RuntimeException("ainda n„o implementado");
+		throw new RuntimeException("ainda n√£o implementado");
 	}
 
 	@Override
@@ -260,7 +260,7 @@ public class DefaultConnection extends DBSConnection {
 			}
 		}
 
-		throw new RuntimeException("Tipo de loop for n„o suportado");
+		throw new RuntimeException("Tipo de loop for n√£o suportado");
 
 	}
 

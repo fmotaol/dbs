@@ -942,7 +942,7 @@ public abstract class Performer implements SlavePerformer, SavePointRestoreable 
 			return;
 		}
 
-		// TODO avaliar se isto n�o deveria ser uma propriedade da Conex�o
+		// TODO avaliar se isto não deveria ser uma propriedade da Conexão
 		if (var.equalsIgnoreCase("AUTOCOMMIT")) {
 			boolean v = Boolean.parseBoolean(value);
 			try {
@@ -955,7 +955,7 @@ public abstract class Performer implements SlavePerformer, SavePointRestoreable 
 
 		if (var.equalsIgnoreCase("ALIAS")) {
 			if (!Parse.isSQLIdentifier(value))
-				throw new RuntimeException(value + " n�o � um alias v�lido");
+				throw new RuntimeException(value + " não é um alias válido");
 			setAlias(value);
 			return;
 		}
@@ -963,7 +963,7 @@ public abstract class Performer implements SlavePerformer, SavePointRestoreable 
 		if (var.equalsIgnoreCase("THREAD") || var.equalsIgnoreCase("EXECUTION_THREAD")) {
 			throw new RuntimeException("Atributos THREAD e EXECUTION_THREAD descontinuados");
 //			if ((value == null) || (value.isEmpty()))
-//				throw new RuntimeException("Thread n�o especificada");
+//				throw new RuntimeException("Thread não especificada");
 //
 //			executionThreadId = value;
 //			return;
@@ -1364,7 +1364,7 @@ public abstract class Performer implements SlavePerformer, SavePointRestoreable 
 	public DBSConnection getConnection(Context context) {
 
 		if (isDynamicConnection())
-			throw new RuntimeException("N�o � poss�vel identificar uma conex�o din�mica sem informar o contexto");
+			throw new RuntimeException("Não é possível identificar uma conexão dinâmica sem informar o contexto");
 		String id = getConcreteConnectionId(context);
 		DBSConnection r = getProgram().getConnection(id);
 		Language lang = r.getLanguage();
@@ -1816,7 +1816,7 @@ public abstract class Performer implements SlavePerformer, SavePointRestoreable 
 				if (invoker.actionByError.get(k) == this)
 					return "iferror." + k;
 			}
-			throw new RuntimeException("Performer n�o associado");
+			throw new RuntimeException("Performer não associado");
 //			return "unassigned-performer";
 		}
 
@@ -1895,7 +1895,7 @@ public abstract class Performer implements SlavePerformer, SavePointRestoreable 
 			return null;
 
 //		if (sl == null)
-//			throw new RuntimeException("Componente n�o identificado: " + 
+//			throw new RuntimeException("Componente não identificado: " + 
 //					relName.substring(1, prefixLength - 1));
 
 		if (ss.length == 1)

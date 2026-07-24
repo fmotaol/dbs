@@ -308,7 +308,7 @@ public class DBS extends Engine {
 				continue;
 			}
 
-			createArg(i, a);
+			createArg(i, a, Origin.PROGRAM_INPUT);
 
 		}
 	}
@@ -821,24 +821,36 @@ public class DBS extends Engine {
 			savePoint = SavePoint.newSavePoint(this, withArgs);
 	}
 
-	public Argument createArg(String name, String value) {
+	public Argument createArg(String name) {
 		Argument a;
 		a = new Argument(this);
 		a.setName(name);
-		a.setValue(value, Origin.PROGRAM_INPUT);
+		//a.setValue(value, origin);
 		arguments.add(a);
 		return a;
 	}
 
-	private Argument createArg(int index, String value) {
+	public Argument createArg(String name, String value, Origin origin) {
+		Argument a = createArg(name);
+		a.setValue(value, origin);
+		return a;
+	}
+	
+	private Argument createArg(int index) {
 		Argument a;
 		a = new Argument(this);
 		a.setName(index + "");
-		a.setValue(value, Origin.PROGRAM_INPUT);
+		//a.setValue(value, origin);
 		arguments.add(a);
 		return a;
 	}
 
+	private Argument createArg(int index, String value, Origin origin) {
+		Argument a = createArg(index);
+		a.setValue(value, origin);
+		return a;
+	}
+	
 	public Logger getLogger() {
 		if (logger == null) {
 			logger = new FileLogger(this, new Date());

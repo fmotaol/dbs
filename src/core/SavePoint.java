@@ -36,7 +36,7 @@ public class SavePoint {
 	public SavePoint(DBS program, boolean withArgs) {
 		this.program = program;
 		this.withArgs = withArgs;
-		this.file = null; //será carregado depois
+		this.file = null; //serï¿½ carregado depois
 	}
 
 	public SavePoint(DBS program, File file) {
@@ -135,7 +135,7 @@ public class SavePoint {
 	}
 
 //	public void load() throws IOException {
-//		// tenta carregar também o filename.sav com o mesmo nome do arquivo sql
+//		// tenta carregar tambï¿½m o filename.sav com o mesmo nome do arquivo sql
 //		String name = program.getDBSFileName() + ".sav";
 //		File f = new File(name);
 //		if (f.exists())
@@ -205,7 +205,7 @@ public class SavePoint {
 
 			if (fileWriteError) {
 				if (!showedWarning) {
-					System.out.println("AVISO: Aguardando liberação de escrita do arquivo " + file.getName());
+					System.out.println("AVISO: Aguardando liberaï¿½ï¿½o de escrita do arquivo " + file.getName());
 					showedWarning = true;
 				}
 				Thread.sleep(400);
@@ -277,7 +277,7 @@ public class SavePoint {
 				String name = ss[0];
 				SavePointRestoreable d = (SavePointRestoreable) program.findDevice(name);
 				if (d == null)
-					throw new RuntimeException("Dispositivo não localizado: " + name);
+					throw new RuntimeException("Dispositivo nÃ£o localizado: " + name);
 				d.setAsDone();
 			}
 			return;
@@ -288,7 +288,7 @@ public class SavePoint {
 			return;
 		}
 
-		throw new RuntimeException("Conteúdo do arquivo de SavePoint não reconhecido: " + row);
+		throw new RuntimeException("ConteÃºdo do arquivo de SavePoint nÃ£o reconhecido: " + row);
 	}
 
 	private void parseProperty(String row, DataScope scope) {
@@ -317,7 +317,7 @@ public class SavePoint {
 			SavePointRestoreable d = null;
 			String device = null;
 
-			if (ns.length > 1) { // já aponta para o device
+			if (ns.length > 1) { // jï¿½ aponta para o device
 				int se = name.length() - property.length();
 				if (se > 0) {
 					se -= 1;

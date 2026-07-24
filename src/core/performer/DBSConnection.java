@@ -22,7 +22,7 @@ public abstract class DBSConnection {
 
 	@Deprecated
 	public JDBCConnection getJDBCConnection() {
-		throw new RuntimeException("Conex�o n�o � JDBC");
+		throw new RuntimeException("Conexão não é JDBC");
 	}
 
 	public abstract void defaultStartImportingData(TargetPerformer target);

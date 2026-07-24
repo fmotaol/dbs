@@ -42,7 +42,7 @@ public class ArgsFileLoader {
 			return;
 		String[] ss = row.split("=", 2);
 		if (ss.length > 2)
-			throw new RuntimeException("Erro no conteúdo do arquivo .args");
+			throw new RuntimeException("Erro no conteï¿½do do arquivo .args");
 
 		System.out.println("Carregando argumento " + row);
 
@@ -54,12 +54,12 @@ public class ArgsFileLoader {
 		Argument a = program.getArgByName(arg);
 		if (a == null)
 //			a = program.createArg(arg);
-			throw new RuntimeException("Argumento não encontrado: " + ss[0]);
+			throw new RuntimeException("Argumento nÃ£o encontrado: " + ss[0]);
 		if (a.origin == null)
 			a.setValue(ss[1].trim(), Origin.ARG_FILE);
 		else
 			System.out.println(
-					"AVISO: argumento " + a.getName() + " do arquivo .args ignorado. Já carregado de " + a.origin);
+					"AVISO: argumento " + a.getName() + " do arquivo .args ignorado. JÃ¡ carregado de " + a.origin);
 
 //			XX
 //			program.addMainArg(ss[1].trim());

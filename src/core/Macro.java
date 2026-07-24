@@ -184,7 +184,7 @@ public class Macro extends Engine implements Device, SavePointRestoreable {
 		String arg = ss[1];
 
 		if (cmd.equalsIgnoreCase("ARG_LABEL")) {
-			Argument a = program.getArgByName(arg);
+			Argument a = presumedArgByName(arg);
 			if (a.label != null)
 				throw new RuntimeException("Label j� foi definido para o argumento " + arg);
 			a.label = value;
@@ -192,7 +192,7 @@ public class Macro extends Engine implements Device, SavePointRestoreable {
 		}
 
 		if (cmd.equalsIgnoreCase("ARG_DEFAULT_VALUE")) {
-			Argument a = program.getArgByName(arg);
+			Argument a = presumedArgByName(arg);
 			if (a.defaultValue != null)
 				throw new RuntimeException("Valor default j� foi definido para o argumento " + arg);
 			a.defaultValue = value;
@@ -200,7 +200,7 @@ public class Macro extends Engine implements Device, SavePointRestoreable {
 		}
 
 		if (cmd.equalsIgnoreCase("ARG_USE_DEFAULT_VALUE")) {
-			Argument a = program.getArgByName(arg);
+			Argument a = presumedArgByName(arg);
 			if (a.useDefault)
 				throw new RuntimeException("Condi��o de uso do valor default j� foi definido para o argumento " + arg);
 			boolean v = Boolean.parseBoolean(value);
@@ -209,7 +209,7 @@ public class Macro extends Engine implements Device, SavePointRestoreable {
 		}
 		
 		if (cmd.equalsIgnoreCase("ARG_VALUE_LIST")) {
-			Argument a = program.getArgByName(arg);
+			Argument a = presumedArgByName(arg);
 			if (a.valueList != null)
 				throw new RuntimeException("Lista de valores j� foi definido para o argumento " + arg);
 			String[] list = Util.splitByComma(value, true);
@@ -219,7 +219,7 @@ public class Macro extends Engine implements Device, SavePointRestoreable {
 
 		if (cmd.equalsIgnoreCase("FORCE_ARG")) {
 //			program.addArgByName(arg, value);
-			Argument a = program.getArgByName(arg);
+			Argument a = presumedArgByName(arg);
 			a.setValue(value, Origin.FORCED);
 			System.out.printf("AVISO: Argumento \"%s\" for�ado para valor \"%s\"", arg, value);
 
@@ -234,6 +234,13 @@ public class Macro extends Engine implements Device, SavePointRestoreable {
 		}
 
 		return false;
+	}
+
+	private Argument presumedArgByName(String arg) {
+		Argument a = program.getArgByName(arg);
+		if (a == null)
+			a = program.createArg(arg);
+		return a;
 	}
 
 	public static boolean isPaused = false;
@@ -301,7 +308,7 @@ public class Macro extends Engine implements Device, SavePointRestoreable {
 	//
 	// while (isPaused)
 	//
-	// throw new RuntimeException("ainda n�o implementado");
+	// throw new RuntimeException("ainda não implementado");
 	//
 	// try {
 	//

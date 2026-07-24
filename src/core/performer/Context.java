@@ -32,7 +32,7 @@ public class Context implements FieldValueSource {
 
 	public Throwable getException() {
 		if (exception == null)
-			throw new RuntimeException("N�o foi lan�ado erro");
+			throw new RuntimeException("Não foi lançado erro");
 		return exception;
 	}
 
@@ -44,7 +44,7 @@ public class Context implements FieldValueSource {
 		if (record == this.record)
 			return 1;
 		if (parent == null)
-			throw new RuntimeException("Inconsist�ncia na cadeia de contextos");
+			throw new RuntimeException("Inconsistência na cadeia de contextos");
 
 		return parent.getLevelOf(record) + 1;
 	}
@@ -120,7 +120,7 @@ public class Context implements FieldValueSource {
 		else
 			r = record;
 		if (r == null)
-			throw new RuntimeException("Campo n�o encontrado: " + field);
+			throw new RuntimeException("Campo não encontrado: " + field);
 		return r.getValue(field);
 	}
 
@@ -139,7 +139,7 @@ public class Context implements FieldValueSource {
 		}
 
 		if (f == null)
-			throw new RuntimeException("Campo n�o encontrado: " + fieldId);
+			throw new RuntimeException("Campo não encontrado: " + fieldId);
 		return f;
 	}
 
@@ -181,7 +181,7 @@ public class Context implements FieldValueSource {
 	private Field getFieldByName(String name) {
 		Field r = fieldByName(name);
 		if (r == null)
-			throw new RuntimeException("Campo n�o identificado: " + name);
+			throw new RuntimeException("Campo não identificado: " + name);
 		return r;
 	}
 
@@ -230,7 +230,7 @@ public class Context implements FieldValueSource {
 				if (f1.getName().length() == f2.getName().length())
 					return 0;
 
-				throw new RuntimeException("Condi��o n�o esperada");
+				throw new RuntimeException("Condição não esperada");
 			}
 		};
 
@@ -324,9 +324,9 @@ public class Context implements FieldValueSource {
 		Record r = findSavedRecord(recordName);
 		if (r == null) {
 			if (recordName.equals("prev"))
-				throw new RuntimeException("N�o existe registro anterior");
+				throw new RuntimeException("Não existe registro anterior");
 			else
-				throw new RuntimeException("N�o existe registro salvo como \"" + recordName + "\"");
+				throw new RuntimeException("Não existe registro salvo como \"" + recordName + "\"");
 		}
 
 		return r;

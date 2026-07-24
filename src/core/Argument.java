@@ -34,8 +34,8 @@ public class Argument {
 			return true;
 		boolean r = Util.contains(valueList, value);
 		if (!r && informError) {
-			System.out.println("Valor " + value + " não permitido em " + name);
-			System.out.println("Os valores permitidos são: " + Util.concat(valueList, ", "));
+			System.out.println("Valor " + value + " nÃ£o permitido em " + name);
+			System.out.println("Os valores permitidos sÃ£o: " + Util.concat(valueList, ", "));
 		}
 		return r;
 	}
@@ -43,7 +43,7 @@ public class Argument {
 	public void obtainArg() {
 		if (useDefault) {
 			if (defaultValue == null)
-				throw new RuntimeException("Não foi definido valor default para o argumento " + name);
+				throw new RuntimeException("NÃ£o foi definido valor default para o argumento " + name);
 			setDefaultValue();
 			return;
 		}
@@ -93,13 +93,13 @@ public class Argument {
 
 	public void setName(String name) {
 //		if (Util.isNumber(name))
-//			throw new RuntimeException("Nome de argumento não pode ser puramente numérico");
+//			throw new RuntimeException("Nome de argumento nï¿½o pode ser puramente numï¿½rico");
 		this.name = name;
 	}
 
 	public void setValue(String value, Origin origin) {
 		if (!allowedValue(value, true))
-			throw new RuntimeException("Argumento inválido");
+			throw new RuntimeException("Argumento invÃ¡lido");
 		this.value = value;
 	}
 
@@ -124,7 +124,7 @@ public class Argument {
 
 	public Origin getOrigin() {
 		if (origin == null) {
-			getValue(); //força a obter o valor
+			getValue(); //forï¿½a a obter o valor
 		}
 		return origin;
 	}
