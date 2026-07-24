@@ -97,7 +97,6 @@ public class DBS extends Engine {
 			} while (e != null);
 			System.exit(1);
 		}
-
 	}
 
 	private static void configureColors(String[] args) {

@@ -536,9 +536,9 @@ COMO FUNCIONA:
   
   Exemplo:
   
-  select * from minha_tabela where id = @arg[0]; 
-  -- @arg[0] extrai o primeiro argumento passado para a aplicação pela linha de comando
-  --(índice 0 = primeiro, 1 = segundo, e assim por diante) 
+  select * from minha_tabela where id = @arg[1]; 
+  -- @arg[1] extrai o primeiro argumento passado para a aplicação pela linha de comando
+  --(índice 1 = primeiro, 2 = segundo, e assim por diante) 
   
   ARGUMENTOS POR NOME
   
