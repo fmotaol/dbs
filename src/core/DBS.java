@@ -806,10 +806,6 @@ public class DBS extends Engine {
 					return a;
 		}
 		return null;
-
-//		if (i > arguments.size())
-//			throw new RuntimeException("Argumento " + i + " n�o existe");
-//		return arguments.get(i);
 	}
 
 	public String getDBSFile() {

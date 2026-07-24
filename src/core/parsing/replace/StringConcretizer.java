@@ -772,24 +772,40 @@ public class StringConcretizer extends Concretizer {
 
 		if (!containsIgnoreCase(sql, "@arg"))
 			return;
-
+		
 		concretizeArgsByIndex(sql);
-
+		
+		if (!containsIgnoreCase(sql, "@arg"))
+			return;
+		
 		concretizeArgsByName(sql);
 
 	}
 
+	public static String extractArgName(String argPlaceHolder) {
+	    if (argPlaceHolder == null || argPlaceHolder.isEmpty()) {
+	        return null;
+	    }
+	    
+	    // Esta regex captura qualquer coisa entre [ e ]
+	    Pattern pattern = Pattern.compile("@arg\\[([^\\]]+)\\]");
+	    Matcher matcher = pattern.matcher(argPlaceHolder);
+	    
+	    if (matcher.find()) {
+	        return matcher.group(1);
+	    }
+	    
+	    throw new RuntimeException("Argumento mal-formado: " + argPlaceHolder);
+	}	
+	
 	private void concretizeArgsByName(StringBuilder2 sql) {
-		String[] as = ArgByNameParser.listArgNames(sql);
-		for (String name : as) {
+		final String regex = "@arg\\[[a-zA-Z0-9._ ]+\\]";		
+		String[] as = sql.findByRegex(regex);
+		for (String placeHolder : as) {
+			String name = extractArgName(placeHolder);
 			Argument a = program.getArgByName(name);
 			if (a == null)
-				throw new RuntimeException("Argumento " + name + " não encontrado");
-
-//			String v;
-//			if (createArgs)
-////				v = "null";
-//			else
+				a = program.createArg(name);
 
 			String v = a.getValue();
 
@@ -800,13 +816,16 @@ public class StringConcretizer extends Concretizer {
 
 	private void concretizeArgsByIndex(StringBuilder2 sql) {
 		for (int i = 1; i <= 50; i++) {
+			if (!containsIgnoreCase(sql, "@arg")) //evita ir até o fim do loop desnecessariamente
+				return;
+			
 			if (containsIgnoreCase(sql, "@arg[" + i + "]")) {
 				Argument a = program.getArg(i);
-				if (a != null) {
-					String v = a.getValue();
-					concretizeArgByIndex(sql, i, v);
-				} else
-					throw new RuntimeException("Não foi informado argumento " + i);
+				if (a == null)
+					a = program.createArg(i + ""); //somente neste caso de arg indexado SEM FORNECER ele cria - mas cria como se fosse nome. 
+				
+				String v = a.getValue();
+				concretizeArgByIndex(sql, i, v);
 			}
 		}
 	}

@@ -1,6 +1,8 @@
-# ============================================
-# DIRETÓRIOS SOLICITADOS
-# ============================================
+# Arquivos do DBS:
+*.conf
+
+
+
 
 # Pasta de binários compilados
 bin/

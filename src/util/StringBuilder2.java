@@ -1,5 +1,8 @@
 package util;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class StringBuilder2 {
 
 	public StringBuilder2() {
@@ -115,6 +118,28 @@ public class StringBuilder2 {
 
 	public boolean contains(String s) {
 		return contains(original, s);
+	}
+
+	public String[] findByRegex(String regex) {
+		return findByRegex(regex, 0);
+	}
+
+	
+	public String[] findByRegex(String regex, int flags) {
+		if (regex == null || regex.isEmpty()) {
+			return new String[0];
+		}
+
+		Pattern pattern = Pattern.compile(regex, flags);
+		String content = original.toString();
+		Matcher matcher = pattern.matcher(content);
+
+		java.util.List<String> matches = new java.util.ArrayList<>();
+		while (matcher.find()) {
+			matches.add(matcher.group());
+		}
+
+		return matches.toArray(new String[0]);
 	}
 
 }
