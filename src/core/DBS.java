@@ -70,6 +70,16 @@ public class DBS extends Engine {
 	public Logger logger;
 
 	protected StringConcretizer connectionConcretizer = new StringConcretizer(this);
+	
+	private boolean queryUndefinedArgs = true;
+
+	public boolean isQueryUndefinedArgs() {
+		return queryUndefinedArgs;
+	}
+
+	public void setQueryUndefinedArgs(boolean queryUndefinedArgs) {
+		this.queryUndefinedArgs = queryUndefinedArgs;
+	}
 
 	public DBS(String[] args) {
 		mainArgs = args;
@@ -821,13 +831,14 @@ public class DBS extends Engine {
 		Argument a;
 		a = new Argument(this);
 		a.setName(name);
-		//a.setValue(value, origin);
+		a.setQueryUndefinedValue(this.queryUndefinedArgs);
 		arguments.add(a);
 		return a;
 	}
 
 	public Argument createArg(String name, String value, Origin origin) {
 		Argument a = createArg(name);
+		a.setQueryUndefinedValue(this.queryUndefinedArgs);
 		a.setValue(value, origin);
 		return a;
 	}
@@ -835,6 +846,7 @@ public class DBS extends Engine {
 	private Argument createArg(int index) {
 		Argument a;
 		a = new Argument(this);
+		a.setQueryUndefinedValue(this.queryUndefinedArgs);
 		a.setName(index + "");
 		//a.setValue(value, origin);
 		arguments.add(a);
@@ -843,6 +855,7 @@ public class DBS extends Engine {
 
 	private Argument createArg(int index, String value, Origin origin) {
 		Argument a = createArg(index);
+		a.setQueryUndefinedValue(this.queryUndefinedArgs);
 		a.setValue(value, origin);
 		return a;
 	}

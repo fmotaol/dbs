@@ -18,8 +18,18 @@ public class Argument {
 	public String defaultValue = null;
 
 	public boolean useDefault = false;
-	
+
 	public Origin origin = null;
+
+	public boolean queryUndefinedValue = false;
+
+	public boolean isQueryUndefinedValue() {
+		return queryUndefinedValue;
+	}
+
+	public void setQueryUndefinedValue(boolean askUndefinedValue) {
+		this.queryUndefinedValue = askUndefinedValue;
+	}
 
 	public Argument(DBS program) {
 		this.program = program;
@@ -48,9 +58,10 @@ public class Argument {
 			return;
 		}
 
-		do {
-			internalRequestArg();
-		} while (!allowedValue(value, true));
+		if (queryUndefinedValue)
+			do {
+				internalRequestArg();
+			} while (!allowedValue(value, true));
 	}
 
 	public String label() {
@@ -71,7 +82,7 @@ public class Argument {
 
 		value = DBS.inputQuery("Informe o valor para o argumento \"" + label() + "\"" + defaultExp + ": ");
 		origin = Origin.USER;
-		
+
 		if (defaultValue != null) {
 			if ((value == null) || ("".equals(value))) {
 				System.out.println("Assumido valor default " + defaultValue);
@@ -103,7 +114,9 @@ public class Argument {
 		this.value = value;
 	}
 
-	public static enum Origin { PROGRAM_INPUT, USER, FORCED, ARG_FILE, SAV_FILE, DEFAULT }
+	public static enum Origin {
+		PROGRAM_INPUT, USER, FORCED, ARG_FILE, SAV_FILE, DEFAULT
+	}
 
 	@Override
 	public String toString() {
@@ -115,16 +128,15 @@ public class Argument {
 			return name;
 		return index() + "";
 	};
-	
+
 	public String getFullId() {
 		String id = getId();
 		return "arg[" + id + "]";
 	};
-	
 
 	public Origin getOrigin() {
 		if (origin == null) {
-			getValue(); //for�a a obter o valor
+			getValue(); // for�a a obter o valor
 		}
 		return origin;
 	}

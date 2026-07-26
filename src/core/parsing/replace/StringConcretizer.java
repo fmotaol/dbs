@@ -1,6 +1,8 @@
 package core.parsing.replace;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,6 +21,7 @@ import core.performer.Performer;
 import core.performer.TargetPerformer;
 import core.sql.DefaultLanguage;
 import core.sql.Language;
+import util.Colls;
 import util.Getable;
 import util.StringBuilder2;
 import util.Util;
@@ -689,6 +692,7 @@ public class StringConcretizer extends Concretizer {
 		concretizeFileName(sql, context);
 		concretizeExpressionTranslation(sql);
 		concretizeFromSavedRecords(sql, context);
+		concretizeConditionalBlocks(sql, context);
 		concretizeReferences(sql, context);
 		if (performer != null)
 			if (performer.clearUnknownVarReferences())
@@ -772,35 +776,35 @@ public class StringConcretizer extends Concretizer {
 
 		if (!containsIgnoreCase(sql, "@arg"))
 			return;
-		
+
 		concretizeArgsByIndex(sql);
-		
+
 		if (!containsIgnoreCase(sql, "@arg"))
 			return;
-		
+
 		concretizeArgsByName(sql);
 
 	}
 
 	public static String extractArgName(String argPlaceHolder) {
-	    if (argPlaceHolder == null || argPlaceHolder.isEmpty()) {
-	        return null;
-	    }
-	    
-	    // Esta regex captura qualquer coisa entre [ e ]
-	    Pattern pattern = Pattern.compile("@arg\\[([^\\]]+)\\]");
-	    Matcher matcher = pattern.matcher(argPlaceHolder);
-	    
-	    if (matcher.find()) {
-	        return matcher.group(1);
-	    }
-	    
-	    throw new RuntimeException("Argumento mal-formado: " + argPlaceHolder);
-	}	
-	
+		if (argPlaceHolder == null || argPlaceHolder.isEmpty()) {
+			return null;
+		}
+
+		// Esta regex captura qualquer coisa entre [ e ]
+		Pattern pattern = Pattern.compile("@arg\\[([^\\]]+)\\]");
+		Matcher matcher = pattern.matcher(argPlaceHolder);
+
+		if (matcher.find()) {
+			return matcher.group(1);
+		}
+
+		throw new RuntimeException("Argumento mal-formado: " + argPlaceHolder);
+	}
+
 	private void concretizeArgsByName(StringBuilder2 sql) {
-		final String regex = "@arg\\[[a-zA-Z0-9._ ]+\\]";		
-		String[] as = sql.findByRegex(regex);
+		final String regex = "@arg\\[[a-zA-Z0-9._ ]+\\]";
+		String[] as = sql.find(regex);
 		for (String placeHolder : as) {
 			String name = extractArgName(placeHolder);
 			Argument a = program.getArgByName(name);
@@ -816,14 +820,15 @@ public class StringConcretizer extends Concretizer {
 
 	private void concretizeArgsByIndex(StringBuilder2 sql) {
 		for (int i = 1; i <= 50; i++) {
-			if (!containsIgnoreCase(sql, "@arg")) //evita ir até o fim do loop desnecessariamente
+			if (!containsIgnoreCase(sql, "@arg")) // evita ir até o fim do loop desnecessariamente
 				return;
-			
+
 			if (containsIgnoreCase(sql, "@arg[" + i + "]")) {
 				Argument a = program.getArg(i);
 				if (a == null)
-					a = program.createArg(i + ""); //somente neste caso de arg indexado SEM FORNECER ele cria - mas cria como se fosse nome. 
-				
+					a = program.createArg(i + ""); // somente neste caso de arg indexado SEM FORNECER ele cria - mas
+													// cria como se fosse nome.
+
 				String v = a.getValue();
 				concretizeArgByIndex(sql, i, v);
 			}
@@ -928,13 +933,6 @@ public class StringConcretizer extends Concretizer {
 
 		return s;
 	}
-
-//	public static final String regexSubQuery = "@query(?<conn>.*)\\{(?<sql>.*)\\}(\\[(?<qfield>.*)\\])?(::native)?"
-//			+ "|@previousquery(\\[(?<pqfield>.*)\\])?";
-
-//	public static final String regexSubQuery = "@query(=(?<conn>.*))?"
-//			+ "\\{(?<sql>.*)\\}(\\[(?<qfield>.*)\\])?(::(native|\\.))?"
-//			+ "|@previousquery(\\[(?<pqfield>.*)\\])?";
 
 	public static final String regexSubQuery = "@query(=(?<conn>.*))?"
 			+ "\\{(?<sql>[^\\}]*)\\}(\\[(?<qfield>.*)\\])?(::(native|\\.))?" + "|@previousquery(\\[(?<pqfield>.*)\\])?";
@@ -1077,6 +1075,61 @@ public class StringConcretizer extends Concretizer {
 		// TODO Auto-generated method stub
 
 		throw new RuntimeException("ainda não implementado");
+	}
+
+	public static final String regexCondBlock = "@(?<type>ifhas|ifhasany)\\{(?<block>(?!@(?:ifhas|ifhasany)\\{)[^}]*)\\}";
+
+	private static final Pattern patternCondBlock = Pattern.compile(regexCondBlock,
+			Pattern.DOTALL | Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+
+	private void concretizeConditionalBlocks(StringBuilder2 sql, Context context) {
+
+		sql.replace(patternCondBlock, (matcher) -> {
+			String type = matcher.group("type");
+			String block = matcher.group("block");
+			boolean activate = activateConditionalBlock(type, block, context);
+
+			if (activate)
+				return block;
+			else
+				return "";
+		});
+
+	}
+
+	private List<String> listRefsByNullCondition(Map<String, String> valByRef, boolean ifNull, boolean ifNotNull) {
+		return Colls.filter(valByRef.keySet(), 
+			(k) -> {
+				String v = valByRef.get(k);
+				
+				boolean isNull = (v == null || "null".equals(v));
+				if (isNull) {
+					return ifNull;
+				} else {
+					return ifNotNull;
+				}
+			});
+	}
+	
+	private boolean activateConditionalBlock(String type, String block, Context context) {
+		StringBuilder2 sb = new StringBuilder2(block);
+		concretizeReferences(sb, context);
+		
+		if (type.equalsIgnoreCase("ifhas") || type.equalsIgnoreCase("ifhasany")) {
+			List<String> nulls = listRefsByNullCondition(sb.getReplacements(), true, false); 
+			if (nulls.isEmpty())
+				return true; //tanto ifhas quanto ifhasany
+			//passou daqui, tem refs nulas
+			
+			if (type.equalsIgnoreCase("ifhas"))
+				return false;
+			//passou daqui, é ifhasany
+			
+			List<String> notNulls = listRefsByNullCondition(sb.getReplacements(), false, true);
+			return !notNulls.isEmpty();			
+		}
+		
+		throw new RuntimeException("Tipo de bloco condicional não suportado: " + type);
 	}
 
 	public static void checkVarNameSyntax(String name) {

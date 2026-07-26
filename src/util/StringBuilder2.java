@@ -1,9 +1,21 @@
 package util;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class StringBuilder2 {
+
+	private Map<String, String> replacements = new HashMap<>(); 
+
+	private ArrayList<String> additions = new ArrayList<>(); 
+
+	private ArrayList<String> exclusions = new ArrayList<>(); 
 
 	public StringBuilder2() {
 		original = new StringBuilder();
@@ -31,16 +43,19 @@ public class StringBuilder2 {
 	public void append(String s) {
 		original.append(s);
 		lowerCase.append(s.toLowerCase());
+		additions.add(s);
 	}
 
 	public void setLength(int length) {
 		original.setLength(0);
 		lowerCase.setLength(0);
+		exclusions.add(this.toString());
 	}
 
 	public void insert(int offset, String s) {
 		original.insert(offset, s);
 		lowerCase.insert(offset, s.toLowerCase());
+		additions.add(s);
 	}
 
 	public void trimToSize() {
@@ -93,7 +108,14 @@ public class StringBuilder2 {
 	public StringBuilder getOriginalBuilder() {
 		return original;
 	}
-
+	
+	public StringBuilder2 clone() {
+	    StringBuilder2 cloned = new StringBuilder2();
+	    cloned.original = new StringBuilder(this.original);
+	    cloned.lowerCase = new StringBuilder(this.lowerCase);
+	    return cloned;
+	}
+	
 	public void replaceIgnoreCase(final String from, final String to) {
 		replaceIgnoreCase(from, to, false);
 	}
@@ -111,6 +133,7 @@ public class StringBuilder2 {
 		while ((idx = lowerCase.indexOf(targetLower, idx)) != -1) {
 			original.replace(idx, idx + target.length(), replacement);
 			lowerCase.replace(idx, idx + target.length(), replacement);
+			replacements.put(replacement, targetLower);
 			if (onlyFirst)
 				break;
 		}
@@ -120,17 +143,20 @@ public class StringBuilder2 {
 		return contains(original, s);
 	}
 
-	public String[] findByRegex(String regex) {
-		return findByRegex(regex, 0);
+	public String[] find(String regex) {
+		return find(regex, 0);
 	}
 
-	
-	public String[] findByRegex(String regex, int flags) {
+	public String[] find(String regex, int flags) {
 		if (regex == null || regex.isEmpty()) {
 			return new String[0];
 		}
 
 		Pattern pattern = Pattern.compile(regex, flags);
+		return find(pattern);
+	}
+	
+	public String[] find(Pattern pattern) {
 		String content = original.toString();
 		Matcher matcher = pattern.matcher(content);
 
@@ -142,4 +168,69 @@ public class StringBuilder2 {
 		return matches.toArray(new String[0]);
 	}
 
+	
+	public void replace(String regex, int flags, Function<Matcher, String> replacement) {
+	    if (regex == null || regex.isEmpty() || replacement == null) {
+	        return;
+	    }
+
+	    Pattern pattern = Pattern.compile(regex, flags);
+	    replace(pattern, replacement);
+	}
+	
+	public void replace(Pattern pattern, Function<Matcher, String> replacement) {
+	    String content = original.toString();
+	    Matcher matcher = pattern.matcher(content);
+
+	    StringBuilder resultOriginal = new StringBuilder();
+	    StringBuilder resultLowerCase = new StringBuilder();
+	    
+	    int lastEnd = 0;
+	    
+	    while (matcher.find()) {
+	        // Adiciona o trecho antes da correspondência
+	        String beforeMatch = content.substring(lastEnd, matcher.start());
+	        resultOriginal.append(beforeMatch);
+	        resultLowerCase.append(beforeMatch.toLowerCase());
+	        
+	        // Aplica a função de substituição
+	        String replacementText = replacement.apply(matcher);
+	        if (replacementText == null) {
+	            replacementText = "null";
+	        }
+	        this.replacements.put(matcher.group(), replacementText);
+	        
+	        resultOriginal.append(replacementText);
+	        resultLowerCase.append(replacementText.toLowerCase());
+	        
+	        lastEnd = matcher.end();
+	    }
+	    
+	    // Adiciona o restante do texto
+	    if (lastEnd < content.length()) {
+	        String remaining = content.substring(lastEnd);
+	        resultOriginal.append(remaining);
+	        resultLowerCase.append(remaining.toLowerCase());
+	    }
+	    
+	    // Substitui os StringBuilders internos
+	    original = resultOriginal;
+	    lowerCase = resultLowerCase;
+	}
+	
+	public void replace(String regex, Function<Matcher, String> replacement) {
+	    replace(regex, 0, replacement);
+	}
+	
+	public Map<String, String> getReplacements() {
+	    return Collections.unmodifiableMap(replacements);
+	}
+
+	public List<String> getAdditions() {
+	    return Collections.unmodifiableList(additions);
+	}
+
+	public List<String> getExclusions() {
+	    return Collections.unmodifiableList(exclusions);
+	}	
 }

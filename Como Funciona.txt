@@ -1,10 +1,10 @@
-										DDDDD     BBBBB       SSSS
-										D    D    B     B   S      S
-									    D     D   B     B   S 
-									    D     D   BBBBB       SSSS 
-									    D     D   B     B          S
-									    D    D    B     B   S      S
-									    DDDDD     BBBBB       SSSS
+									DDDDD     BBBBB       SSSS
+									D    D    B     B   S      S
+									D     D   B     B   S 
+									D     D   BBBBB       SSSS 
+									D     D   B     B          S
+									D    D    B     B   S      S
+									DDDDD     BBBBB       SSSS
 									    
 									    
 COMO FUNCIONA:
@@ -479,8 +479,10 @@ COMO FUNCIONA:
   
     Algumas variáveis estão disponíveis para leitura no sistema. São elas:
      
-      @#macro ou @macro - Nome da macro que está em execução.
+      @#macroname ou @macroname - Nome da macro que está em execução.
       
+      OBS: @#macro ou @macro (Versão 1) foi descontinuado
+
       @#dbsfile ou @dbsfile - Nome do arquivo DBS/SQL em execução (sem extensão)
 
       @#dbsfileext ou @dbsfileext - Extensão do arquivo DBS/SQL em execução (incluindo o ".")
@@ -617,6 +619,69 @@ COMO FUNCIONA:
   
   Neste exemplo, o nome da macro exibido será NOME DA MACRO 
   
+  
+  BLOCOS CONDICIONAIS
+  
+  Um bloco condicional é um trecho de código SQL, aplicável tanto aos sources quanto aos targets, que 
+  e pode ser incluído ou não na consulta final em função da satifação de um determinado critério. O 
+  tipo de bloco condicional determinará o critério de ativação do bloco.
+
+  BLOCO CONDICIONAL IFHAS
+
+
+  IFHAS é um tipo de bloco condicional cuja ativação depende da existência de valores nas referências 
+   (@) do conteúdo do bloco. Isto significa que o bloco será automaticamente ativado se todos os argumentos,
+  campos ou demais referências possuírem valor. Caso contrário, o bloco é automaticamente removido do 
+  código SQL.
+
+  A sintaxe do bloco IFHAS é composta pelo uso da diretiva @ifhas seguida de chaves {}:
+
+
+  @ifhas{ ... conteúdo do bloco opcional @ref1 .... @ref2 ... @refn }
+
+
+  Importante destacar que um bloco ifhas, tal como qualquer outro bloco condicional, não admite composição
+  recursiva (um bloco dentro do outro).
+
+  Exemplo de uso:
+
+  select * from funcionario
+  where true
+    @ifhas{and matricula = @arg[matricula]}
+    @ifhas{and data_admissao between '@arg[adm_inicio]' and '@arg[adm_final]'}
+
+  No exemplo constam dois blocos ifhas empregados numa consulta sobre uma tabela de funcionários.
+  Os blocos empregados são entre si dependentes em parâmetros diferentes, embora todos eles sejam baseados
+  em argumentos do programa. No primeiro bloco, a busca é feita pelo critério de matrícula, enquanto no 
+  segundo, são filtrados registros pela data de admissão.
+
+  A abordagem de exemplo permite que usuário forneça, ao programa, argumentos nomeados alternativamente, 
+  como diferentes possibilidades de busca. Somente se for fornecida a matrícula como argumento do DBS 
+  (por exemplo, matricula=123), o primeiro bloco será incluído no SQL final - e o mesmo vale para o segundo 
+  bloco, caso sejam fornecidas as datas adm_inicio e adm_final.
+
+  Considerando a hipótese de que se tenha fornecido apenas o argumento "matricula=123", o SQL final ficará:
+
+  select * from funcionario
+  where true
+    and matricula = 123
+
+
+  BLOCO CONDICIONAL IFHASANY
+
+
+  O bloco condicional IFHASANY funciona da mesma forma que o IFHAS, com uma única diferença que ocorre quando
+  existem múltiplas referências (@): enquanto o IFHAS só é ativado se todas as referências internas possuirem
+  valores não-nulos, o IFHASANY é ativado quando pelo menos uma referência é não-nula.
+
+  Exemplo:
+
+  select * from funcionario
+  where true
+    @ifhasany{and data_admissao > '@arg[adm_inicio]' and data_admissao < '@arg[adm_final]'}
+
+  A diferença neste caso está no segundo bloco: quando apenas uma das datas é fornecida (adm_inicio e 
+  adm_final), o bloco IFHASANY é ativado, enquanto um bloco do tipo IFHAS não seria.
 
 
 
@@ -1411,6 +1476,9 @@ COMO FUNCIONA:
     	$FORCE_ARG ano = 2020
     	$FORCE_ARG regiao = IS
     
+    $QUERY_UNDEFINED_ARGS: Requisita ao usuário o valor dos argumentos quando referenciados
+       no código, e que cujo valor não foi passado para o programa.
+
     $DISABLE_COMMANDS: permite desabilitar a execução efetiva dos comandos de todos os #target  
     	
 	$THREAD_POOL_SIZE: atribui o tamanho do pool de threads, para o caso de chamadas assíncronas 

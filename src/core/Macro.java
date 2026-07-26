@@ -170,10 +170,16 @@ public class Macro extends Engine implements Device, SavePointRestoreable {
 			DBS.setThreadPoolSize(s);
 			return;
 		}
+		if (var.equalsIgnoreCase("QUERY_UNDEFINED_ARGS")) {
+			boolean v = Boolean.parseBoolean(value);
+			program.setQueryUndefinedArgs(v);
+			return;
+		}
+		
 		if (assignArgProperty(var, value))
 			return;
 
-		throw new RuntimeException("Vari�vel n�o reconhecida: " + var);
+		throw new RuntimeException("Variãvel não reconhecida: " + var);
 	}
 
 	private boolean assignArgProperty(String var, String value) {
