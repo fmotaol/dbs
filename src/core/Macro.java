@@ -536,8 +536,6 @@ public class Macro extends Engine implements Device, SavePointRestoreable {
 		return null;
 	}
 
-
-
 	public void addInitTarget(TargetPerformer t) {
 		nameDevice("init", t, initTargets);
 		initTargets.add(t);
