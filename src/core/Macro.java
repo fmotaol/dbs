@@ -175,7 +175,7 @@ public class Macro extends Engine implements Device, SavePointRestoreable {
 			program.setQueryUndefinedArgs(v);
 			return;
 		}
-		
+
 		if (assignArgProperty(var, value))
 			return;
 
@@ -213,7 +213,7 @@ public class Macro extends Engine implements Device, SavePointRestoreable {
 			a.useDefault = v;
 			return true;
 		}
-		
+
 		if (cmd.equalsIgnoreCase("ARG_VALUE_LIST")) {
 			Argument a = presumedArgByName(arg);
 			if (a.valueList != null)
@@ -541,8 +541,6 @@ public class Macro extends Engine implements Device, SavePointRestoreable {
 	public String getAlias() {
 		return null;
 	}
-
-
 
 	public void addInitTarget(TargetPerformer t) {
 		nameDevice("init", t, initTargets);

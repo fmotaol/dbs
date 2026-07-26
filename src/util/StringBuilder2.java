@@ -133,7 +133,7 @@ public class StringBuilder2 {
 		while ((idx = lowerCase.indexOf(targetLower, idx)) != -1) {
 			original.replace(idx, idx + target.length(), replacement);
 			lowerCase.replace(idx, idx + target.length(), replacement);
-			replacements.put(replacement, targetLower);
+			replacements.put(target, replacement);
 			if (onlyFirst)
 				break;
 		}
@@ -194,14 +194,15 @@ public class StringBuilder2 {
 	        resultLowerCase.append(beforeMatch.toLowerCase());
 	        
 	        // Aplica a função de substituição
-	        String replacementText = replacement.apply(matcher);
-	        if (replacementText == null) {
-	            replacementText = "null";
+	        String fromText = matcher.group();
+	        String toText = replacement.apply(matcher);
+	        if (toText == null) {
+	            toText = "null";
 	        }
-	        this.replacements.put(matcher.group(), replacementText);
+			this.replacements.put(fromText, toText);
 	        
-	        resultOriginal.append(replacementText);
-	        resultLowerCase.append(replacementText.toLowerCase());
+	        resultOriginal.append(toText);
+	        resultLowerCase.append(toText.toLowerCase());
 	        
 	        lastEnd = matcher.end();
 	    }

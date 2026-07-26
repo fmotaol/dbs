@@ -1,3 +1,5 @@
+$QUERY_UNDEFINED_ARGS=false
+
 #target = localhost.conf
 
   select * from funcionario

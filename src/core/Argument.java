@@ -136,7 +136,7 @@ public class Argument {
 
 	public Origin getOrigin() {
 		if (origin == null) {
-			getValue(); // for�a a obter o valor
+			getValue(); // força a obter o valor
 		}
 		return origin;
 	}

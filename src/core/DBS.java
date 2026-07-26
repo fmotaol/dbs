@@ -192,8 +192,9 @@ public class DBS extends Engine {
 				savePoint.load(DataScope.PROPERTIES);
 	}
 
-	class Console extends ANSI {};
-	
+	class Console extends ANSI {
+	};
+
 	private static void showIntro() {
 
 		Console.setColor(ANSI.RED);
@@ -291,36 +292,41 @@ public class DBS extends Engine {
 					throw new RuntimeException("Faltando argumento para " + a);
 				String v = args[i + 1];
 				if (v.startsWith("--"))
-					v = "true"; // se n�o h� o valor correspondente - interpreta-se como uma assertiva
+					v = "true"; // se não há o valor correspondente - interpreta-se como uma assertiva
 				else
-					i++; // pula um, pq j� consumiu o valor do arg
+					i++; // pula um, pq já consumiu o valor do arg
 
 				String n = a.substring(2);
-				Argument arg = getArgByName(n);
-				if (arg.origin == null)
-					arg.setValue(v, Origin.PROGRAM_INPUT);
-				else
-					Console.println("AVISO: argumento de programa " + arg.getName() + " ignorado. Já carregado de "
-							+ arg.origin);
+				assignArgument(n, v, Origin.PROGRAM_INPUT);
 				continue;
 			}
 
 			if (a.contains("=")) {
 				String[] as = a.split("=");
+				String v;
 				if (as.length > 1) {
-					String v = a.substring(as[0].length() + 1);
-					Argument arg = getArgByName(as[0]);
-					if (arg.origin == null)
-						arg.setValue(v, Origin.PROGRAM_INPUT);
-					else
-						Console.println("AVISO: argumento " + arg.getName() + " já carregado de " + arg.origin);
+					v = a.substring(as[0].length() + 1);
+				} else {
+					v = "true"; // também interpreta-se como uma assertiva
 				}
+				assignArgument(as[0], v, Origin.PROGRAM_INPUT);
 				continue;
 			}
 
 			createArg(i, a, Origin.PROGRAM_INPUT);
 
 		}
+	}
+
+	private void assignArgument(String name, String value, Origin origin) {
+		//as[0] name, v value, 
+		Argument arg = getArgByName(name);
+		if (arg == null)
+			arg = createArg(name, value, origin);
+		else if (arg.origin == null) //este bloco de código passou a me parecer desnecessário...
+			arg.setValue(value, origin);
+		else
+			Console.println("AVISO: argumento " + arg.getName() + " já carregado de " + arg.origin);
 	}
 
 
@@ -848,7 +854,7 @@ public class DBS extends Engine {
 		a = new Argument(this);
 		a.setQueryUndefinedValue(this.queryUndefinedArgs);
 		a.setName(index + "");
-		//a.setValue(value, origin);
+		// a.setValue(value, origin);
 		arguments.add(a);
 		return a;
 	}

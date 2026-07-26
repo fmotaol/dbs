@@ -25,6 +25,7 @@ import util.Colls;
 import util.Getable;
 import util.StringBuilder2;
 import util.Util;
+import util.logical.Check;
 
 public class StringConcretizer extends Concretizer {
 
@@ -811,8 +812,7 @@ public class StringConcretizer extends Concretizer {
 			if (a == null)
 				a = program.createArg(name);
 
-			String v = a.getValue();
-
+			String v = Check.coalesce(a.getValue(), "null");
 			replaceIgnoreCase(sql, "@arg[" + a.getName() + "]", v);
 		}
 
@@ -829,7 +829,8 @@ public class StringConcretizer extends Concretizer {
 					a = program.createArg(i + ""); // somente neste caso de arg indexado SEM FORNECER ele cria - mas
 													// cria como se fosse nome.
 
-				String v = a.getValue();
+				String v = Check.coalesce(a.getValue(), "null");
+				
 				concretizeArgByIndex(sql, i, v);
 			}
 		}
