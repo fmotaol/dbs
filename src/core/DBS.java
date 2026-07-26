@@ -282,30 +282,24 @@ public class DBS extends Engine {
 					throw new RuntimeException("Faltando argumento para " + a);
 				String v = args[i + 1];
 				if (v.startsWith("--"))
-					v = "true"; // se n�o h� o valor correspondente - interpreta-se como uma assertiva
+					v = "true"; // se não há o valor correspondente - interpreta-se como uma assertiva
 				else
-					i++; // pula um, pq j� consumiu o valor do arg
+					i++; // pula um, pq já consumiu o valor do arg
 
 				String n = a.substring(2);
-				Argument arg = getArgByName(n);
-				if (arg.origin == null)
-					arg.setValue(v, Origin.PROGRAM_INPUT);
-				else
-					Console.println("AVISO: argumento de programa " + arg.getName() + " ignorado. Já carregado de "
-							+ arg.origin);
+				assignArgument(n, v, Origin.PROGRAM_INPUT);
 				continue;
 			}
 
 			if (a.contains("=")) {
 				String[] as = a.split("=");
+				String v;
 				if (as.length > 1) {
-					String v = a.substring(as[0].length() + 1);
-					Argument arg = getArgByName(as[0]);
-					if (arg.origin == null)
-						arg.setValue(v, Origin.PROGRAM_INPUT);
-					else
-						Console.println("AVISO: argumento " + arg.getName() + " já carregado de " + arg.origin);
+					v = a.substring(as[0].length() + 1);
+				} else {
+					v = "true"; // também interpreta-se como uma assertiva
 				}
+				assignArgument(as[0], v, Origin.PROGRAM_INPUT);
 				continue;
 			}
 
@@ -313,6 +307,18 @@ public class DBS extends Engine {
 
 		}
 	}
+
+	private void assignArgument(String name, String value, Origin origin) {
+		//as[0] name, v value, 
+		Argument arg = getArgByName(name);
+		if (arg == null)
+			arg = createArg(name, value, origin);
+		else if (arg.origin == null) //este bloco de código passou a me parecer desnecessário...
+			arg.setValue(value, origin);
+		else
+			Console.println("AVISO: argumento " + arg.getName() + " já carregado de " + arg.origin);
+	}
+
 
 	public Argument getArgByName(String name) {
 		for (Argument a : arguments) {
@@ -517,7 +523,7 @@ public class DBS extends Engine {
 			return new JsonPathConnection();
 		if (connectionId.equalsIgnoreCase("xpath"))
 			return new XPathConnection();
-
+		
 		return createJDBCConnection(connectionId);
 	}
 
@@ -598,7 +604,7 @@ public class DBS extends Engine {
 			throw new RuntimeException(e);
 		}
 	}
-
+	
 	public static String getCurrentDir() {
 		return System.getProperty("user.dir");
 	}
@@ -831,7 +837,7 @@ public class DBS extends Engine {
 		a.setValue(value, origin);
 		return a;
 	}
-
+	
 	private Argument createArg(int index) {
 		Argument a;
 		a = new Argument(this);

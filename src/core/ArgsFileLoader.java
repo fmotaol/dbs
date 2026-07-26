@@ -42,7 +42,7 @@ public class ArgsFileLoader {
 			return;
 		String[] ss = row.split("=", 2);
 		if (ss.length > 2)
-			throw new RuntimeException("Erro no conte�do do arquivo .args");
+			throw new RuntimeException("Erro no conteúdo do arquivo .args");
 
 		System.out.println("Carregando argumento " + row);
 

@@ -18,7 +18,7 @@ public class Argument {
 	public String defaultValue = null;
 
 	public boolean useDefault = false;
-	
+
 	public Origin origin = null;
 
 	public Argument(DBS program) {
@@ -71,7 +71,7 @@ public class Argument {
 
 		value = DBS.inputQuery("Informe o valor para o argumento \"" + label() + "\"" + defaultExp + ": ");
 		origin = Origin.USER;
-		
+
 		if (defaultValue != null) {
 			if ((value == null) || ("".equals(value))) {
 				System.out.println("Assumido valor default " + defaultValue);
@@ -103,7 +103,9 @@ public class Argument {
 		this.value = value;
 	}
 
-	public static enum Origin { PROGRAM_INPUT, USER, FORCED, ARG_FILE, SAV_FILE, DEFAULT }
+	public static enum Origin {
+		PROGRAM_INPUT, USER, FORCED, ARG_FILE, SAV_FILE, DEFAULT
+	}
 
 	@Override
 	public String toString() {
@@ -115,16 +117,15 @@ public class Argument {
 			return name;
 		return index() + "";
 	};
-	
+
 	public String getFullId() {
 		String id = getId();
 		return "arg[" + id + "]";
 	};
-	
 
 	public Origin getOrigin() {
 		if (origin == null) {
-			getValue(); //for�a a obter o valor
+			getValue(); // força a obter o valor
 		}
 		return origin;
 	}

@@ -783,21 +783,21 @@ public class StringConcretizer extends Concretizer {
 	}
 
 	public static String extractArgName(String argPlaceHolder) {
-	    if (argPlaceHolder == null || argPlaceHolder.isEmpty()) {
-	        return null;
-	    }
-	    
-	    // Esta regex captura qualquer coisa entre [ e ]
-	    Pattern pattern = Pattern.compile("@arg\\[([^\\]]+)\\]");
-	    Matcher matcher = pattern.matcher(argPlaceHolder);
-	    
-	    if (matcher.find()) {
-	        return matcher.group(1);
-	    }
-	    
-	    throw new RuntimeException("Argumento mal-formado: " + argPlaceHolder);
-	}	
-	
+		if (argPlaceHolder == null || argPlaceHolder.isEmpty()) {
+			return null;
+		}
+
+		// Esta regex captura qualquer coisa entre [ e ]
+		Pattern pattern = Pattern.compile("@arg\\[([^\\]]+)\\]");
+		Matcher matcher = pattern.matcher(argPlaceHolder);
+
+		if (matcher.find()) {
+			return matcher.group(1);
+		}
+
+		throw new RuntimeException("Argumento mal-formado: " + argPlaceHolder);
+	}
+
 	private void concretizeArgsByName(StringBuilder2 sql) {
 		final String regex = "@arg\\[[a-zA-Z0-9._ ]+\\]";		
 		String[] as = sql.findByRegex(regex);
@@ -807,8 +807,7 @@ public class StringConcretizer extends Concretizer {
 			if (a == null)
 				a = program.createArg(name);
 
-			String v = a.getValue();
-
+			String v = Check.coalesce(a.getValue(), "null");
 			replaceIgnoreCase(sql, "@arg[" + a.getName() + "]", v);
 		}
 
@@ -816,15 +815,17 @@ public class StringConcretizer extends Concretizer {
 
 	private void concretizeArgsByIndex(StringBuilder2 sql) {
 		for (int i = 1; i <= 50; i++) {
-			if (!containsIgnoreCase(sql, "@arg")) //evita ir até o fim do loop desnecessariamente
+			if (!containsIgnoreCase(sql, "@arg")) // evita ir até o fim do loop desnecessariamente
 				return;
-			
+
 			if (containsIgnoreCase(sql, "@arg[" + i + "]")) {
 				Argument a = program.getArg(i);
 				if (a == null)
-					a = program.createArg(i + ""); //somente neste caso de arg indexado SEM FORNECER ele cria - mas cria como se fosse nome. 
+					a = program.createArg(i + ""); // somente neste caso de arg indexado SEM FORNECER ele cria - mas
+													// cria como se fosse nome.
+
+				String v = Check.coalesce(a.getValue(), "null");
 				
-				String v = a.getValue();
 				concretizeArgByIndex(sql, i, v);
 			}
 		}
