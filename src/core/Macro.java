@@ -26,7 +26,7 @@ public class Macro extends Engine implements Device, SavePointRestoreable {
 	private Performer performer;
 
 	private DBS program;
-
+	
 	private List<TargetPerformer> initTargets = new ArrayList<TargetPerformer>();
 
 	private List<TargetPerformer> finalTargets = new ArrayList<TargetPerformer>();
@@ -173,7 +173,7 @@ public class Macro extends Engine implements Device, SavePointRestoreable {
 		if (assignArgProperty(var, value))
 			return;
 
-		throw new RuntimeException("Vari�vel n�o reconhecida: " + var);
+		throw new RuntimeException("Variável não reconhecida: " + var);
 	}
 
 	private boolean assignArgProperty(String var, String value) {

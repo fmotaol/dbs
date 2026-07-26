@@ -66,7 +66,7 @@ public class DBS extends Engine {
 	public boolean ignoreUnknownFields = false;
 
 	public boolean usePreparedStatements = false;
-	
+
 	public Logger logger;
 
 	protected StringConcretizer connectionConcretizer = new StringConcretizer(this);
@@ -182,8 +182,9 @@ public class DBS extends Engine {
 				savePoint.load(DataScope.PROPERTIES);
 	}
 
-	class Console extends ANSI {};
-	
+	class Console extends ANSI {
+	};
+
 	private static void showIntro() {
 
 		Console.setColor(ANSI.RED);
@@ -312,7 +313,6 @@ public class DBS extends Engine {
 
 		}
 	}
-
 
 	public Argument getArgByName(String name) {
 		for (Argument a : arguments) {
@@ -517,7 +517,7 @@ public class DBS extends Engine {
 			return new JsonPathConnection();
 		if (connectionId.equalsIgnoreCase("xpath"))
 			return new XPathConnection();
-		
+
 		return createJDBCConnection(connectionId);
 	}
 
@@ -598,7 +598,7 @@ public class DBS extends Engine {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	public static String getCurrentDir() {
 		return System.getProperty("user.dir");
 	}
@@ -821,7 +821,7 @@ public class DBS extends Engine {
 		Argument a;
 		a = new Argument(this);
 		a.setName(name);
-		//a.setValue(value, origin);
+		// a.setValue(value, origin);
 		arguments.add(a);
 		return a;
 	}
@@ -831,12 +831,12 @@ public class DBS extends Engine {
 		a.setValue(value, origin);
 		return a;
 	}
-	
+
 	private Argument createArg(int index) {
 		Argument a;
 		a = new Argument(this);
 		a.setName(index + "");
-		//a.setValue(value, origin);
+		// a.setValue(value, origin);
 		arguments.add(a);
 		return a;
 	}
@@ -846,7 +846,7 @@ public class DBS extends Engine {
 		a.setValue(value, origin);
 		return a;
 	}
-	
+
 	public Logger getLogger() {
 		if (logger == null) {
 			logger = new FileLogger(this, new Date());
