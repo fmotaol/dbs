@@ -1,10 +1,10 @@
-									DDDDD     BBBBB       SSSS
-									D    D    B     B   S      S
-									D     D   B     B   S 
-									D     D   BBBBB       SSSS 
-									D     D   B     B          S
-									D    D    B     B   S      S
-									DDDDD     BBBBB       SSSS
+						DDDDD     BBBBB       SSSS
+						D    D    B     B   S      S
+						D     D   B     B   S 
+						D     D   BBBBB       SSSS 
+						D     D   B     B          S
+						D    D    B     B   S      S
+						DDDDD     BBBBB       SSSS
 									    
 									    
 COMO FUNCIONA:
@@ -683,6 +683,32 @@ COMO FUNCIONA:
   A diferença neste caso está no segundo bloco: quando apenas uma das datas é fornecida (adm_inicio e 
   adm_final), o bloco IFHASANY é ativado, enquanto um bloco do tipo IFHAS não seria.
 
+
+  BLOCO CONDICIONAL IF
+
+
+  IF é um tipo de bloco condicional que depende de uma condição adicional de valor booleano, para que o 
+  seu conteúdo seja ativado. A definição deste tipo de bloco é ilustrada a seguir: 
+
+    @if(<condição>){  <conteúdo do bloco>  } 
+
+  No caso, ele dependerá de um resultado booleano no lugar de <condição> - que pode ser, inclusive, uma 
+  referência (@). Entretanto, esta referência deverá ser do tipo booleana (true, false ou null). Caso 
+  <condição> se apresente como "true", o bloco é ativado. Caso negativo (false), ou mesmo "null", o bloco
+  é removido do SQL final.
+
+
+  Exemplo:
+
+  select id, nome, matricula,
+	 login,
+	 @if(@incluirsenha){password as senha,} 
+         data_nascimento
+  from usuario
+
+
+  Neste caso, a expressão "password as senha," passa a ser condicionalmente exibida em função da 
+  variável booleana @incluirsenha.
 
 
   SUBQUERIES

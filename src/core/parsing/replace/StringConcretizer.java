@@ -1078,8 +1078,10 @@ public class StringConcretizer extends Concretizer {
 		throw new RuntimeException("ainda não implementado");
 	}
 
-	public static final String regexCondBlock = "@(?<type>ifhas|ifhasany)\\{(?<block>(?!@(?:ifhas|ifhasany)\\{)[^}]*)\\}";
-
+	//public static final String regexCondBlock = "@(?<type>ifhas|ifhasany)\\{(?<block>(?!@(?:ifhas|ifhasany)\\{)[^}]*)\\}";
+	//public static final String regexCondBlock = "@(?<type>ifhas|ifhasany)\\{(?<block>[^}]*)\\}";
+	public static final String regexCondBlock = "@(?<type>if\\([^)]*\\)|ifhas|ifhasany)\\{(?<block>[^}]*)\\}";
+	
 	private static final Pattern patternCondBlock = Pattern.compile(regexCondBlock,
 			Pattern.DOTALL | Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
 
@@ -1130,9 +1132,44 @@ public class StringConcretizer extends Concretizer {
 			return !notNulls.isEmpty();			
 		}
 		
+		if (type.startsWith("if(")) {
+			String cond = extractIfCondition(type);
+			Boolean b = concretizeAsBoolean(cond, context);
+			if (b != null && b)
+				return true;
+			else
+				return false;
+		}
+		
 		throw new RuntimeException("Tipo de bloco condicional não suportado: " + type);
 	}
 
+	private boolean concretizeAsBoolean(String booleanRef, Context context) {
+		StringBuilder2 sb = new StringBuilder2(booleanRef);
+		concretizeReferences(sb, context);
+		Boolean b = parseAsBoolean(sb); 
+		return b;
+	}
+
+	private Boolean parseAsBoolean(StringBuilder2 sb) {
+		String s = sb.toString();
+		if (s.equals("null"))
+			return null;
+		return Boolean.parseBoolean(s);
+	}
+
+	private String extractIfCondition(String type) {
+	    if (type == null || !type.startsWith("if(")) {
+	        return "";
+	    }
+	    int start = type.indexOf('(');
+	    int end = type.lastIndexOf(')');
+	    if (start == -1 || end == -1 || start >= end) {
+	        return "";
+	    }
+	    return type.substring(start + 1, end);
+	}
+	    
 	public static void checkVarNameSyntax(String name) {
 		if (!isVarNameSyntax(name))
 			throw new RuntimeException("Sintaxe inválida para identificador ou nome de variável");
