@@ -66,7 +66,7 @@ public class ColumnarDataSet extends AbstractDataSet {
 	public void createEmptyColumns(Collection<String> colNames) {
 		for (String f : colNames) {
 			List<Object> valueList = columns.get(f);
-			if (valueList == null) { // n√£o existe esta coluna
+			if (valueList == null) { // n„o existe esta coluna
 				valueList = new ArrayList<>();
 				columns.put(f, valueList);
 			}
@@ -75,7 +75,7 @@ public class ColumnarDataSet extends AbstractDataSet {
 
 	public int totalRows() {
 		if (columns.isEmpty())
-			throw new RuntimeException("N√£o existem colunas");
+			throw new RuntimeException("N„o existem colunas");
 		assertColumnsHaveSameSizeInRows();
 		List<Object> values = columns.get(getFieldName(0));
 		int sz = values.size();

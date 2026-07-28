@@ -76,7 +76,7 @@ public class CounterDataSet extends AbstractDataSet {
 		return r;
 	}
 
-//	TODO parece que não admite contagem inversa! Veja esse sinal de < a seguir, por ex.
+//	TODO parece que nÃ£o admite contagem inversa! Veja esse sinal de < a seguir, por ex.
 
 	@Override
 	public boolean hasNext() {

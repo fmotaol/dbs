@@ -115,7 +115,7 @@ public interface DataSet {
 				r = previous();
 		} while(r);
 		
-		throw new RuntimeException("NÃ£o foi possÃ­vel restaurar o MarkPoint " + mp);
+		throw new RuntimeException("Não foi possível restaurar o MarkPoint " + mp);
 	}
 
 

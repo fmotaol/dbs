@@ -41,11 +41,13 @@ public abstract class AbstractDataSet implements DataSet {
 	public abstract boolean hasNext();
 
 	public boolean previous() {
-		throw new RuntimeException("Chamada previous() n√£o permitida");
+		throw new RuntimeException("Chamada previous() n„o permitida");
 	}
 
+	//@TODO caracteres para corrigir: √ £ °
+	
 	public boolean hasPrevious(){
-		throw new RuntimeException("Chamada hasPrevious() n√£o permitida");
+		throw new RuntimeException("Chamada hasPrevious() n„o permitida");
 	}
 
 	public Record currentRecord() {
@@ -81,7 +83,7 @@ public abstract class AbstractDataSet implements DataSet {
 			return new InvalidRecord(this);
 		
 		// if (resultSet.next())
-//			throw new RuntimeException("ResultSet est√° fechado"); TODO REVER
+//			throw new RuntimeException("ResultSet est· fechado"); TODO REVER
 
 		DataSetRecord r = new DataSetRecord(this, getRowId());
 		return r;
@@ -135,7 +137,7 @@ public abstract class AbstractDataSet implements DataSet {
 
 	@Deprecated
 	public Record previewNextRecord() {
-		throw new RuntimeException("Chamada previewNextRecord() n√£o dispon√≠vel");
+		throw new RuntimeException("Chamada previewNextRecord() n„o disponÌvel");
 	}
 
 	public Object[] readValues() {
@@ -150,7 +152,7 @@ public abstract class AbstractDataSet implements DataSet {
 
 	public void beforeFirst() {
 		// TODO Auto-generated method stub
-		throw new RuntimeException("ainda n√£o implementado");
+		throw new RuntimeException("ainda n„o implementado");
 	}
 
 	public boolean next() {

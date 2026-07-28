@@ -1075,7 +1075,7 @@ public class StringConcretizer extends Concretizer {
 	private static String getSubqueryFieldValues(DataSet result, String field, String colSeparator) {
 		// TODO Auto-generated method stub
 
-		throw new RuntimeException("ainda n√£o implementado");
+		throw new RuntimeException("ainda n„o implementado");
 	}
 
 	//public static final String regexCondBlock = "@(?<type>ifhas|ifhasany)\\{(?<block>(?!@(?:ifhas|ifhasany)\\{)[^}]*)\\}";
