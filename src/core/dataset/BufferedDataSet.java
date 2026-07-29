@@ -127,19 +127,19 @@ public class BufferedDataSet implements DataSet {
 	@Override
 	public Record currentRecord() {
 		// TODO Auto-generated method stub
-		throw new RuntimeException("ainda n„o implementado");
+		throw new RuntimeException("ainda n√£o implementado");
 	}
 
 	@Override
 	public Record previousRecord() {
 		// TODO Auto-generated method stub
-		throw new RuntimeException("ainda n„o implementado");
+		throw new RuntimeException("ainda n√£o implementado");
 	}
 
 	@Override
 	public void beforeFirst() {
 		// TODO Auto-generated method stub
-		throw new RuntimeException("ainda n„o implementado");
+		throw new RuntimeException("ainda n√£o implementado");
 	}
 
 	@Override
@@ -154,7 +154,7 @@ public class BufferedDataSet implements DataSet {
 
 	@Override
 	public void setInvokerData(String sql, Context context, String alias) {
-		throw new RuntimeException("Chamada n„o permitida");
+		throw new RuntimeException("Chamada n√£o permitida");
 	}
 
 }

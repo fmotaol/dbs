@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import core.Argument.Origin;
+import core.Argument.UndefinedAction;
 import core.SavePoint.DataScope;
 import core.file.FileConnection;
 import core.jdbc.DBProperties;
@@ -71,14 +72,14 @@ public class DBS extends Engine {
 
 	protected StringConcretizer connectionConcretizer = new StringConcretizer(this);
 	
-	private boolean queryUndefinedArgs = true;
+	private Argument.UndefinedAction undefinedArgAction = Argument.UndefinedAction.ERROR;
 
-	public boolean isQueryUndefinedArgs() {
-		return queryUndefinedArgs;
+	public Argument.UndefinedAction getUndefinedArgAction() {
+		return undefinedArgAction;
 	}
 
-	public void setQueryUndefinedArgs(boolean queryUndefinedArgs) {
-		this.queryUndefinedArgs = queryUndefinedArgs;
+	public void setUndefinedArgAction(Argument.UndefinedAction action) {
+		this.undefinedArgAction = action;
 	}
 
 	public DBS(String[] args) {
@@ -297,7 +298,7 @@ public class DBS extends Engine {
 					i++; // pula um, pq já consumiu o valor do arg
 
 				String n = a.substring(2);
-				assignArgument(n, v, Origin.PROGRAM_INPUT);
+				assignProgramArg(n, v);
 				continue;
 			}
 
@@ -309,24 +310,26 @@ public class DBS extends Engine {
 				} else {
 					v = "true"; // também interpreta-se como uma assertiva
 				}
-				assignArgument(as[0], v, Origin.PROGRAM_INPUT);
+				assignProgramArg(as[0], v);
 				continue;
 			}
 
-			createArg(i, a, Origin.PROGRAM_INPUT);
-
+			assignProgramArg(i + "", a);
 		}
 	}
 
-	private void assignArgument(String name, String value, Origin origin) {
-		//as[0] name, v value, 
+	private void assignProgramArg(String name, String value) {
 		Argument arg = getArgByName(name);
+		
+		final Origin origin = Origin.PROGRAM_INPUT;
+		
 		if (arg == null)
 			arg = createArg(name, value, origin);
-		else if (arg.origin == null) //este bloco de código passou a me parecer desnecessário...
-			arg.setValue(value, origin);
-		else
-			Console.println("AVISO: argumento " + arg.getName() + " já carregado de " + arg.origin);
+		else 	//if (arg.origin == null) 
+			arg.setValue(value, origin); //se já existe um arg via main, ele força os valores
+		
+		//else
+			//Console.println("AVISO: argumento " + arg.getName() + " já carregado de " + arg.origin);
 	}
 
 
@@ -338,6 +341,13 @@ public class DBS extends Engine {
 		return null;
 	}
 
+	public Argument getOrCreateArg(String name) {
+		Argument a = getArgByName(name);
+		if (a == null)
+			a = createArg(name);
+		return a;
+	}
+	
 	private void loadFromArgsFile() {
 		File argsFile = new File(getDBSFileName() + ".args");
 
@@ -834,37 +844,31 @@ public class DBS extends Engine {
 	}
 
 	public Argument createArg(String name) {
-		Argument a;
-		a = new Argument(this);
+		if (getArgByName(name) != null)
+			throw new RuntimeException("Argumento já existe: " + name);
+		
+		Argument a = new Argument(this);
 		a.setName(name);
-		a.setQueryUndefinedValue(this.queryUndefinedArgs);
+		a.setUndefinedAction(undefinedArgAction);
 		arguments.add(a);
 		return a;
 	}
 
 	public Argument createArg(String name, String value, Origin origin) {
 		Argument a = createArg(name);
-		a.setQueryUndefinedValue(this.queryUndefinedArgs);
 		a.setValue(value, origin);
 		return a;
 	}
 	
 	private Argument createArg(int index) {
-		Argument a;
-		a = new Argument(this);
-		a.setQueryUndefinedValue(this.queryUndefinedArgs);
-		a.setName(index + "");
-		// a.setValue(value, origin);
-		arguments.add(a);
-		return a;
+		return createArg(index + "");
 	}
 
-	private Argument createArg(int index, String value, Origin origin) {
-		Argument a = createArg(index);
-		a.setQueryUndefinedValue(this.queryUndefinedArgs);
-		a.setValue(value, origin);
-		return a;
-	}
+//	private Argument createArg(int index, String value, Origin origin) {
+//		Argument a = createArg(index);
+//		a.setValue(value, origin);
+//		return a;
+//	}
 	
 	public Logger getLogger() {
 		if (logger == null) {
