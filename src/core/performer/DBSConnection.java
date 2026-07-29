@@ -51,4 +51,13 @@ public abstract class DBSConnection {
 		throw new RuntimeException("Execução de batch não suportada pela classe " + getClass());
 	}
 
+	public static void sleep(long sleepTime) {
+		try {
+			Thread.sleep(sleepTime);
+		} catch (InterruptedException e1) {
+			throw new RuntimeException(e1);
+		}
+	}
+
+
 }

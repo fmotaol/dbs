@@ -9,9 +9,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.Callable;
 
 import core.DBS;
 import core.Macro;
@@ -27,6 +25,7 @@ import ext.db.DriverSupport;
 import ext.db.db2.DB2Dialet;
 import ext.db.pgsql.PostgreSQLDialet;
 import util.Util;
+import util.threads.Parallelizer;
 
 public class JDBCConnection extends DBSConnection {
 
@@ -38,20 +37,24 @@ public class JDBCConnection extends DBSConnection {
 	}
 
 	private Connection connection;
-	private WarningChecker warningChecker;
+	
+	Parallelizer parallel = new Parallelizer(2);
 
 	private DBProperties properties;
 
 	private Language language;
 
-	private DriverSupport driverSupport;
+	DriverSupport driverSupport;
 
 	private boolean reconnect;
 
 	private HashMap<String, String[]> pkFieldsByTable = new HashMap<String, String[]>();
 
 	private HashMap<String, String[]> fieldsByTable = new HashMap<String, String[]>();
+	
 	private Statement activeStatement;
+	
+//	private WarningChecker warningChecker; 
 
 	public JDBCConnection(DBProperties properties, String id) {
 		this.id = id;
@@ -162,8 +165,13 @@ public class JDBCConnection extends DBSConnection {
 		try {
 			PreparedStatement s = prepareStatement(sql);
 			activeStatement = s;
-			ResultSet rs = s.executeQuery();
+			
+			//ResultSet rs = parallel.callAndWait(() -> s.executeQuery());
+			ResultSet rs = executeWithWarnings(() -> s.executeQuery(), s);
+			//ResultSet rs = s.executeQuery();
 			r = new JDBCDataSet(rs, s);
+			//warningChecker.finish();
+			
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		} finally {
@@ -216,7 +224,7 @@ public class JDBCConnection extends DBSConnection {
 
 	@Override
 	public synchronized Result executeBatch(Batch batch) throws SQLException {
-		Result r = internalExecuteBatch(batch);
+		Result r = parallel.callAndWait(() -> internalExecuteBatch(batch));
 		return r;
 	}
 
@@ -241,8 +249,26 @@ public class JDBCConnection extends DBSConnection {
 			//warningChecker = new WarningChecker(connection, stmt);
 	}
 
+	protected <T> T executeWithWarnings(Callable<T> callable, Statement statement) {
+		WarningChecker warningChecker = new WarningChecker(this, statement);
+		try {
+			
+			return callable.call();
+			
+		} catch (Exception e) {
+			
+			throw new RuntimeException(e);
+			
+		} finally {
+			
+			warningChecker.finish();
+			
+		}		
+	}
+	
 	protected Result internalExecuteBatch(Batch batch) throws SQLException {
 		Statement st = createStatementForBatch(batch.getBuffer());
+		
 		int[] is = st.executeBatch();
 		int affectedRows = 0;
 		for (int i : is)
@@ -269,7 +295,9 @@ public class JDBCConnection extends DBSConnection {
 		Result r;
 		try {
 
-			activeStatement.execute(sql);
+			//warningChecker = new WarningChecker(this, activeStatement);
+			// parallel.callAndWait(() -> activeStatement.execute(sql));
+			executeWithWarnings(() -> activeStatement.execute(sql), activeStatement);
 
 			int affectedRows = activeStatement.getUpdateCount();
 			if (affectedRows < 0)
@@ -434,14 +462,6 @@ public class JDBCConnection extends DBSConnection {
 		// nada
 	}
 
-	private void sleep(long sleepTime) {
-		try {
-			Thread.sleep(sleepTime);
-		} catch (InterruptedException e1) {
-			throw new RuntimeException(e1);
-		}
-	}
-
 	private long sleepTime = 0;
 	private static final int T_30_MIN = 30 * 60 * 1000;
 
@@ -535,13 +555,13 @@ public class JDBCConnection extends DBSConnection {
 		} catch (SQLException e) {
 		}
 		
-		try {
-
-			closeExecutorService();
-
-		} catch (Throwable e) {
-			e.printStackTrace();
-		}
+//		try {
+//
+//			closeExecutorService();
+//
+//		} catch (Throwable e) {
+//			e.printStackTrace();
+//		}
 		
 	}
 
@@ -549,82 +569,27 @@ public class JDBCConnection extends DBSConnection {
 		return language;
 	}
 
-	private static ExecutorService threadExecutorService;
+//	private static ExecutorService threadExecutorService;
 
-	static ExecutorService getWarningExecutorService() {
-		if (threadExecutorService == null)
-			threadExecutorService = Executors.newFixedThreadPool(2);
+//	static ExecutorService getWarningExecutorService() {
+//		if (threadExecutorService == null)
+//			threadExecutorService = Executors.newFixedThreadPool(2);
+//
+//		return threadExecutorService;
+//	}
 
-		return threadExecutorService;
-	}
-
-	class WarningChecker {
-
-		Connection connection;
-		Statement statement;
-		boolean done = false;
-
-		public WarningChecker(Connection connection, Statement statement) {
-			this.connection = connection;
-			this.statement = statement;
-
-			ExecutorService service = getWarningExecutorService();
-
-			service.submit(
-			() -> {
-				do {
-					if (this.connection == null)
-						return;
-					
-					System.out.println("Executando...");
-					sleep(2000);
-					this.check();
-					
-				} while (!isReady() && !done);
-			});
-
-		}
-
-		public boolean isReady() {
-			try {
-
-				if (statement.getResultSet() != null) {
-					done = true;
-					return true;
-				}
-
-				if (statement.getUpdateCount() != -1) {
-					done = true;
-					return true;
-				}
-
-				return false;
-
-			} catch (SQLException e) {
-				throw new RuntimeException(e);
-			}
-
-		}
-
-		public void check() {
-
-			driverSupport.checkWarnings(connection);
-			
-		}
-
-	}
 	
-    public void closeExecutorService() {
-        if (threadExecutorService != null) {
-            threadExecutorService.shutdown();
-            try {
-                if (!threadExecutorService.awaitTermination(5, TimeUnit.SECONDS)) {
-                    threadExecutorService.shutdownNow();
-                }
-            } catch (InterruptedException e) {
-                threadExecutorService.shutdownNow();
-                Thread.currentThread().interrupt();
-            }
+    public void closeParallelizer() {
+        if (parallel != null) {
+        	parallel.shutdown();
+//            try {
+//                if (!parallel.awaitTermination(5, TimeUnit.SECONDS)) {
+//                    threadExecutorService.shutdownNow();
+//                }
+//            } catch (InterruptedException e) {
+//                threadExecutorService.shutdownNow();
+//                Thread.currentThread().interrupt();
+//            }
         }
     }
 
