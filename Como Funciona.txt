@@ -1470,9 +1470,9 @@ COMO FUNCIONA:
 
     $ARG_DEFAULT_VALUE: Associa um valor default para o argumento, de modo a ser assumido quando não informado
       por qualquer das vias de entrada de argumentos (arquivo *.args, argumentos de programa ou entrada por
-      teclado). Caso o usuário seja inquirido sobre o argumento (vide XXXXX), o DBS informa ao usuário qual
-      é o valor default sugerido - de modo que se este simplesmente digitar ENTER ao ser inquirido, esse 
-      valor default é automaticamente assumido.
+      teclado). Caso o usuário seja inquirido sobre o argumento (quando a opção UNDEFINED_ARG_ACTION é ASK), 
+      o DBS informa ao usuário qual é o valor default sugerido - de modo que se este simplesmente digitar ENTER 
+      ao ser inquirido, esse valor default é automaticamente assumido.
 
 	Ex.:
     	$ARG_DEFAULT_VALUE dbsource = Maya-P
@@ -1502,8 +1502,12 @@ COMO FUNCIONA:
     	$FORCE_ARG ano = 2020
     	$FORCE_ARG regiao = IS
     
-    $QUERY_UNDEFINED_ARGS: Requisita ao usuário o valor dos argumentos quando referenciados
-       no código, e que cujo valor não foi passado para o programa.
+    $UNDEFINED_ARG_ACTION: Determina que ação o DBS tomará para as referências a argumentos que
+      não foram informados ao programa. As opções disponíveis são:
+	   	ERROR: Um erro é lançado;
+        NULL: A referência será substituída por "null"; 
+        IGNORE: A substituição da referência será ignorada; 
+        ASK: A execução será interrompida, e o valor do argumento será perguntado ao usuário.
 
     $DISABLE_COMMANDS: permite desabilitar a execução efetiva dos comandos de todos os #target  
     	

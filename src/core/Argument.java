@@ -21,20 +21,40 @@ public class Argument {
 
 	public Origin origin = null;
 
-	public boolean queryUndefinedValue = false;
+	public UndefinedAction undefinedAction = UndefinedAction.ERROR;
 
-	public boolean isQueryUndefinedValue() {
-		return queryUndefinedValue;
+	public UndefinedAction getUndefinedAction() {
+		return undefinedAction;
 	}
 
-	public void setQueryUndefinedValue(boolean askUndefinedValue) {
-		this.queryUndefinedValue = askUndefinedValue;
-	}
+	public enum UndefinedAction {
+		ERROR, IGNORE, NULL, ASK;
+
+		static UndefinedAction parse(String text) {
+			if (text.equalsIgnoreCase("ERROR"))
+				return ERROR;
+			if (text.equalsIgnoreCase("IGNORE"))
+				return IGNORE;
+			if (text.equalsIgnoreCase("NULL"))
+				return NULL;
+			if (text.equalsIgnoreCase("ASK"))
+				return ASK;
+			throw new RuntimeException("Opção inválida: " + text);
+		}
+	};
 
 	public Argument(DBS program) {
 		this.program = program;
 	}
 
+	public void setUndefinedAction(UndefinedAction action) {
+		this.undefinedAction = action;
+	}
+
+	public void setUndefinedValueAction(String action) {
+		this.undefinedAction = UndefinedAction.parse(action);
+	}
+	
 	public int index() {
 		return program.arguments.indexOf(this);
 	}
@@ -58,12 +78,30 @@ public class Argument {
 			return;
 		}
 
-		if (queryUndefinedValue)
-			do {
-				internalRequestArg();
-			} while (!allowedValue(value, true));
+		switch (undefinedAction) {
+			case ERROR: 
+				throw new RuntimeException("Não foi definido valor para o argumento " + name);
+	
+			case IGNORE: 
+				return;
+					
+			case NULL: {
+				this.value = null;
+				return;
+			}
+	
+			case ASK: {
+				requestUser();
+			}
+		}
 	}
 
+	public void requestUser() {
+		do {
+			internalRequestArg();
+		} while (!allowedValue(value, true));
+	}
+	
 	public String label() {
 		String r = label;
 		if (r == null)
@@ -144,6 +182,14 @@ public class Argument {
 	public void setDefaultValue() {
 		value = defaultValue;
 		origin = Origin.DEFAULT;
+	}
+
+	public boolean shouldIgnore() {
+		return isUndefined() && undefinedAction == UndefinedAction.IGNORE;
+	}
+
+	public boolean isUndefined() {
+		return value == null;
 	}
 
 }

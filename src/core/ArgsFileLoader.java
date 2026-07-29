@@ -51,10 +51,7 @@ public class ArgsFileLoader {
 //		} else {
 
 		String arg = ss[0];
-		Argument a = program.getArgByName(arg);
-		if (a == null)
-//			a = program.createArg(arg);
-			throw new RuntimeException("Argumento não encontrado: " + ss[0]);
+		Argument a = program.getOrCreateArg(arg);
 		if (a.origin == null)
 			a.setValue(ss[1].trim(), Origin.ARG_FILE);
 		else

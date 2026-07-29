@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 import core.Argument;
 import core.DBS;
 import core.Macro;
+import core.Argument.UndefinedAction;
 import core.dataset.DataSet;
 import core.dataset.Field;
 import core.dataset.FieldValueSource;
@@ -556,18 +557,9 @@ public class StringConcretizer extends Concretizer {
 		// return contains(sb.getOriginalBuilder(), s);
 	}
 
-	// private boolean contains(StringBuilder sb, String s) {
-	// return Util.contains(sb, s);
-	// }
-
 	private static void replaceIgnoreCase(StringBuilder2 sb, String from, String to) {
 		sb.replaceIgnoreCase(from, to);
 	}
-
-	// private static void replaceIgnoreCase(StringBuilder sb, String from,
-	// String to) {
-	// Util.replace(sb, from, to, false);
-	// }
 
 	private void concretizeFromSavedRecords(StringBuilder2 sql, Context context) {
 		if (context == null)
@@ -808,14 +800,24 @@ public class StringConcretizer extends Concretizer {
 		String[] as = sql.find(regex);
 		for (String placeHolder : as) {
 			String name = extractArgName(placeHolder);
-			Argument a = program.getArgByName(name);
-			if (a == null)
-				a = program.createArg(name);
-
-			String v = Check.coalesce(a.getValue(), "null");
-			replaceIgnoreCase(sql, "@arg[" + a.getName() + "]", v);
+			Argument a = argForConcretization(name);
+			concretizeArgByName(sql, a);
 		}
 
+	}
+
+	private void concretizeArgByName(StringBuilder2 sql, Argument arg) {
+		if (arg == null)
+			return; //foi ignorado
+		
+		String ref = "@arg[" + arg.getName() + "]";
+		if (!containsIgnoreCase(sql, ref))
+			return;
+		if (arg.shouldIgnore()) 
+			return;
+		
+		String v = Check.coalesce(arg.getValue(), "null");
+		replaceIgnoreCase(sql, ref, v);
 	}
 
 	private void concretizeArgsByIndex(StringBuilder2 sql) {
@@ -824,36 +826,55 @@ public class StringConcretizer extends Concretizer {
 				return;
 
 			if (containsIgnoreCase(sql, "@arg[" + i + "]")) {
-				Argument a = program.getArg(i);
-				if (a == null)
-					a = program.createArg(i + ""); // somente neste caso de arg indexado SEM FORNECER ele cria - mas
-													// cria como se fosse nome.
-
-				String v = Check.coalesce(a.getValue(), "null");
-				
-				concretizeArgByIndex(sql, i, v);
+				Argument a = argForConcretization(i + "");
+				concretizeArgByIndex(sql, i, a);
 			}
 		}
 	}
 
-//	private void createArgByIndex(int i, Argument a) {
-//		if (a == null) {
-//			if (createArgs) {
-//				a = program.createArg(i + "");
-//				a = program.createArg(i);
-//			} else
-//				throw new RuntimeException("Argumento " + i + " não encontrado");
-//		}
-////				assertArgIsLoaded(sql, i);
-//	}
-
-	private void concretizeArgByIndex(StringBuilder2 sql, int index, String value) {
+	private void concretizeArgByIndex(StringBuilder2 sql, int index, Argument arg) {
+		if (arg == null)
+			return; //foi ignorado
+		
 		String s = "@arg[" + index + "]";
 
-		if (containsIgnoreCase(sql, s)) {
-			replaceIgnoreCase(sql, s, value);
-		}
+		if (!containsIgnoreCase(sql, s)) 
+			return;
+
+		if (arg.shouldIgnore()) 
+			return;
+		
+		String value = Check.coalesce(arg.getValue(), "null");
+		replaceIgnoreCase(sql, s, value);
 	}
+	
+	public Argument argForConcretization(String name) {
+		Argument a = program.getArgByName(name);
+		if (a != null)
+			return a;
+		
+		UndefinedAction action = program.getUndefinedArgAction();
+		
+		if (action == UndefinedAction.ERROR) 
+			throw new RuntimeException("Não foi definido valor para o argumento " + name);
+
+		if (action == UndefinedAction.IGNORE) 
+			return null;
+
+		a = program.createArg(name);
+		a.setUndefinedAction(action);
+		
+		if (action == UndefinedAction.NULL)
+			return a; //já inicializa com value null
+			
+		if (action == UndefinedAction.ASK)
+			a.requestUser();
+		
+		return a;
+	}
+
+	
+	
 
 	public String concretizeAll(String text, Context context) {
 		if (text == null)

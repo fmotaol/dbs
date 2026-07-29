@@ -350,6 +350,8 @@ public class SavePoint {
 		name = Strings.removeEnd(name, "]");
 
 		Argument a = program.getArgByName(name);
+		if (a == null)
+			throw new RuntimeException("Inconsistência de savepoint: argumento não encontrado: " + name);
 
 		value = value.trim();
 		if (value.equals("$default"))
