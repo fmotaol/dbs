@@ -1269,7 +1269,7 @@ public abstract class Performer implements SlavePerformer, SavePointRestoreable 
 	}
 
 	protected Future<DataSet> asyncQueryDataSet(String sql, Performer invoker, Context context) {
-		Future<DataSet> r = DBS.parallelProcessor().asyncCall(() -> queryDataSet(sql, invoker, context));
+		Future<DataSet> r = DBS.parallelizer().call(() -> queryDataSet(sql, invoker, context));
 		return r;
 	}
 

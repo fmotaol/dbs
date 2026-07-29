@@ -16,7 +16,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import core.Argument.Origin;
-import core.Argument.UndefinedAction;
 import core.SavePoint.DataScope;
 import core.file.FileConnection;
 import core.jdbc.DBProperties;
@@ -39,6 +38,7 @@ import util.Util;
 import util.console.ANSI;
 import util.logical.Assert;
 import util.threads.ParallelProcessor;
+import util.threads.Parallelizer;
 
 public class DBS extends Engine {
 
@@ -72,7 +72,7 @@ public class DBS extends Engine {
 
 	protected StringConcretizer connectionConcretizer = new StringConcretizer(this);
 	
-	private Argument.UndefinedAction undefinedArgAction = Argument.UndefinedAction.ERROR;
+	private Argument.UndefinedAction undefinedArgAction = Argument.UndefinedAction.ASK;
 
 	public Argument.UndefinedAction getUndefinedArgAction() {
 		return undefinedArgAction;
@@ -98,7 +98,7 @@ public class DBS extends Engine {
 			try {
 				mainProgram.execute();
 			} finally {
-				freeParallelProcessor();
+				shutdownParallelizer();
 			}
 		} catch (Throwable e) {
 //			throw new RuntimeException(e);
@@ -244,24 +244,24 @@ public class DBS extends Engine {
 
 	private static int threadPoolSize = 4;
 
-	private static ParallelProcessor parallelProcessor;
+	private static Parallelizer parallelizer;
 
-	private static void freeParallelProcessor() {
-		if (parallelProcessor != null)
-			parallelProcessor.shutdown();
+	private static void shutdownParallelizer() {
+		if (parallelizer != null)
+			parallelizer.shutdown();
 	}
 
-	public static ParallelProcessor parallelProcessor() {
-		if (parallelProcessor == null)
-			parallelProcessor = new ParallelProcessor(threadPoolSize);
-		return parallelProcessor;
+	public static Parallelizer parallelizer() {
+		if (parallelizer == null)
+			parallelizer = new Parallelizer(threadPoolSize);
+		return parallelizer;
 	}
 
 	public static void setThreadPoolSize(int threadPoolSize) {
 		DBS.threadPoolSize = threadPoolSize;
-		if (parallelProcessor != null) {
-			ParallelProcessor old = parallelProcessor;
-			parallelProcessor = new ParallelProcessor(threadPoolSize);
+		if (parallelizer != null) {
+			Parallelizer old = parallelizer;
+			parallelizer = new Parallelizer(threadPoolSize);
 			old.shutdown();
 		}
 	}
@@ -860,9 +860,9 @@ public class DBS extends Engine {
 		return a;
 	}
 	
-	private Argument createArg(int index) {
-		return createArg(index + "");
-	}
+//	private Argument createArg(int index) {
+//		return createArg(index + "");
+//	}
 
 //	private Argument createArg(int index, String value, Origin origin) {
 //		Argument a = createArg(index);
@@ -875,6 +875,14 @@ public class DBS extends Engine {
 			logger = new FileLogger(this, new Date());
 		}
 		return logger;
+	}
+
+	public static void sleep(long sleepTime) {
+		try {
+			Thread.sleep(sleepTime);
+		} catch (InterruptedException e1) {
+			throw new RuntimeException(e1);
+		}
 	}
 
 }

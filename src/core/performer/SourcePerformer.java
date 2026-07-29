@@ -149,7 +149,7 @@ public class SourcePerformer extends Performer implements SavePointRestoreable {
 
 	void iterate(DataSet dataSet, Context invokerContext, boolean async) {
 		if (async) {
-			DBS.parallelProcessor().async(() -> iterate(dataSet, invokerContext));
+			DBS.parallelizer().run(() -> iterate(dataSet, invokerContext));
 		} else {
 			iterate(dataSet, invokerContext);
 		}

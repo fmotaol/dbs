@@ -1,8 +1,12 @@
 package core.jdbc;
 
+import java.sql.SQLException;
+import java.sql.SQLWarning;
 import java.sql.Statement;
 
+import core.DBS;
 import core.performer.DBSConnection;
+import util.threads.Parallelizer;
 
 class WarningChecker {
 
@@ -13,28 +17,56 @@ class WarningChecker {
 	public WarningChecker(JDBCConnection connection, Statement statement) {
 		this.connection = connection;
 		this.statement = statement;
-
-//			ExecutorService service = getWarningExecutorService();
-
-		connection.parallel.run(() -> {
+		Parallelizer par = DBS.parallelizer();
+		par.run(() -> {
 			do {
 				if (this.connection == null)
 					return;
 
-				// System.out.println("Executando...");
-				DBSConnection.sleep(200);
+				DBS.sleep(200);
+			
+				if (par.finished())
+					return;
+				
+				if (!statementIsActive())
+					return;
+				
 				this.check();
 
 			} while (true);
-//					} while (!isReady() && !done);
 		});
 
 	}
 
+	private boolean statementIsActive() {
+		try {
+			return !statement.isClosed();
+		} catch (SQLException e) {
+			return false;
+		}
+	}
+
 	public void check() {
 
-		connection.driverSupport.checkWarnings(statement);
-		// driverSupport.checkWarnings(connection);
+		try {
+			// System.out.println("Checando warnings...");
+			if (statement == null)
+				return;
+
+			SQLWarning w = statement.getWarnings();
+			if (w == null)
+				return;
+
+			while (w != null) {
+				System.out.println(w.getMessage());
+				w = w.getNextWarning();
+			}
+
+			statement.clearWarnings();
+
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
 
 	}
 

@@ -3,7 +3,6 @@ package ext.db;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
-import java.sql.Statement;
 
 import ext.db.db2.DB2DriverSupport;
 import ext.db.pgsql.PgsqlDriverSupport;
@@ -38,30 +37,6 @@ public class DriverSupport {
 		return new DefaultDriverSupport();
 	}
 
-
-	public void checkWarnings(Statement statement) {
-		try {
-			//System.out.println("Checando warnings...");
-			if (statement == null)
-				return;
-			
-			SQLWarning w = statement.getWarnings();
-			if (w == null)
-				return;
-
-			System.out.println(w.getMessage());
-
-			while (w != null) {
-				System.out.println(w.getMessage());
-				w = w.getNextWarning();
-			}
-
-			//statement.clearWarnings();
-
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-		}
-	}
 
 	@Deprecated
 	public void checkWarnings(Connection connection) {

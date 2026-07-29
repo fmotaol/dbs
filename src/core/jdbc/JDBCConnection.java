@@ -25,7 +25,6 @@ import ext.db.DriverSupport;
 import ext.db.db2.DB2Dialet;
 import ext.db.pgsql.PostgreSQLDialet;
 import util.Util;
-import util.threads.Parallelizer;
 
 public class JDBCConnection extends DBSConnection {
 
@@ -38,7 +37,7 @@ public class JDBCConnection extends DBSConnection {
 
 	private Connection connection;
 	
-	Parallelizer parallel = new Parallelizer(2);
+	//Parallelizer parallel = new Parallelizer(2);
 
 	private DBProperties properties;
 
@@ -224,7 +223,7 @@ public class JDBCConnection extends DBSConnection {
 
 	@Override
 	public synchronized Result executeBatch(Batch batch) throws SQLException {
-		Result r = parallel.callAndWait(() -> internalExecuteBatch(batch));
+		Result r = internalExecuteBatch(batch);
 		return r;
 	}
 
@@ -268,8 +267,9 @@ public class JDBCConnection extends DBSConnection {
 	
 	protected Result internalExecuteBatch(Batch batch) throws SQLException {
 		Statement st = createStatementForBatch(batch.getBuffer());
+		int[] is = executeWithWarnings(() -> st.executeBatch(), st);
 		
-		int[] is = st.executeBatch();
+		//int[] is = st.executeBatch();
 		int affectedRows = 0;
 		for (int i : is)
 			if (i >= 0)
@@ -472,7 +472,7 @@ public class JDBCConnection extends DBSConnection {
 		if (sleepTime > 0)
 			Macro.println("Aguardando " + (sleepTime / 1000), " segundos...");
 
-		sleep(sleepTime);
+		DBS.sleep(sleepTime);
 
 		sleepTime = (long) (sleepTime * 1.5) + 1000;
 		if (sleepTime > T_30_MIN)
@@ -557,7 +557,7 @@ public class JDBCConnection extends DBSConnection {
 		
 //		try {
 //
-//			closeExecutorService();
+//			closeParallelizer();
 //
 //		} catch (Throwable e) {
 //			e.printStackTrace();
@@ -579,9 +579,9 @@ public class JDBCConnection extends DBSConnection {
 //	}
 
 	
-    public void closeParallelizer() {
-        if (parallel != null) {
-        	parallel.shutdown();
+//    public void closeParallelizer() {
+//        if (parallel != null) {
+//        	parallel.shutdown();
 //            try {
 //                if (!parallel.awaitTermination(5, TimeUnit.SECONDS)) {
 //                    threadExecutorService.shutdownNow();
@@ -590,7 +590,7 @@ public class JDBCConnection extends DBSConnection {
 //                threadExecutorService.shutdownNow();
 //                Thread.currentThread().interrupt();
 //            }
-        }
-    }
+//        }
+//    }
 
 }
