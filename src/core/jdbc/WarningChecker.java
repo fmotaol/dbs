@@ -33,7 +33,7 @@ class WarningChecker {
 				
 				this.check();
 
-			} while (true);
+			} while (!done);
 		});
 
 	}

@@ -1075,11 +1075,10 @@ public class StringConcretizer extends Concretizer {
 		throw new RuntimeException("ainda não implementado");
 	}
 
-	// public static final String regexCondBlock =
-	// "@(?<type>ifhas|ifhasany)\\{(?<block>(?!@(?:ifhas|ifhasany)\\{)[^}]*)\\}";
-	// public static final String regexCondBlock =
-	// "@(?<type>ifhas|ifhasany)\\{(?<block>[^}]*)\\}";
-	public static final String regexCondBlock = "@(?<type>if\\([^)]*\\)|ifhas|ifhasany)\\{(?<block>[^}]*)\\}";
+	public static final String regexCondBlock_Old = "@(?<type>if\\([^)]*\\)|ifhas|ifhasany)\\{(?<block>[^}]*)\\}";
+	
+	public static final String regexCondBlock = 
+		    "@(?<type>if\\([^)]*\\)|ifhas|ifhasany)\\{(?<ifblock>[^}]*)\\}(?:@else\\{(?<elseblock>[^}]*)\\})?";	
 
 	private static final Pattern patternCondBlock = Pattern.compile(regexCondBlock,
 			Pattern.DOTALL | Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
@@ -1088,13 +1087,11 @@ public class StringConcretizer extends Concretizer {
 
 		sql.replace(patternCondBlock, (matcher) -> {
 			String type = matcher.group("type");
-			String block = matcher.group("block");
-			boolean activate = activateConditionalBlock(type, block, context);
-
-			if (activate)
-				return block;
-			else
-				return "";
+			String ifblock = matcher.group("ifblock");
+			String elseblock = matcher.group("elseblock");
+			if (elseblock == null)
+				elseblock = "";
+			return activatedConditionalBlock(type, ifblock, elseblock, context);
 		});
 
 	}
@@ -1112,31 +1109,35 @@ public class StringConcretizer extends Concretizer {
 		});
 	}
 
-	private boolean activateConditionalBlock(String type, String block, Context context) {
-		StringBuilder2 sb = new StringBuilder2(block);
-		concretizeReferences(sb, context, UndefinedArgAction.NULL); //precisa ser NULL, pra identificar argumentos indefinidos
+	private String activatedConditionalBlock(String type, String ifblock, String elseblock, Context context) {
+		StringBuilder2 ifb = new StringBuilder2(ifblock);
+		concretizeReferences(ifb, context, UndefinedArgAction.NULL); //precisa ser NULL, pra identificar argumentos indefinidos
 
 		if (type.equalsIgnoreCase("ifhas") || type.equalsIgnoreCase("ifhasany")) {
-			List<String> nulls = listRefsByNullCondition(sb.getReplacements(), true, false);
+			List<String> nulls = listRefsByNullCondition(ifb.getReplacements(), true, false);
 			if (nulls.isEmpty())
-				return true; // tanto ifhas quanto ifhasany
+				return ifblock; // tanto ifhas quanto ifhasany
+			
 			// passou daqui, tem refs nulas
 
 			if (type.equalsIgnoreCase("ifhas"))
-				return false;
+				return elseblock;
 			// passou daqui, é ifhasany
 
-			List<String> notNulls = listRefsByNullCondition(sb.getReplacements(), false, true);
-			return !notNulls.isEmpty();
+			List<String> notNulls = listRefsByNullCondition(ifb.getReplacements(), false, true);
+			if (notNulls.isEmpty())
+				return elseblock;
+			else
+				return ifblock;
 		}
 
 		if (type.startsWith("if(")) {
 			String cond = extractIfCondition(type);
 			Boolean b = concretizeAsBoolean(cond, context);
 			if (b != null && b)
-				return true;
+				return ifblock;
 			else
-				return false;
+				return elseblock;
 		}
 
 		throw new RuntimeException("Tipo de bloco condicional não suportado: " + type);

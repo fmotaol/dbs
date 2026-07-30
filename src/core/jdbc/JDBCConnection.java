@@ -165,11 +165,8 @@ public class JDBCConnection extends DBSConnection {
 			PreparedStatement s = prepareStatement(sql);
 			activeStatement = s;
 			
-			//ResultSet rs = parallel.callAndWait(() -> s.executeQuery());
 			ResultSet rs = executeWithWarnings(() -> s.executeQuery(), s);
-			//ResultSet rs = s.executeQuery();
 			r = new JDBCDataSet(rs, s);
-			//warningChecker.finish();
 			
 		} catch (SQLException e) {
 			throw new RuntimeException(e);

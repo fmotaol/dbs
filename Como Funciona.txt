@@ -626,6 +626,17 @@ COMO FUNCIONA:
   e pode ser incluído ou não na consulta final em função da satifação de um determinado critério. O 
   tipo de bloco condicional determinará o critério de ativação do bloco.
 
+  A sintaxe base é do bloco condicional é a seguir:
+  
+  	@<tipo_condicional>{<blocoif>}
+  	
+  Ou
+  
+  	@<tipo_condicional>{<blocoif>}@else{<blocoelse>}
+  	
+  Sendo que <tipo_condicional> pode ser if(<condição>), ifhas ou ifhasany.
+
+
   BLOCO CONDICIONAL IFHAS
 
 
@@ -672,13 +683,13 @@ COMO FUNCIONA:
 
   O bloco condicional IFHASANY funciona da mesma forma que o IFHAS, com uma única diferença que ocorre quando
   existem múltiplas referências (@): enquanto o IFHAS só é ativado se todas as referências internas possuirem
-  valores não-nulos, o IFHASANY é ativado quando pelo menos uma referência é não-nula.
-
+  valores não-nulos, o IFHASANY é ativado quando pelo menos uma referência é não-nula. 
+  
   Exemplo:
 
-  select * from funcionario
-  where true
-    @ifhasany{and data_admissao > '@arg[adm_inicio]' and data_admissao < '@arg[adm_final]'}
+	  select * from funcionario
+	  where true
+	    @ifhasany{and data_admissao > '@arg[adm_inicio]' and data_admissao < '@arg[adm_final]'}
 
   A diferença neste caso está no segundo bloco: quando apenas uma das datas é fornecida (adm_inicio e 
   adm_final), o bloco IFHASANY é ativado, enquanto um bloco do tipo IFHAS não seria.
@@ -690,7 +701,7 @@ COMO FUNCIONA:
   IF é um tipo de bloco condicional que depende de uma condição adicional de valor booleano, para que o 
   seu conteúdo seja ativado. A definição deste tipo de bloco é ilustrada a seguir: 
 
-    @if(<condição>){  <conteúdo do bloco>  } 
+	    @if(<condição>){  <conteúdo do bloco>  } 
 
   No caso, ele dependerá de um resultado booleano no lugar de <condição> - que pode ser, inclusive, uma 
   referência (@). Entretanto, esta referência deverá ser do tipo booleana (true, false ou null). Caso 
@@ -706,10 +717,19 @@ COMO FUNCIONA:
          data_nascimento
   from usuario
 
-
   Neste caso, a expressão "password as senha," passa a ser condicionalmente exibida em função da 
   variável booleana @incluirsenha.
 
+  CLÁUSULA ELSE
+  
+  Opcionalmente, é em todos os tipos de bloco condicional, é permitida a inclusão de um bloco SQL
+    associado à cláusula else, conforme exemplo a seguir:
+
+  select id, nome, matricula,
+	 login,
+	 @if(@possuisenha){password as senha}@else{'USUÁRIO SEM SENHA' as senha}, 
+         data_nascimento
+  from usuario
 
   SUBQUERIES
   
