@@ -3,9 +3,9 @@ package util;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import core.Argument;
-import core.Argument.Origin;
 import core.DBS;
+import core.args.Argument;
+import core.args.Argument.Origin;
 
 public class FileUtil {
 

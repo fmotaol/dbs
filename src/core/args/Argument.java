@@ -1,5 +1,6 @@
-package core;
+package core.args;
 
+import core.DBS;
 import util.Util;
 import util.logical.Check;
 
@@ -21,38 +22,14 @@ public class Argument {
 
 	public Origin origin = null;
 
-	public UndefinedAction undefinedAction = UndefinedAction.ERROR;
-
-	public UndefinedAction getUndefinedAction() {
-		return undefinedAction;
-	}
-
-	public enum UndefinedAction {
-		ERROR, IGNORE, NULL, ASK;
-
-		static UndefinedAction parse(String text) {
-			if (text.equalsIgnoreCase("ERROR"))
-				return ERROR;
-			if (text.equalsIgnoreCase("IGNORE"))
-				return IGNORE;
-			if (text.equalsIgnoreCase("NULL"))
-				return NULL;
-			if (text.equalsIgnoreCase("ASK"))
-				return ASK;
-			throw new RuntimeException("Opção inválida: " + text);
-		}
-	};
+	public static UndefinedArgAction undefinedAction = UndefinedArgAction.ERROR;
 
 	public Argument(DBS program) {
 		this.program = program;
 	}
 
-	public void setUndefinedAction(UndefinedAction action) {
-		this.undefinedAction = action;
-	}
-
-	public void setUndefinedValueAction(String action) {
-		this.undefinedAction = UndefinedAction.parse(action);
+	public static void setUndefinedAction(String action) {
+		undefinedAction = UndefinedArgAction.parse(action);
 	}
 	
 	public int index() {
@@ -70,7 +47,7 @@ public class Argument {
 		return r;
 	}
 
-	public void obtainArg() {
+	public void obtainArg(UndefinedArgAction undefinedAction) {
 		if (useDefault) {
 			if (defaultValue == null)
 				throw new RuntimeException("Não foi definido valor default para o argumento " + name);
@@ -130,12 +107,16 @@ public class Argument {
 		}
 	}
 
-	public String getValue() {
+	public String getValue(UndefinedArgAction undefinedAction) {
 		if (value == null)
-			obtainArg();
+			obtainArg(undefinedAction);
 		return value;
 	}
 
+	public String getValue() {
+		return getValue(undefinedAction);
+	}	
+	
 	public String getName() {
 		return name;
 	}
@@ -185,7 +166,7 @@ public class Argument {
 	}
 
 	public boolean shouldIgnore() {
-		return isUndefined() && undefinedAction == UndefinedAction.IGNORE;
+		return isUndefined() && undefinedAction == UndefinedArgAction.IGNORE;
 	}
 
 	public boolean isUndefined() {

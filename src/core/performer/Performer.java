@@ -11,12 +11,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 
-import core.Argument;
 import core.DBS;
 import core.Device;
 import core.Macro;
 import core.SavePoint;
 import core.SavePointRestoreable;
+import core.args.Argument;
+import core.args.UndefinedArgAction;
 import core.dataset.DataSet;
 import core.dataset.Record;
 import core.events.Event;
@@ -1779,7 +1780,7 @@ public abstract class Performer implements SlavePerformer, SavePointRestoreable 
 			if (r.length() > 1)
 				r.append(", ");
 
-			String value = a.getValue();
+			String value = a.getValue(UndefinedArgAction.NULL);
 			if ((value != null) && (value.length() > 40))
 				value = value.substring(0, 40) + "(...)";
 			r.append(a.getName() + "=" + value);

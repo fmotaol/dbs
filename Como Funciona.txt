@@ -629,10 +629,10 @@ COMO FUNCIONA:
   BLOCO CONDICIONAL IFHAS
 
 
-  IFHAS é um tipo de bloco condicional cuja ativação depende da existência de valores nas referências 
-   (@) do conteúdo do bloco. Isto significa que o bloco será automaticamente ativado se todos os argumentos,
-  campos ou demais referências possuírem valor. Caso contrário, o bloco é automaticamente removido do 
-  código SQL.
+  IFHAS é um tipo de bloco condicional cuja ativação depende da existência de valores concretos nas 
+    referências (@) do conteúdo do bloco. Isto significa que o bloco será incluído no código SQL final
+    apenas se todos os argumentos, campos ou demais referências possuírem valor definido e não-nulo. 
+    Caso contrário, o bloco é automaticamente removido do código.
 
   A sintaxe do bloco IFHAS é composta pelo uso da diretiva @ifhas seguida de chaves {}:
 
@@ -1508,6 +1508,7 @@ COMO FUNCIONA:
         NULL: A referência será substituída por "null"; 
         IGNORE: A substituição da referência será ignorada; 
         ASK: A execução será interrompida, e o valor do argumento será perguntado ao usuário.
+	  Quando não informada, a opção padrão selecionada será ASK.
 
     $DISABLE_COMMANDS: permite desabilitar a execução efetiva dos comandos de todos os #target  
     	

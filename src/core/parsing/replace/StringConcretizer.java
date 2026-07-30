@@ -6,10 +6,10 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import core.Argument;
 import core.DBS;
 import core.Macro;
-import core.Argument.UndefinedAction;
+import core.args.Argument;
+import core.args.UndefinedArgAction;
 import core.dataset.DataSet;
 import core.dataset.Field;
 import core.dataset.FieldValueSource;
@@ -686,7 +686,7 @@ public class StringConcretizer extends Concretizer {
 		concretizeExpressionTranslation(sql);
 		concretizeFromSavedRecords(sql, context);
 		concretizeConditionalBlocks(sql, context);
-		concretizeReferences(sql, context);
+		concretizeReferences(sql, context, Argument.undefinedAction);
 		if (performer != null)
 			if (performer.clearUnknownVarReferences())
 				clearUnkownVarReferences(sql);
@@ -708,10 +708,10 @@ public class StringConcretizer extends Concretizer {
 		}
 	}
 
-	private void concretizeReferences(StringBuilder2 sql, Context context) {
+	private void concretizeReferences(StringBuilder2 sql, Context context, UndefinedArgAction undefinedArgAction) {
 		concretizeInvokerData(sql, context);
 		concretizeTableAttributes(sql, context);
-		concretizeArgs(sql, true);
+		concretizeArgs(sql, undefinedArgAction);
 		concretizeVariables(sql, engine);
 		concretizeSystemVars(sql, engine);
 	}
@@ -765,17 +765,17 @@ public class StringConcretizer extends Concretizer {
 		return Util.containsRegex(sb.getOriginalBuilder(), regex);
 	}
 
-	private void concretizeArgs(StringBuilder2 sql, boolean requestIfNotFound) {
+	private void concretizeArgs(StringBuilder2 sql, UndefinedArgAction action) {
 
 		if (!containsIgnoreCase(sql, "@arg"))
 			return;
 
-		concretizeArgsByIndex(sql);
+		concretizeArgsByIndex(sql, action);
 
 		if (!containsIgnoreCase(sql, "@arg"))
 			return;
 
-		concretizeArgsByName(sql);
+		concretizeArgsByName(sql, action);
 
 	}
 
@@ -795,86 +795,62 @@ public class StringConcretizer extends Concretizer {
 		throw new RuntimeException("Argumento mal-formado: " + argPlaceHolder);
 	}
 
-	private void concretizeArgsByName(StringBuilder2 sql) {
+	private void concretizeArgsByName(StringBuilder2 sql, UndefinedArgAction action) {
 		final String regex = "@arg\\[[a-zA-Z0-9._ ]+\\]";
 		String[] as = sql.find(regex);
 		for (String placeHolder : as) {
 			String name = extractArgName(placeHolder);
-			Argument a = argForConcretization(name);
-			concretizeArgByName(sql, a);
+			Argument a = argForConcretization(name, action);
+			concretizeArgByName(sql, action, a);
 		}
 
 	}
 
-	private void concretizeArgByName(StringBuilder2 sql, Argument arg) {
+	private void concretizeArgByName(StringBuilder2 sql, UndefinedArgAction action, Argument arg) {
 		if (arg == null)
-			return; //foi ignorado
-		
+			return; // foi ignorado
+
 		String ref = "@arg[" + arg.getName() + "]";
 		if (!containsIgnoreCase(sql, ref))
 			return;
-		if (arg.shouldIgnore()) 
+		if (arg.shouldIgnore())
 			return;
-		
-		String v = Check.coalesce(arg.getValue(), "null");
+
+		String v = Check.coalesce(arg.getValue(action), "null");
 		replaceIgnoreCase(sql, ref, v);
 	}
 
-	private void concretizeArgsByIndex(StringBuilder2 sql) {
+	private void concretizeArgsByIndex(StringBuilder2 sql, UndefinedArgAction action) {
 		for (int i = 1; i <= 50; i++) {
 			if (!containsIgnoreCase(sql, "@arg")) // evita ir até o fim do loop desnecessariamente
 				return;
 
 			if (containsIgnoreCase(sql, "@arg[" + i + "]")) {
-				Argument a = argForConcretization(i + "");
-				concretizeArgByIndex(sql, i, a);
+				Argument a = argForConcretization(i + "", action);
+				concretizeArgByIndex(sql, i, action, a);
 			}
 		}
 	}
 
-	private void concretizeArgByIndex(StringBuilder2 sql, int index, Argument arg) {
+	private void concretizeArgByIndex(StringBuilder2 sql, int index, UndefinedArgAction action, Argument arg) {
 		if (arg == null)
-			return; //foi ignorado
-		
+			return; // foi ignorado
+
 		String s = "@arg[" + index + "]";
 
-		if (!containsIgnoreCase(sql, s)) 
+		if (!containsIgnoreCase(sql, s))
 			return;
 
-		if (arg.shouldIgnore()) 
+		if (arg.shouldIgnore())
 			return;
-		
-		String value = Check.coalesce(arg.getValue(), "null");
+
+		String value = Check.coalesce(arg.getValue(action), "null");
 		replaceIgnoreCase(sql, s, value);
 	}
-	
-	public Argument argForConcretization(String name) {
-		Argument a = program.getArgByName(name);
-		if (a != null)
-			return a;
-		
-		UndefinedAction action = program.getUndefinedArgAction();
-		
-		if (action == UndefinedAction.ERROR) 
-			throw new RuntimeException("Não foi definido valor para o argumento " + name);
 
-		if (action == UndefinedAction.IGNORE) 
-			return null;
-
-		a = program.createArg(name);
-		a.setUndefinedAction(action);
-		
-		if (action == UndefinedAction.NULL)
-			return a; //já inicializa com value null
-			
-		if (action == UndefinedAction.ASK)
-			a.requestUser();
-		
-		return a;
+	public Argument argForConcretization(String name, UndefinedArgAction action) {
+		return UndefinedArgAction.argumentFromAction(program, name, action);
 	}
-
-	
-	
 
 	public String concretizeAll(String text, Context context) {
 		if (text == null)
@@ -948,7 +924,7 @@ public class StringConcretizer extends Concretizer {
 		String s = text;
 
 		StringBuilder2 sb = new StringBuilder2(s);
-		concretizeArgs(sb, true);
+		concretizeArgs(sb, Argument.undefinedAction);
 		s = sb.toString();
 		sb.setLength(0);
 		sb.trimToSize();
@@ -1099,10 +1075,12 @@ public class StringConcretizer extends Concretizer {
 		throw new RuntimeException("ainda não implementado");
 	}
 
-	//public static final String regexCondBlock = "@(?<type>ifhas|ifhasany)\\{(?<block>(?!@(?:ifhas|ifhasany)\\{)[^}]*)\\}";
-	//public static final String regexCondBlock = "@(?<type>ifhas|ifhasany)\\{(?<block>[^}]*)\\}";
+	// public static final String regexCondBlock =
+	// "@(?<type>ifhas|ifhasany)\\{(?<block>(?!@(?:ifhas|ifhasany)\\{)[^}]*)\\}";
+	// public static final String regexCondBlock =
+	// "@(?<type>ifhas|ifhasany)\\{(?<block>[^}]*)\\}";
 	public static final String regexCondBlock = "@(?<type>if\\([^)]*\\)|ifhas|ifhasany)\\{(?<block>[^}]*)\\}";
-	
+
 	private static final Pattern patternCondBlock = Pattern.compile(regexCondBlock,
 			Pattern.DOTALL | Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
 
@@ -1122,37 +1100,36 @@ public class StringConcretizer extends Concretizer {
 	}
 
 	private List<String> listRefsByNullCondition(Map<String, String> valByRef, boolean ifNull, boolean ifNotNull) {
-		return Colls.filter(valByRef.keySet(), 
-			(k) -> {
-				String v = valByRef.get(k);
-				
-				boolean isNull = (v == null || "null".equals(v));
-				if (isNull) {
-					return ifNull;
-				} else {
-					return ifNotNull;
-				}
-			});
+		return Colls.filter(valByRef.keySet(), (k) -> {
+			String v = valByRef.get(k);
+
+			boolean isNull = (v == null || "null".equals(v));
+			if (isNull) {
+				return ifNull;
+			} else {
+				return ifNotNull;
+			}
+		});
 	}
-	
+
 	private boolean activateConditionalBlock(String type, String block, Context context) {
 		StringBuilder2 sb = new StringBuilder2(block);
-		concretizeReferences(sb, context);
-		
+		concretizeReferences(sb, context, UndefinedArgAction.NULL); //precisa ser NULL, pra identificar argumentos indefinidos
+
 		if (type.equalsIgnoreCase("ifhas") || type.equalsIgnoreCase("ifhasany")) {
-			List<String> nulls = listRefsByNullCondition(sb.getReplacements(), true, false); 
+			List<String> nulls = listRefsByNullCondition(sb.getReplacements(), true, false);
 			if (nulls.isEmpty())
-				return true; //tanto ifhas quanto ifhasany
-			//passou daqui, tem refs nulas
-			
+				return true; // tanto ifhas quanto ifhasany
+			// passou daqui, tem refs nulas
+
 			if (type.equalsIgnoreCase("ifhas"))
 				return false;
-			//passou daqui, é ifhasany
-			
+			// passou daqui, é ifhasany
+
 			List<String> notNulls = listRefsByNullCondition(sb.getReplacements(), false, true);
-			return !notNulls.isEmpty();			
+			return !notNulls.isEmpty();
 		}
-		
+
 		if (type.startsWith("if(")) {
 			String cond = extractIfCondition(type);
 			Boolean b = concretizeAsBoolean(cond, context);
@@ -1161,14 +1138,14 @@ public class StringConcretizer extends Concretizer {
 			else
 				return false;
 		}
-		
+
 		throw new RuntimeException("Tipo de bloco condicional não suportado: " + type);
 	}
 
 	private boolean concretizeAsBoolean(String booleanRef, Context context) {
 		StringBuilder2 sb = new StringBuilder2(booleanRef);
-		concretizeReferences(sb, context);
-		Boolean b = parseAsBoolean(sb); 
+		concretizeReferences(sb, context, Argument.undefinedAction);
+		Boolean b = parseAsBoolean(sb);
 		return b;
 	}
 
@@ -1180,17 +1157,17 @@ public class StringConcretizer extends Concretizer {
 	}
 
 	private String extractIfCondition(String type) {
-	    if (type == null || !type.startsWith("if(")) {
-	        return "";
-	    }
-	    int start = type.indexOf('(');
-	    int end = type.lastIndexOf(')');
-	    if (start == -1 || end == -1 || start >= end) {
-	        return "";
-	    }
-	    return type.substring(start + 1, end);
+		if (type == null || !type.startsWith("if(")) {
+			return "";
+		}
+		int start = type.indexOf('(');
+		int end = type.lastIndexOf(')');
+		if (start == -1 || end == -1 || start >= end) {
+			return "";
+		}
+		return type.substring(start + 1, end);
 	}
-	    
+
 	public static void checkVarNameSyntax(String name) {
 		if (!isVarNameSyntax(name))
 			throw new RuntimeException("Sintaxe inválida para identificador ou nome de variável");

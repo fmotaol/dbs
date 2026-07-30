@@ -11,7 +11,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import core.Argument.Origin;
+import core.args.Argument;
+import core.args.Argument.Origin;
 import core.dataset.DataSet;
 import core.dataset.Record;
 import core.performer.Performer;
@@ -171,7 +172,7 @@ public class Macro extends Engine implements Device, SavePointRestoreable {
 			return;
 		}
 		if (var.equalsIgnoreCase("UNDEFINED_ARG_ACTION")) {
-			program.setUndefinedArgAction(Argument.UndefinedAction.parse(value));
+			Argument.setUndefinedAction(value);
 			return;
 		}
 

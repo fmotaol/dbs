@@ -1,11 +1,12 @@
-package core;
+package core.args;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import core.Argument.Origin;
+import core.DBS;
+import core.args.Argument.Origin;
 
 public class ArgsFileLoader {
 

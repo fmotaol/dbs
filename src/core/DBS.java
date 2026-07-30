@@ -15,8 +15,10 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import core.Argument.Origin;
 import core.SavePoint.DataScope;
+import core.args.ArgsFileLoader;
+import core.args.Argument;
+import core.args.Argument.Origin;
 import core.file.FileConnection;
 import core.jdbc.DBProperties;
 import core.jdbc.JDBCConnection;
@@ -37,7 +39,6 @@ import util.Strings;
 import util.Util;
 import util.console.ANSI;
 import util.logical.Assert;
-import util.threads.ParallelProcessor;
 import util.threads.Parallelizer;
 
 public class DBS extends Engine {
@@ -72,16 +73,6 @@ public class DBS extends Engine {
 
 	protected StringConcretizer connectionConcretizer = new StringConcretizer(this);
 	
-	private Argument.UndefinedAction undefinedArgAction = Argument.UndefinedAction.ASK;
-
-	public Argument.UndefinedAction getUndefinedArgAction() {
-		return undefinedArgAction;
-	}
-
-	public void setUndefinedArgAction(Argument.UndefinedAction action) {
-		this.undefinedArgAction = action;
-	}
-
 	public DBS(String[] args) {
 		mainArgs = args;
 		obtainDBSFile();
@@ -849,7 +840,6 @@ public class DBS extends Engine {
 		
 		Argument a = new Argument(this);
 		a.setName(name);
-		a.setUndefinedAction(undefinedArgAction);
 		arguments.add(a);
 		return a;
 	}
