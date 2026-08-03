@@ -35,6 +35,6 @@ public class TreeConcretizer extends Concretizer {
 	
 	static final String regexMultiOp = MultiOpTranslator.regexMultiOp;
 
-	static final String regexSubQuery = StringConcretizer.regexSubQuery;
+//	static final String regexSubQuery = StringConcretizer.regexSubQuery;
 
 }

@@ -9,6 +9,8 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import util.Util;
+
 public class StringUnit implements StringItem {
 
 	private Map<String, String> replacements = new HashMap<>(); 
@@ -130,6 +132,11 @@ public class StringUnit implements StringItem {
 	public void replaceFirstIgnoreCase(String from, String to) {
 		replaceIgnoreCase(from, to, true);
 	}
+
+
+	public void replaceFirst(String from, String to) {
+		Util.replaceFirst(original, from, to);
+	}	
 
 	private void replaceIgnoreCase(final String target, String replacement, final boolean onlyFirst) {
 		int idx = 0;

@@ -48,6 +48,8 @@ public class StringConcretizer extends Concretizer {
 
 	private Language language;
 
+	private TempBlockConcretizer subBlock = new TempBlockConcretizer(this);
+
 //	public boolean createArgs = false;
 
 	public void setLanguage(Language language) {
@@ -71,14 +73,6 @@ public class StringConcretizer extends Concretizer {
 		if (language == null)
 			language = new DefaultLanguage();
 		return language;
-	}
-
-	private void concretizeExpressionTranslation(StringBuilder2 sql) {
-		if (!containsIgnoreCase(sql, "@$"))
-			return;
-
-		if (containsIgnoreCase(sql, "@$MULTIOP{"))
-			MultiOpTranslator.translate(sql);
 	}
 
 	private void concretizeFieldsByAliasAndIndex(StringBuilder2 sql, String prefix, Record record, Context context) {
@@ -683,15 +677,19 @@ public class StringConcretizer extends Concretizer {
 
 	private void concretizeAll(StringBuilder2 sql, Context context) {
 		concretizeFileName(sql, context);
-		concretizeExpressionTranslation(sql);
+		concretizeSubBlocks(sql, performer, context);
 		concretizeFromSavedRecords(sql, context);
-		concretizeConditionalBlocks(sql, context);
 		concretizeReferences(sql, context, Argument.undefinedAction);
 		if (performer != null)
 			if (performer.clearUnknownVarReferences())
 				clearUnkownVarReferences(sql);
-		concretizeSubQuery(sql, performer, context);
 
+	}
+
+	private void concretizeSubBlocks(StringBuilder2 sql, Performer performer, Context context) {
+		if (!concretizeSubBlocks)
+			return;
+		subBlock.concretizeAll(sql, performer, context);
 	}
 
 	private void concretizeFileName(StringBuilder2 sql, Context context) {
@@ -708,7 +706,7 @@ public class StringConcretizer extends Concretizer {
 		}
 	}
 
-	private void concretizeReferences(StringBuilder2 sql, Context context, UndefinedArgAction undefinedArgAction) {
+	void concretizeReferences(StringBuilder2 sql, Context context, UndefinedArgAction undefinedArgAction) {
 		concretizeInvokerData(sql, context);
 		concretizeTableAttributes(sql, context);
 		concretizeArgs(sql, undefinedArgAction);
@@ -889,7 +887,7 @@ public class StringConcretizer extends Concretizer {
 
 	private StringConcretizer cascadeConcretizer = null;
 
-	private boolean concretizeSubqueries = true;
+	private boolean concretizeSubBlocks = true;
 
 	private StringConcretizer cascadeConcretizer(String refSymbol) {
 		if (cascadeConcretizer == null)
@@ -901,7 +899,7 @@ public class StringConcretizer extends Concretizer {
 		StringConcretizer r = new StringConcretizer(engine, performer, false);
 		r.refSymbol = refSymbol;
 		r.replPrefix = this.refSymbol;
-		r.concretizeSubqueries = false;
+		r.concretizeSubBlocks = false;
 		return r;
 	}
 
@@ -932,129 +930,7 @@ public class StringConcretizer extends Concretizer {
 		return s;
 	}
 
-	public static final String regexSubQuery = "@query(=(?<conn>.*))?"
-			+ "\\{(?<sql>[^\\}]*)\\}(\\[(?<qfield>.*)\\])?(::(native|\\.))?" + "|@previousquery(\\[(?<pqfield>.*)\\])?";
-
-	private static final Pattern patternSubQuery = Pattern.compile(regexSubQuery,
-			Pattern.DOTALL | Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
-
-	private void concretizeSubQuery(StringBuilder2 sql, Performer performer, Context context) {
-		if (!concretizeSubqueries)
-			return;
-		if (performer == null)
-			return;
-		if (!sql.contains("@query") && !sql.contains("@previousquery"))
-			return;
-
-		String field = null;
-
-		Matcher matcher = patternSubQuery.matcher(sql.toString());
-
-		boolean hasPreviousQuery = false;
-
-		// Record record = null;
-		DataSet ds = null;
-
-		while (matcher.find()) {
-
-			String pattern = matcher.group(0);
-			String lowerPattern = pattern.toLowerCase();
-
-			if (lowerPattern.startsWith("@query=") || lowerPattern.startsWith("@query{")) {
-
-				String subSQL = matcher.group("sql");
-				String connId = Util.ifNull(matcher.group("conn"), performer.getConcreteConnectionId(context));
-
-				ds = performer.subquery(connId, subSQL, performer);
-				performer.setPreviousSubqueryResult(ds);
-
-//				previousQueryResult = queryResult;
-				hasPreviousQuery = true;
-
-				String f = matcher.group("qfield");
-				if (f != null)
-					field = f;
-
-			} else if (pattern.startsWith("@previousquery")) {
-
-				if (!hasPreviousQuery)
-					throw new RuntimeException("Não existe query referida para @previousquery");
-
-				String f = matcher.group("pqfield");
-				if (f != null)
-					field = f;
-
-				ds = performer.getPreviousSubqueryResult();
-				ds.beforeFirst();
-//				if (psr != null)
-//					field = psr.getField(fieldId);
-			}
-
-			boolean isNative = lowerPattern.endsWith("::native") || lowerPattern.endsWith("::.");
-
-			String rowSep = performer.getSubqueryRowSeparator();
-			String colSep = performer.getSubqueryColumnSeparator();
-			concretizeSubqueryResult(sql, pattern, ds, field, isNative, rowSep, colSep);
-
-		}
-
-	}
-
-	private void concretizeSubqueryResult(StringBuilder2 sql, String pattern, DataSet result, String field,
-			boolean isNative, String rowSeparator, String colSeparator) {
-		// field = null >> todos os campos
-		int cols = 1;
-		if (field == null)
-			cols = result.getFieldCount();
-
-		boolean tupleRequiresParenthesis = (cols > 1) && (rowSeparator.trim().equals(colSeparator.trim()));
-
-		int rows = 0;
-
-		String r = "";
-
-		while (result.next()) {
-			rows++;
-
-			if (tupleRequiresParenthesis) {
-				if (rows == 2)
-					r = "(" + r + ")";
-			}
-
-			Record record = result.currentRecord();
-			String s = getSubqueryFieldValues(record, field, isNative, colSeparator);
-			if (tupleRequiresParenthesis) {
-				if (rows >= 2)
-					s = "(" + s + ")";
-			}
-
-			if (!"".equals(r))
-				r += rowSeparator;
-
-			r += s;
-		}
-
-		replaceFirst(sql, pattern, r);
-	}
-
-	private String getSubqueryFieldValues(Record record, String field, boolean isNative, String colSeparator) {
-		if (field != null) {
-			Field f = record.getField(field);
-			String r = getFieldValue(record, f, isNative, !isNative);
-			return r;
-		} else {
-			String r = "";
-			for (Field f : record.getFields()) {
-				String s = getFieldValue(record, f, isNative, !isNative);
-				if (!"".equals(r))
-					r += colSeparator;
-				r += s;
-			}
-			return r;
-		}
-	}
-
-	private String getFieldValue(Record record, Field field, boolean isNative, boolean forSQL) {
+	String getFieldValue(Record record, Field field, boolean isNative, boolean forSQL) {
 		String r;
 
 		if (record != null) {
@@ -1069,81 +945,7 @@ public class StringConcretizer extends Concretizer {
 		return r;
 	}
 
-	private static String getSubqueryFieldValues(DataSet result, String field, String colSeparator) {
-		// TODO Auto-generated method stub
-
-		throw new RuntimeException("ainda não implementado");
-	}
-
-	public static final String regexCondBlock_Old = "@(?<type>if\\([^)]*\\)|ifhas|ifhasany)\\{(?<block>[^}]*)\\}";
-	
-	public static final String regexCondBlock = 
-		    "@(?<type>if\\([^)]*\\)|ifhas|ifhasany)\\{(?<ifblock>[^}]*)\\}(?:@else\\{(?<elseblock>[^}]*)\\})?";	
-
-	private static final Pattern patternCondBlock = Pattern.compile(regexCondBlock,
-			Pattern.DOTALL | Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
-
-	private void concretizeConditionalBlocks(StringBuilder2 sql, Context context) {
-
-		sql.replace(patternCondBlock, (matcher) -> {
-			String type = matcher.group("type");
-			String ifblock = matcher.group("ifblock");
-			String elseblock = matcher.group("elseblock");
-			if (elseblock == null)
-				elseblock = "";
-			return activatedConditionalBlock(type, ifblock, elseblock, context);
-		});
-
-	}
-
-	private List<String> listRefsByNullCondition(Map<String, String> valByRef, boolean ifNull, boolean ifNotNull) {
-		return Colls.filter(valByRef.keySet(), (k) -> {
-			String v = valByRef.get(k);
-
-			boolean isNull = (v == null || "null".equals(v));
-			if (isNull) {
-				return ifNull;
-			} else {
-				return ifNotNull;
-			}
-		});
-	}
-
-	private String activatedConditionalBlock(String type, String ifblock, String elseblock, Context context) {
-		StringBuilder2 ifb = new StringBuilder2(ifblock);
-		concretizeReferences(ifb, context, UndefinedArgAction.NULL); //precisa ser NULL, pra identificar argumentos indefinidos
-
-		if (type.equalsIgnoreCase("ifhas") || type.equalsIgnoreCase("ifhasany")) {
-			List<String> nulls = listRefsByNullCondition(ifb.getReplacements(), true, false);
-			if (nulls.isEmpty())
-				return ifblock; // tanto ifhas quanto ifhasany
-			
-			// passou daqui, tem refs nulas
-
-			if (type.equalsIgnoreCase("ifhas"))
-				return elseblock;
-			// passou daqui, é ifhasany
-
-			List<String> notNulls = listRefsByNullCondition(ifb.getReplacements(), false, true);
-			if (notNulls.isEmpty())
-				return elseblock;
-			else
-				return ifblock;
-		}
-
-		if (type.startsWith("if(")) {
-			String cond = extractIfCondition(type);
-			Boolean b = concretizeAsBoolean(cond, context);
-			if (b != null && b)
-				return ifblock;
-			else
-				return elseblock;
-		}
-
-		throw new RuntimeException("Tipo de bloco condicional não suportado: " + type);
-	}
-
-	private boolean concretizeAsBoolean(String booleanRef, Context context) {
+	boolean concretizeAsBoolean(String booleanRef, Context context) {
 		StringBuilder2 sb = new StringBuilder2(booleanRef);
 		concretizeReferences(sb, context, Argument.undefinedAction);
 		Boolean b = parseAsBoolean(sb);
@@ -1155,18 +957,6 @@ public class StringConcretizer extends Concretizer {
 		if (s.equals("null"))
 			return null;
 		return Boolean.parseBoolean(s);
-	}
-
-	private String extractIfCondition(String type) {
-		if (type == null || !type.startsWith("if(")) {
-			return "";
-		}
-		int start = type.indexOf('(');
-		int end = type.lastIndexOf(')');
-		if (start == -1 || end == -1 || start >= end) {
-			return "";
-		}
-		return type.substring(start + 1, end);
 	}
 
 	public static void checkVarNameSyntax(String name) {

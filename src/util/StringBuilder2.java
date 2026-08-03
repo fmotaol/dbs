@@ -120,6 +120,10 @@ public class StringBuilder2 {
 		replaceIgnoreCase(from, to, false);
 	}
 
+	public void replaceFirst(String from, String to) {
+		Util.replaceFirst(original, from, to);
+	}	
+
 	public void replaceFirstIgnoreCase(String from, String to) {
 		replaceIgnoreCase(from, to, true);
 	}
@@ -236,5 +240,6 @@ public class StringBuilder2 {
 
 	public List<String> getExclusions() {
 	    return Collections.unmodifiableList(exclusions);
-	}	
+	}
+
 }
