@@ -7,11 +7,11 @@ import java.util.function.Predicate;
 import core.DBS;
 import core.Device;
 import core.Macro;
-import core.SavePoint;
 import core.dataset.DataSet;
 import core.dataset.Record;
 import core.jdbc.JDBCConnection;
 import core.parsing.CommandParser;
+import core.savepoint.SavePoint;
 import util.logical.Assert;
 
 public class TargetPerformer extends Performer implements SimplePerformer {
@@ -89,7 +89,7 @@ public class TargetPerformer extends Performer implements SimplePerformer {
 		setAsDone();
 		registerSavePointAsDone();
 
-		setAsDone(false); // para reinício
+		setAsDone(false); // para reinï¿½cio
 
 		delay(delayTimeAfter);
 
@@ -307,7 +307,7 @@ public class TargetPerformer extends Performer implements SimplePerformer {
 		if (invoker != null)
 			invoker.setRepeat(repeat);
 		else
-			throw new RuntimeException("Impossível atribuir repetição. Nenhum source invocou este target.");
+			throw new RuntimeException("Impossï¿½vel atribuir repetiï¿½ï¿½o. Nenhum source invocou este target.");
 	}
 
 	// @Override
@@ -499,7 +499,7 @@ public class TargetPerformer extends Performer implements SimplePerformer {
 
 			// batch.appendConditionalAction(sql, aif, anf, ae);
 
-			throw new RuntimeException("Uso de batch não é permitido com cláusulas condicionais");
+			throw new RuntimeException("Uso de batch nï¿½o ï¿½ permitido com clï¿½usulas condicionais");
 	}
 
 	@Override
@@ -512,7 +512,7 @@ public class TargetPerformer extends Performer implements SimplePerformer {
 
 	private void assignNewBatch() {
 		if (isDynamicConnection())
-			throw new RuntimeException("Uso de comandos em lote (batch) não permitido para conexões dinâmicas");
+			throw new RuntimeException("Uso de comandos em lote (batch) nï¿½o permitido para conexï¿½es dinï¿½micas");
 
 		if (currentBatch == null)
 			currentBatch = getConnection().createBatch(this);

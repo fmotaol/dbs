@@ -3,9 +3,9 @@ package core.performer;
 import java.util.concurrent.Future;
 
 import core.Device;
-import core.SavePoint;
 import core.dataset.DataSet;
 import core.events.Event;
+import core.savepoint.SavePoint;
 
 public abstract class ProxyPerformer implements SlavePerformer {
 

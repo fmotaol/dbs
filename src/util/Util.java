@@ -235,6 +235,7 @@ public class Util {
 			sb.append(s2);
 	}
 
+	@Deprecated
 	public static void appendIfNotEmpty(final StringBuilder2 sb, final String separator, final String s2) {
 		if (sb.length() > 0)
 			sb.append(separator);
@@ -389,7 +390,7 @@ public class Util {
 	}
 
 	public static void confirm(boolean condition) {
-		confirm(condition, "Condição violada");
+		confirm(condition, "Condiï¿½ï¿½o violada");
 	}
 
 	public static Boolean compare(String operand1, String operator, String operand2) {
@@ -404,7 +405,7 @@ public class Util {
 			return (!operand1.equals(operand2));
 		}
 
-		throw new RuntimeException("Operadores <, <=, >= e > não são aplicáveis aos operandos " + operand1 + " e " + operand2);
+		throw new RuntimeException("Operadores <, <=, >= e > nï¿½o sï¿½o aplicï¿½veis aos operandos " + operand1 + " e " + operand2);
 	}
 
 	public static boolean compare(float operand1, String operator, float operand2) {
@@ -432,7 +433,7 @@ public class Util {
 		if (operator.equals(">")) {
 			return (operand1 > operand2);
 		}
-		throw new RuntimeException("Operador não suportado: " + operator);
+		throw new RuntimeException("Operador nï¿½o suportado: " + operator);
 	}
 
 	public static String left(String s, int chars) {
@@ -459,7 +460,7 @@ public class Util {
 
 	public static <T> void copyRight(T[] source, T[] dest, int offset) {
 		if (source.length != dest.length + offset)
-			throw new RuntimeException("Tamanhos de array incompatíveis");
+			throw new RuntimeException("Tamanhos de array incompatï¿½veis");
 
 		for (int i = 0; i < dest.length; i++) {
 			dest[i] = source[i + offset];

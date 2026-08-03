@@ -3,7 +3,7 @@ package core.performer;
 import java.util.ArrayList;
 import java.util.List;
 
-import core.SavePoint;
+import core.savepoint.SavePoint;
 import util.Util;
 
 public class Batch {

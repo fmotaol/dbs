@@ -1,4 +1,4 @@
-package util;
+package core.parsing.tree;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,7 +9,7 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class StringBuilder2 {
+public class StringUnit implements StringItem {
 
 	private Map<String, String> replacements = new HashMap<>(); 
 
@@ -17,12 +17,12 @@ public class StringBuilder2 {
 
 	private ArrayList<String> exclusions = new ArrayList<>(); 
 
-	public StringBuilder2() {
+	public StringUnit() {
 		original = new StringBuilder();
 		lowerCase = new StringBuilder();
 	}
 
-	public StringBuilder2(String s) {
+	public StringUnit(String s) {
 		original = new StringBuilder(s);
 		lowerCase = new StringBuilder(s.toLowerCase());
 	}
@@ -46,6 +46,13 @@ public class StringBuilder2 {
 		additions.add(s);
 	}
 
+	public void appendIfNotEmpty(final String separator, final String newString) {
+		if (this.length() > 0)
+			this.append(separator);
+		if (newString != null)
+			this.append(newString);
+	}
+	
 	public void setLength(int length) {
 		original.setLength(0);
 		lowerCase.setLength(0);
@@ -109,8 +116,8 @@ public class StringBuilder2 {
 		return original;
 	}
 	
-	public StringBuilder2 clone() {
-	    StringBuilder2 cloned = new StringBuilder2();
+	public StringUnit clone() {
+	    StringUnit cloned = new StringUnit();
 	    cloned.original = new StringBuilder(this.original);
 	    cloned.lowerCase = new StringBuilder(this.lowerCase);
 	    return cloned;
@@ -190,12 +197,10 @@ public class StringBuilder2 {
 	    int lastEnd = 0;
 	    
 	    while (matcher.find()) {
-	        // Adiciona o trecho antes da correspondência
 	        String beforeMatch = content.substring(lastEnd, matcher.start());
 	        resultOriginal.append(beforeMatch);
 	        resultLowerCase.append(beforeMatch.toLowerCase());
 	        
-	        // Aplica a função de substituição
 	        String fromText = matcher.group();
 	        String toText = replacement.apply(matcher);
 	        if (toText == null) {
@@ -209,16 +214,22 @@ public class StringBuilder2 {
 	        lastEnd = matcher.end();
 	    }
 	    
-	    // Adiciona o restante do texto
 	    if (lastEnd < content.length()) {
 	        String remaining = content.substring(lastEnd);
 	        resultOriginal.append(remaining);
 	        resultLowerCase.append(remaining.toLowerCase());
 	    }
 	    
-	    // Substitui os StringBuilders internos
 	    original = resultOriginal;
 	    lowerCase = resultLowerCase;
+	}
+	
+	public String[] split(String regex) {
+		return split(Pattern.compile(regex));
+	}
+	
+	public String[] split(Pattern pattern) {
+		throw new RuntimeException("ainda não implementado");
 	}
 	
 	public void replace(String regex, Function<Matcher, String> replacement) {
@@ -236,5 +247,7 @@ public class StringBuilder2 {
 
 	public List<String> getExclusions() {
 	    return Collections.unmodifiableList(exclusions);
-	}	
+	}
+	
+	
 }

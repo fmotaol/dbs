@@ -18,6 +18,7 @@ import core.dataset.Record;
 import core.performer.Performer;
 import core.performer.Result;
 import core.performer.TargetPerformer;
+import core.savepoint.SavePointRestoreable;
 import util.Util;
 
 public class Macro extends Engine implements Device, SavePointRestoreable {

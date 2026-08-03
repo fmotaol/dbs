@@ -1,8 +1,8 @@
-package core.parsing.tree;
+package core.parsing.oldtree;
 
 import core.performer.Context;
 
-public class SubQueryReference extends Reference {
+public class VarReference extends AbstractVarReference {
 
 	@Override
 	public String concretize(Context context) {

@@ -15,7 +15,6 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import core.SavePoint.DataScope;
 import core.args.ArgsFileLoader;
 import core.args.Argument;
 import core.args.Argument.Origin;
@@ -27,6 +26,8 @@ import core.parsing.replace.StringConcretizer;
 import core.performer.DBSConnection;
 import core.performer.DefaultConnection;
 import core.performer.Performer;
+import core.savepoint.SavePoint;
+import core.savepoint.SavePoint.DataScope;
 import core.util.FileLogger;
 import core.util.Logger;
 import ext.http.HTTPConnection;

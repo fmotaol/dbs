@@ -1,4 +1,4 @@
-package core.parsing.tree;
+package core.parsing.oldtree;
 
 public class FieldReferenceByIndex extends FieldReference {
 

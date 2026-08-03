@@ -1,4 +1,6 @@
-package core;
+package core.savepoint;
+
+import core.Device;
 
 public interface SavePointRestoreable extends Device {
 
