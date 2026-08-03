@@ -231,6 +231,14 @@ public class StringUnit implements StringItem {
 	public String[] split(Pattern pattern) {
 		throw new RuntimeException("ainda não implementado");
 	}
+
+	public boolean match(String regex) {
+		return match(Pattern.compile(regex));
+	}
+	
+	public boolean match(Pattern pattern) {
+		throw new RuntimeException("ainda não implementado");
+	}
 	
 	public void replace(String regex, Function<Matcher, String> replacement) {
 		Pattern pattern = Pattern.compile(regex, 0);

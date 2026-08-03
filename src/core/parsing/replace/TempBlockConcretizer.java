@@ -4,7 +4,7 @@ import java.util.regex.Pattern;
 
 import core.parsing.tree.EnclosedBlock;
 import core.parsing.tree.StringItem;
-import core.parsing.tree.StringTree;
+import core.parsing.tree.CompositeString;
 import core.parsing.tree.StringUnit;
 import core.performer.Context;
 import core.performer.Performer;
@@ -27,29 +27,40 @@ public class TempBlockConcretizer {
 	
 	public StringUnit concretizeSubBlock(StringUnit sql, Performer performer, Context context) {
 		String[] ss = sql.split(regexOpenOrClose);
-		StringTree tree = parseTree(ss);
+		CompositeString tree = parseTree(ss);
 		StringUnit r = tree.convertToBlock();
 		//falta concretizar
 		return r;
 	}
-
 	
 	private record IndexedEnclosedBlock (EnclosedBlock block, int start, int end) {};
 	
 	private IndexedEnclosedBlock parseSubBlock(String[] parts, int from) {
-		int start = find(parts, from + 1, patternOpen);		
-		int bend = parts.length - 1;
+		int start = from + 1;
+		int bstart = from + 1; //bloco "before"
+		int bend = parts.length - 1; //bloco "before"
+		CompositeString b = new CompositeString();
+		do {
+			start = find(parts, start, patternOpen);
+			if (start > 0) {
+				IndexedEnclosedBlock ie = parseSubBlock(parts, start);
+				
+				bend = start - 1;
+				for (int i = bstart; i <= bend; i++)
+					b.add(parts[i]);
+			
+				b.add(ie.block());
+				bstart = ie.end;
+			}
+			
+		} while (start < parts.length - 1 && start > 0);
+		
 		if (start > 0) {
-			IndexedEnclosedBlock ie = parseSubBlock(parts, start);
-			bend = start - 1;
+			for (int i = from + 1; i <= bend; i++)
+				b.add(parts[i]);
 		}
-		
-		int end = find(parts, from, patternClose);
-		if (end > 0) {
-			addAll(r, parts, from, end);
-		}
-		
-		return null;
+		EnclosedBlock c = new EnclosedBlock(parts[0], b, parts[parts.length - 1]);
+		return new IndexedEnclosedBlock(c, );
 	}
 
 	private int find(String[] parts, int from, Pattern pattern) {

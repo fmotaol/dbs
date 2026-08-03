@@ -5,15 +5,15 @@ import java.util.List;
 
 import util.Colls;
 
-public class StringTree implements StringItem {
+public class CompositeString implements StringItem {
 	
 	private List<StringItem> items;
 	
-	public StringTree() {
+	public CompositeString() {
 		this.items = new ArrayList<StringItem>();
 	}
 
-	public StringTree(StringItem[] items) {
+	public CompositeString(StringItem[] items) {
 		this.items = Colls.toList(items);
 	}
 
