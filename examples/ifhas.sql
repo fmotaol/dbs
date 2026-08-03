@@ -8,4 +8,4 @@
   select * from funcionario
   where true
     @ifhas{and matricula = @arg[matricula]}@else{}
-    @ifhasany{and data_admissao >= '@arg[adm_inicio]' and data_admissao <= '@arg[adm_final]'}@else{}
+    @ifhasany{and data_admissao >= '@arg[adm_inicio]' and data_admissao <= '@arg[adm_final]'}
