@@ -1,8 +1,6 @@
 package core.parsing.replace;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,7 +8,6 @@ import core.DBS;
 import core.Macro;
 import core.args.Argument;
 import core.args.UndefinedArgAction;
-import core.dataset.DataSet;
 import core.dataset.Field;
 import core.dataset.FieldValueSource;
 import core.dataset.Record;
@@ -22,7 +19,6 @@ import core.performer.Performer;
 import core.performer.TargetPerformer;
 import core.sql.DefaultLanguage;
 import core.sql.Language;
-import util.Colls;
 import util.Getable;
 import util.StringBuilder2;
 import util.Util;
@@ -48,7 +44,7 @@ public class StringConcretizer extends Concretizer {
 
 	private Language language;
 
-	private TempBlockConcretizer subBlock = new TempBlockConcretizer(this);
+	private SubBlockConcretizer subBlock = new SubBlockConcretizer(this);
 
 //	public boolean createArgs = false;
 

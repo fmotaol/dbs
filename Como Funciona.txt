@@ -731,8 +731,34 @@ COMO FUNCIONA:
          data_nascimento
   from usuario
 
-  SUBQUERIES
+
+  BLOCOS LITERAIS
   
+  
+  Um bloco literal é um trecho de código que deverá ser preservado pelo processador (#source ou 
+  #target) atual, independentemente do seu conteúdo. Isto significa que o trecho de código SQL 
+  contido no bloco será mantido idêntico e literal ao que foi descrito, mesmo que contenha 
+  referências (@) ou outros elementos que seriam, em condições normais, interpretados e 
+  substituídos pelo DBS.
+  
+  A sintaxe de um bloco literal é descrita por @literal{ <conteúdo> }
+  
+  Por exemplo:
+  
+  select $$@literal{where @name1 = 'JOÃO'}$$ as filter
+  
+  Fará com que o processador atual produza:
+  
+  select $$where @name1 = 'JOÃO'$$ as filter
+  
+  Note-se que, neste caso, o DBS não foi buscar nenhum valor de campo ou variável "name1", de
+  modo que, após a execução pelo banco de dados, a expressão @name1 se manterá intacta no conteúdo 
+  do campo filter.
+    
+
+
+  SUBQUERIES
+ 
   
   É possível invocar uma query de dentro de um comando SQL qualquer (inclusive outra query), 
   mesmo (e inclusive) apontando para uma conexão diferente. Para isso, utilize a sintaxe:
@@ -767,12 +793,13 @@ COMO FUNCIONA:
     Onde "campo" pode ser tanto o nome do campo quanto o seu índice. 
   
   NOTA 3: O valor de uma query solicitada também pode ser reutilizada mais adiante no mesmo código, 
-  através da referência @previousquery.
+  através da referência @prevquery (ou @previousquery).
   
   NOTA 4: É possível, também, extrair o valor de um campo específico da consulta, pela sintaxe
   de exemplo abaixo:
   	
-  	@previousquery[matricula]
+  	@prevquery[matricula]
+  	(ou @previousquery[matricula])
   	
   	Neste caso, será extraído o valor do campo "matricula" da subquery.
   	

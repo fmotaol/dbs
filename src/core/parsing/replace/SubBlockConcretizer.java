@@ -5,38 +5,24 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import core.parsing.tree.EnclosedBlock;
-import core.parsing.tree.StringItem;
 import core.args.UndefinedArgAction;
 import core.dataset.DataSet;
 import core.dataset.Field;
 import core.dataset.Record;
-import core.parsing.tree.CompositeString;
-import core.parsing.tree.StringUnit;
 import core.performer.Context;
 import core.performer.Performer;
 import util.Colls;
 import util.StringBuilder2;
 import util.Util;
-import util.logical.Assert;
 
-//TODO renomear para SubBlockConcretizer
-public class TempBlockConcretizer {
-
-	private static String regexOpen = "??";
-	private static String regexClose = "??";
-	private static String regexOpenOrClose = "??";
+public class SubBlockConcretizer {
 
 	private StringConcretizer main;
-	
-	static Pattern patternOpen = Pattern.compile(regexOpen);
-	static Pattern patternClose = Pattern.compile(regexClose);
-	static Pattern patternOpenOrClose = Pattern.compile(regexOpenOrClose);
 
-	public TempBlockConcretizer(StringConcretizer main) {
+	public SubBlockConcretizer(StringConcretizer main) {
 		this.main = main;
 	}
-	
+
 	private void concretizeMultiOpTranslation(StringBuilder2 sql) {
 		if (!sql.containsIgnoreCase("@$"))
 			return;
@@ -45,62 +31,10 @@ public class TempBlockConcretizer {
 			MultiOpTranslator.translate(sql);
 	}
 
-	private String extract(String[] array, int index) {
-		if (index < 0 || index >= array.length)
-			return null;
-		return array[index];
-	}
-	
-	public StringUnit concretizeSubBlock(StringUnit sql, Performer performer, Context context) {
-		String[] parts = sql.split(patternOpenOrClose);
-		if (parts.length == 0)
-			throw new RuntimeException("Erro interno");
-		
-		if (parts[0].matches(regexOpen)) {
-			XXX
-		}
-		CompositeString tree = parseTree(ss);
-		StringUnit r = tree.convertToBlock();
-		//falta concretizar
-		return r;
-	}
-	
-	private record IndexedEnclosedBlock (EnclosedBlock block, int start, int end) {};
-	
-	private IndexedEnclosedBlock parseSubBlock(String[] parts, int from) {
-		int start = from + 1;
-		int bstart = from + 1; //bloco "before"
-		int bend = parts.length - 1; //bloco "before"
-		CompositeString b = new CompositeString();
-		do {
-			start = find(parts, start, patternOpen);
-			if (start > 0) {
-				IndexedEnclosedBlock ie = parseSubBlock(parts, start);
-				
-				bend = start - 1;
-				for (int i = bstart; i <= bend; i++)
-					b.add(parts[i]);
-			
-				b.add(ie.block());
-				bstart = ie.end;
-			}
-			
-		} while (start < parts.length - 1 && start > 0);
-		
-		if (start > 0) {
-			for (int i = from + 1; i <= bend; i++)
-				b.add(parts[i]);
-		}
-		EnclosedBlock c = new EnclosedBlock(parts[0], b, parts[parts.length - 1]);
-		return new IndexedEnclosedBlock(c, );
-	}
-
-	private int find(String[] parts, int from, Pattern pattern) {
-		throw new RuntimeException("ainda não implementado");
-	}
-
 	public static final String regexSubQuery = "@query(=(?<conn>.*))?"
-			+ "\\{(?<sql>[^\\}]*)\\}(\\[(?<qfield>.*)\\])?(::(native|\\.))?" + "|@previousquery(\\[(?<pqfield>.*)\\])?";
+			+ "\\{(?<sql>[^\\}]*)\\}(\\[(?<qfield>.*)\\])?(::(native|\\.))?" 
+			+ "|@previousquery(\\[(?<pqfield>.*)\\])?" //DEPRECATED
+			+ "|@prevquery(\\[(?<pqfield>.*)\\])?";
 
 	private static final Pattern patternSubQuery = Pattern.compile(regexSubQuery,
 			Pattern.DOTALL | Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
@@ -228,9 +162,8 @@ public class TempBlockConcretizer {
 	}
 
 	public static final String regexCondBlock_Old = "@(?<type>if\\([^)]*\\)|ifhas|ifhasany)\\{(?<block>[^}]*)\\}";
-	
-	public static final String regexCondBlock = 
-		    "@(?<type>if\\([^)]*\\)|ifhas|ifhasany)\\{(?<ifblock>[^}]*)\\}(?:@else\\{(?<elseblock>[^}]*)\\})?";	
+
+	public static final String regexCondBlock = "@(?<type>if\\([^)]*\\)|ifhas|ifhasany)\\{(?<ifblock>[^}]*)\\}(?:@else\\{(?<elseblock>[^}]*)\\})?";
 
 	private static final Pattern patternCondBlock = Pattern.compile(regexCondBlock,
 			Pattern.DOTALL | Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
@@ -263,13 +196,14 @@ public class TempBlockConcretizer {
 
 	private String activatedConditionalBlock(String type, String ifblock, String elseblock, Context context) {
 		StringBuilder2 ifb = new StringBuilder2(ifblock);
-		main.concretizeReferences(ifb, context, UndefinedArgAction.NULL); //precisa ser NULL, pra identificar argumentos indefinidos
+		main.concretizeReferences(ifb, context, UndefinedArgAction.NULL); // precisa ser NULL, pra identificar
+																			// argumentos indefinidos
 
 		if (type.equalsIgnoreCase("ifhas") || type.equalsIgnoreCase("ifhasany")) {
 			List<String> nulls = listRefsByNullCondition(ifb.getReplacements(), true, false);
 			if (nulls.isEmpty())
 				return ifblock; // tanto ifhas quanto ifhasany
-			
+
 			// passou daqui, tem refs nulas
 
 			if (type.equalsIgnoreCase("ifhas"))
@@ -311,7 +245,6 @@ public class TempBlockConcretizer {
 		concretizeMultiOpTranslation(sql);
 		concretizeConditionalBlocks(sql, context);
 		concretizeSubQuery(sql, performer, context);
-
 	}
 
 }
