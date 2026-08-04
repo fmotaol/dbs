@@ -130,6 +130,8 @@ public class StringBuilder2 {
 
 	public void replaceFirst(String from, String to) {
 		Util.replaceFirst(original, from, to);
+		lowerCase = new StringBuilder(original.toString().toLowerCase());
+		replacements.put(from, to);
 	}	
 
 	public void replaceFirstIgnoreCase(String from, String to) {
@@ -159,16 +161,6 @@ public class StringBuilder2 {
 		Pattern pattern = Pattern.compile(regex, 0);
 		return find(pattern);
 	}
-
-	@Deprecated
-	public String[] find(String regex, int flags) {
-		if (regex == null || regex.isEmpty()) {
-			return new String[0];
-		}
-
-		Pattern pattern = Pattern.compile(regex, flags);
-		return find(pattern);
-	}
 	
 	public String[] find(Pattern pattern) {
 		String content = original.toString();
@@ -182,18 +174,16 @@ public class StringBuilder2 {
 		return matches.toArray(new String[0]);
 	}
 
-	public void replace(String regex, Function<Matcher, String> replacement) {
-		Pattern pattern = Pattern.compile(regex, 0);
-	    replace(pattern, replacement);
+	public void replaceString(String from, String to) {
+		String s = original.toString();
+		s = s.replace(from, to);
+		original = new StringBuilder(s);
+		lowerCase = new StringBuilder(s.toLowerCase());
 	}
 	
-	@Deprecated
-	public void replace(String regex, int flags, Function<Matcher, String> replacement) {
-	    if (regex == null || regex.isEmpty() || replacement == null) {
-	        return;
-	    }
-
-	    Pattern pattern = Pattern.compile(regex, flags);
+	
+	public void replace(String regex, Function<Matcher, String> replacement) {
+		Pattern pattern = Pattern.compile(regex, 0);
 	    replace(pattern, replacement);
 	}
 	
@@ -215,9 +205,9 @@ public class StringBuilder2 {
 	        // Aplica a função de substituição
 	        String fromText = matcher.group();
 	        String toText = replacement.apply(matcher);
-	        if (toText == null) {
-	            toText = "null";
-	        }
+	        if (toText == null)
+	            throw new RuntimeException("Texto nulo");
+	        
 			this.replacements.put(fromText, toText);
 	        
 	        resultOriginal.append(toText);

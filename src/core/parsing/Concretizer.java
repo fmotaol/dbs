@@ -5,7 +5,7 @@ import core.performer.Performer;
 public abstract class Concretizer {
 	
 	protected Performer performer;
-	protected boolean recursiveReference;
+	protected boolean recursiveReference = false;
 	
 	public Concretizer(Performer performer) {
 		super();

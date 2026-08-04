@@ -5,20 +5,18 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import core.parsing.tree.EnclosedBlock;
-import core.parsing.tree.StringItem;
 import core.args.UndefinedArgAction;
 import core.dataset.DataSet;
 import core.dataset.Field;
 import core.dataset.Record;
 import core.parsing.tree.CompositeString;
+import core.parsing.tree.EnclosedBlock;
 import core.parsing.tree.StringUnit;
 import core.performer.Context;
 import core.performer.Performer;
 import util.Colls;
 import util.StringBuilder2;
 import util.Util;
-import util.logical.Assert;
 
 @Deprecated //PROJETO INACABADO - TENTATIVA DE FAZER SUBBLOCKS SEREM RECURSIVOS
 public class SubBlockConcretizer2 {
@@ -240,6 +238,8 @@ public class SubBlockConcretizer2 {
 		sql.replace(patternCondBlock, (matcher) -> {
 			String type = matcher.group("type");
 			String ifblock = matcher.group("ifblock");
+			if (ifblock == null)
+				ifblock = "";
 			String elseblock = matcher.group("elseblock");
 			if (elseblock == null)
 				elseblock = "";

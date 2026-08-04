@@ -26,7 +26,7 @@ import util.logical.Check;
 
 public class StringConcretizer extends Concretizer {
 
-	public static boolean cascadeReference = true;
+	public boolean cascadeReference = true; //TODO não está compatível com a DOC
 
 	private static final String DEFAULT_REF_SYMBOL = "@";
 
@@ -370,6 +370,10 @@ public class StringConcretizer extends Concretizer {
 		Field[] fields = context.getDeepFields(true);
 		for (Field field : fields)
 			concretizeField(sql, prefix, field, field.getName(), context);
+		
+		XXX
+		//QUANDO O CONTEÚDO DE UM FIELD CONTÉM @outrofield, ele age como se fosse RECURSIVE_REFERENCE. PRECISA tratar 
+		//isso, porque senão o @ignore{} não vale de nada. 
 	}
 
 	private void concretizeFieldsByAliasAndName(StringBuilder2 sql, String prefix, Record record, Context context) {
@@ -672,6 +676,8 @@ public class StringConcretizer extends Concretizer {
 	}
 
 	private void concretizeAll(StringBuilder2 sql, Context context) {
+		subBlock.scrambleLiteralBlocks(sql);
+		
 		concretizeFileName(sql, context);
 		concretizeSubBlocks(sql, performer, context);
 		concretizeFromSavedRecords(sql, context);
@@ -680,6 +686,7 @@ public class StringConcretizer extends Concretizer {
 			if (performer.clearUnknownVarReferences())
 				clearUnkownVarReferences(sql);
 
+		subBlock.unscrambleLiteralBlocks(sql);
 	}
 
 	private void concretizeSubBlocks(StringBuilder2 sql, Performer performer, Context context) {
@@ -694,11 +701,12 @@ public class StringConcretizer extends Concretizer {
 		if (context.dataSet == null)
 			return;
 
-		if (containsIgnoreCase(sql, refSymbol + "filename")) {
+		String refFileName = refSymbol + "filename";
+		if (containsIgnoreCase(sql, refFileName)) {
 			if (context.dataSet instanceof FileListDataSet)
-				replaceIgnoreCase(sql, "@filename", context.dataSet.readValue(context.dataSet.getRowId()).toString());
+				replaceIgnoreCase(sql, refFileName, context.dataSet.readValue(context.dataSet.getRowId()).toString());
 			if (context.dataSet instanceof FileDataSet)
-				replaceIgnoreCase(sql, "@filename", ((FileDataSet) context.dataSet).getFilePath());
+				replaceIgnoreCase(sql, refFileName, ((FileDataSet) context.dataSet).getFilePath());
 		}
 	}
 
@@ -1041,6 +1049,14 @@ public class StringConcretizer extends Concretizer {
 //		this.concretizePostFix = concretizePostFix;
 //	}
 
+	public boolean isCascadeReference() {
+		return cascadeReference;
+	}
+
+	public void setCascadeReference(boolean cascadeReference) {
+		this.cascadeReference = cascadeReference;
+	}
+	
 	public DBS getProgram() {
 		return program;
 	}
