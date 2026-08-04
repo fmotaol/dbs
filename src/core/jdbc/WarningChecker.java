@@ -5,7 +5,6 @@ import java.sql.SQLWarning;
 import java.sql.Statement;
 
 import core.DBS;
-import core.performer.DBSConnection;
 import util.threads.Parallelizer;
 
 class WarningChecker {

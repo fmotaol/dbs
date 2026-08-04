@@ -45,6 +45,14 @@ public class StringBuilder2 {
 		lowerCase.append(s.toLowerCase());
 		additions.add(s);
 	}
+	
+	public void appendIfNotEmpty(final String separator, final String s2) {
+		if (length() > 0)
+			append(separator);
+		if (s2 != null)
+			append(s2);
+	}
+	
 
 	public void setLength(int length) {
 		original.setLength(0);
@@ -174,6 +182,11 @@ public class StringBuilder2 {
 		return matches.toArray(new String[0]);
 	}
 
+	public void replace(String regex, Function<Matcher, String> replacement) {
+		Pattern pattern = Pattern.compile(regex, 0);
+	    replace(pattern, replacement);
+	}
+	
 	@Deprecated
 	public void replace(String regex, int flags, Function<Matcher, String> replacement) {
 	    if (regex == null || regex.isEmpty() || replacement == null) {
@@ -223,11 +236,6 @@ public class StringBuilder2 {
 	    // Substitui os StringBuilders internos
 	    original = resultOriginal;
 	    lowerCase = resultLowerCase;
-	}
-	
-	public void replace(String regex, Function<Matcher, String> replacement) {
-		Pattern pattern = Pattern.compile(regex, 0);
-	    replace(pattern, replacement);
 	}
 	
 	public Map<String, String> getReplacements() {

@@ -685,7 +685,7 @@ public class StringConcretizer extends Concretizer {
 	private void concretizeSubBlocks(StringBuilder2 sql, Performer performer, Context context) {
 		if (!concretizeSubBlocks)
 			return;
-		subBlock.concretizeAll(sql, performer, context);
+		subBlock.concretizeBlocks(sql, performer, context);
 	}
 
 	private void concretizeFileName(StringBuilder2 sql, Context context) {

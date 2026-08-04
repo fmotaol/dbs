@@ -235,14 +235,6 @@ public class Util {
 			sb.append(s2);
 	}
 
-	@Deprecated
-	public static void appendIfNotEmpty(final StringBuilder2 sb, final String separator, final String s2) {
-		if (sb.length() > 0)
-			sb.append(separator);
-		if (s2 != null)
-			sb.append(s2);
-	}
-
 	public static void append(StringBuilder sb, String... ss) {
 		for (String s : ss)
 			sb.append(s);

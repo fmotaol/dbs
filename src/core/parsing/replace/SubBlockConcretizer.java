@@ -1,5 +1,6 @@
 package core.parsing.replace;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -156,12 +157,8 @@ public class SubBlockConcretizer {
 	}
 
 	private static String getSubqueryFieldValues(DataSet result, String field, String colSeparator) {
-		// TODO Auto-generated method stub
-
 		throw new RuntimeException("ainda não implementado");
 	}
-
-	public static final String regexCondBlock_Old = "@(?<type>if\\([^)]*\\)|ifhas|ifhasany)\\{(?<block>[^}]*)\\}";
 
 	public static final String regexCondBlock = "@(?<type>if\\([^)]*\\)|ifhas|ifhasany)\\{(?<ifblock>[^}]*)\\}(?:@else\\{(?<elseblock>[^}]*)\\})?";
 
@@ -241,10 +238,53 @@ public class SubBlockConcretizer {
 		return type.substring(start + 1, end);
 	}
 
-	public void concretizeAll(StringBuilder2 sql, Performer performer, Context context) {
+	public void concretizeBlocks(StringBuilder2 sql, Performer performer, Context context) {
 		concretizeMultiOpTranslation(sql);
 		concretizeConditionalBlocks(sql, context);
 		concretizeSubQuery(sql, performer, context);
 	}
+
+	public static final String regexLiteralBlock = "@literal\\{(?<content>[^}]*)\\}";
+	
+	private static final Pattern patternLiteralBlock = Pattern.compile(regexCondBlock,
+			Pattern.DOTALL | Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+	
+	private Map<String, String> scrambleMap = new HashMap<>();
+	
+	public void scrambleLiteralBlocks(StringBuilder2 sql) { 
+		sql.replace(patternLiteralBlock, (matcher) -> {
+			String content = matcher.group("content");
+			String key = generateScrambleKey();
+			scrambleMap.put(key, content);
+			return "@literal{" + key + "}";
+		});
+		
+	}
+	
+	private String generateScrambleKey() {
+		String r = null;
+		int i = 1;
+		do {
+			double rand = Math.random();
+			r = "##_SCRAMBLE_" + rand + "_SCRAMBLE_##";
+			i++;
+		} while (scrambleMap.get(r) != null && i < 500);
+		
+		if (i >= 500)
+			throw new RuntimeException("Erro interno. Repetição de chave SCRAMBLE");
+
+		return r;
+	}
+
+	public void unscrambleLiteralBlocks(StringBuilder2 sql) { 
+		sql.replace(patternLiteralBlock, (matcher) -> {
+			String key = matcher.group("content");
+			String content = scrambleMap.get(key);
+			if (content == null)
+				throw new RuntimeException("Erro interno: chave de scramble não localizada para @literal{}");
+			return content;
+		});
+		
+	}	
 
 }

@@ -112,13 +112,13 @@ public class MultiOpTranslator {
 							o = op;
 						s = Util.concat(fs1[j], " ", o, " ", fs2[j]);
 					}
-					Util.appendIfNotEmpty(sub, " and ", s);
+					sub.appendIfNotEmpty(" and ", s);
 				}
 				if (sub.length() > 0) {
 					sub.insert(0, "(");
 					sub.append(")");
 				}
-				Util.appendIfNotEmpty(exp, " or ", sub.toString());
+				sub.appendIfNotEmpty(" or ", sub.toString());
 				sub.setLength(0);
 				sub.trimToSize();
 				// exp = Util.concatOnlyValues(exp, " or ", sub);
