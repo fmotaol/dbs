@@ -14,13 +14,14 @@ import core.dataset.Record;
 import core.file.FileDataSet;
 import core.file.FileListDataSet;
 import core.parsing.Concretizer;
+import core.parsing.string.DBSStringBuilder;
+import core.parsing.string.StringBuilder2;
 import core.performer.Context;
 import core.performer.Performer;
 import core.performer.TargetPerformer;
 import core.sql.DefaultLanguage;
 import core.sql.Language;
 import util.Getable;
-import util.StringBuilder2;
 import util.Util;
 import util.logical.Check;
 
@@ -71,7 +72,7 @@ public class StringConcretizer extends Concretizer {
 		return language;
 	}
 
-	private void concretizeFieldsByAliasAndIndex(StringBuilder2 sql, String prefix, Record record, Context context) {
+	private void concretizeFieldsByAliasAndIndex(DBSStringBuilder sql, String prefix, Record record, Context context) {
 		if (record == null)
 			return;
 		String alias = record.getAlias();
@@ -80,7 +81,7 @@ public class StringConcretizer extends Concretizer {
 		concretizeFieldsByIndex(sql, prefix + alias + ".", record, context);
 	}
 
-	private void concretizeFieldsByIndex(StringBuilder2 sql, String prefix, Record record, Context context) {
+	private void concretizeFieldsByIndex(DBSStringBuilder sql, String prefix, Record record, Context context) {
 		if (record == null)
 			return;
 
@@ -102,7 +103,7 @@ public class StringConcretizer extends Concretizer {
 		}
 	}
 
-	private void concretizeCrossFieldsAll(StringBuilder2 sql, String prefix, Record record) {
+	private void concretizeCrossFieldsAll(DBSStringBuilder sql, String prefix, Record record) {
 		if (performer == null)
 			return;
 		if (record == null)
@@ -156,12 +157,12 @@ public class StringConcretizer extends Concretizer {
 		return pkFields;
 	}
 
-	static boolean containsIgnoreCase(StringBuilder2 sb, String s) {
-		boolean r = sb.containsIgnoreCase(s);
+	static boolean containsIgnoreCase(DBSStringBuilder sb, String s) {
+		boolean r = sb.contains(s, true);
 		return r;
 	}
 
-	private void concretizeInvokerData(StringBuilder2 sql, Context context) {
+	private void concretizeInvokerData(DBSStringBuilder sql, Context context) {
 		if (performer == null)
 			return;
 		if (context == null)
@@ -188,7 +189,7 @@ public class StringConcretizer extends Concretizer {
 
 	}
 
-	private void concretizeContextData(StringBuilder2 sql, Performer performer, Context context, String prefix) {
+	private void concretizeContextData(DBSStringBuilder sql, Performer performer, Context context, String prefix) {
 		if (performer == null)
 			throw new RuntimeException("Bloco de execução não encontrado");
 
@@ -216,7 +217,7 @@ public class StringConcretizer extends Concretizer {
 		}
 	}
 
-	private void concretizeConnectionAttributes(StringBuilder2 sql, Performer performer, String prefix) {
+	private void concretizeConnectionAttributes(DBSStringBuilder sql, Performer performer, String prefix) {
 		if (performer == null)
 			return;
 
@@ -245,12 +246,12 @@ public class StringConcretizer extends Concretizer {
 
 	}
 
-	private void concretizeDataSetAttributes(StringBuilder2 sql, Context context) {
+	private void concretizeDataSetAttributes(DBSStringBuilder sql, Context context) {
 		concretizeDataSetAttributes(sql, context, "@#");
 		concretizeDataSetAttributes(sql, context, refSymbol);
 	}
 
-	private void concretizeDataSetAttributes(StringBuilder2 sql, Context context, String prefix) {
+	private void concretizeDataSetAttributes(DBSStringBuilder sql, Context context, String prefix) {
 		if (context == null)
 			return;
 		if (context.dataSet == null)
@@ -287,7 +288,7 @@ public class StringConcretizer extends Concretizer {
 				return;
 			String[] fieldsToFilter = performer.getFieldsToFilter(context);
 			int total = context.dataSet.getFieldCount();
-			StringBuilder2 sb = new StringBuilder2();
+			DBSStringBuilder sb = newStringBuilder();
 			for (int i = 1; i <= total; i++) {
 				String name = context.dataSet.getFieldName(i);
 				if (containsIgnoreCase(fieldsToFilter, name))
@@ -320,12 +321,12 @@ public class StringConcretizer extends Concretizer {
 		return r;
 	}
 
-	private void concretizeRecordAttributes(StringBuilder2 sql, Record record) {
+	private void concretizeRecordAttributes(DBSStringBuilder sql, Record record) {
 		concretizeRecordAttributes(sql, record, "@#");
 		concretizeRecordAttributes(sql, record, refSymbol);
 	}
 
-	private void concretizeRecordAttributes(StringBuilder2 sql, Record record, String prefix) {
+	private void concretizeRecordAttributes(DBSStringBuilder sql, Record record, String prefix) {
 		if (record == null)
 			return;
 
@@ -335,7 +336,7 @@ public class StringConcretizer extends Concretizer {
 		}
 	}
 
-	private void concretizeFieldsByName(StringBuilder2 sql, String prefix, Context context) {
+	private void concretizeFieldsByName(DBSStringBuilder sql, String prefix, Context context) {
 		if (context == null)
 			return;
 		if (context.record == null)
@@ -347,7 +348,7 @@ public class StringConcretizer extends Concretizer {
 
 	}
 
-	private void concretizeFieldsByAliasAndName(StringBuilder2 sql, String prefix, Context context) {
+	private void concretizeFieldsByAliasAndName(DBSStringBuilder sql, String prefix, Context context) {
 		if (context == null)
 			return;
 		if (context.record == null)
@@ -362,7 +363,7 @@ public class StringConcretizer extends Concretizer {
 		} while (context != null);
 	}
 
-	private void concretizeFieldsByNameNoAlias(StringBuilder2 sql, String prefix, Context context) {
+	private void concretizeFieldsByNameNoAlias(DBSStringBuilder sql, String prefix, Context context) {
 		if (context == null)
 			return;
 		if (context.record == null)
@@ -370,15 +371,11 @@ public class StringConcretizer extends Concretizer {
 		Field[] fields = context.getDeepFields(true);
 		for (Field field : fields)
 			concretizeField(sql, prefix, field, field.getName(), context);
-		
-		XXX
-		//QUANDO O CONTEÚDO DE UM FIELD CONTÉM @outrofield, ele age como se fosse RECURSIVE_REFERENCE. PRECISA tratar 
-		//isso, porque senão o @ignore{} não vale de nada. 
 	}
 	
 	
 
-	private void concretizeFieldsByAliasAndName(StringBuilder2 sql, String prefix, Record record, Context context) {
+	private void concretizeFieldsByAliasAndName(DBSStringBuilder sql, String prefix, Record record, Context context) {
 		if (context == null)
 			return;
 
@@ -405,7 +402,7 @@ public class StringConcretizer extends Concretizer {
 		return Util.containsIgnoreCase(list, string);
 	}
 
-	private void concretizeRecordField(StringBuilder2 sql, String prefix, Field field, String fieldRef, Record record) {
+	private void concretizeRecordField(DBSStringBuilder sql, String prefix, Field field, String fieldRef, Record record) {
 		if (!contains(sql, prefix))
 			return;
 		if (record == null)
@@ -416,7 +413,7 @@ public class StringConcretizer extends Concretizer {
 		concretizeWithPreAndPostFix(sql, record, field, fieldRef, prefix, "");
 	}
 
-	private void concretizeField(StringBuilder2 sql, String prefix, Field field, String fieldRef, Context context) {
+	private void concretizeField(DBSStringBuilder sql, String prefix, Field field, String fieldRef, Context context) {
 		if (!contains(sql, prefix))
 			return;
 		if (context == null)
@@ -427,14 +424,14 @@ public class StringConcretizer extends Concretizer {
 		concretizeWithPreAndPostFix(sql, context, field, fieldRef, prefix, "");
 	}
 
-	private void concretizeFieldWithLevel(StringBuilder2 sql, String prefix, Field field, String fieldRef,
+	private void concretizeFieldWithLevel(DBSStringBuilder sql, String prefix, Field field, String fieldRef,
 			Record record, Context context) {
 		int level = context.getLevelOf(record);
 		String postfix = "\\{" + level + "\\}";
 		concretizeWithPreAndPostFix(sql, record, field, fieldRef, prefix, postfix);
 	}
 
-	private void concretizeWithPreAndPostFix(StringBuilder2 sql, FieldValueSource source, Field field, String fieldRef,
+	private void concretizeWithPreAndPostFix(DBSStringBuilder sql, FieldValueSource source, Field field, String fieldRef,
 			String prefix, String postfix) {
 
 		String fm = prefix + fieldRef + postfix;
@@ -467,11 +464,11 @@ public class StringConcretizer extends Concretizer {
 		}
 	}
 
-	private void replaceReference(StringBuilder2 sql, String s, String value) {
+	private void replaceReference(DBSStringBuilder sql, String s, String value) {
 		replaceIgnoreCase(sql, s, includePrefix(replPrefix, value));
 	}
 
-	private void concretizeCrossFieldsAssignmentsWithAlias(StringBuilder2 sql, String prefix, Context context) {
+	private void concretizeCrossFieldsAssignmentsWithAlias(DBSStringBuilder sql, String prefix, Context context) {
 		if (context == null)
 			return;
 		if (context.record == null)
@@ -486,7 +483,7 @@ public class StringConcretizer extends Concretizer {
 		} while (context != null);
 	}
 
-	private void concretizeCrossFieldsAllWithAlias(StringBuilder2 sql, String prefix, Context context) {
+	private void concretizeCrossFieldsAllWithAlias(DBSStringBuilder sql, String prefix, Context context) {
 
 		if (context == null)
 			return;
@@ -502,7 +499,7 @@ public class StringConcretizer extends Concretizer {
 		} while (context != null);
 	}
 
-	private void concretizeCrossFieldsAssignments(StringBuilder2 sql, String prefix, Context context) {
+	private void concretizeCrossFieldsAssignments(DBSStringBuilder sql, String prefix, Context context) {
 		if (context == null)
 			return;
 		if (context.record == null)
@@ -548,16 +545,16 @@ public class StringConcretizer extends Concretizer {
 		}
 	}
 
-	private boolean contains(StringBuilder2 sb, String s) {
+	private boolean contains(DBSStringBuilder sb, String s) {
 		return sb.contains(s);
 		// return contains(sb.getOriginalBuilder(), s);
 	}
 
-	private static void replaceIgnoreCase(StringBuilder2 sb, String from, String to) {
-		sb.replaceIgnoreCase(from, to);
+	private static void replaceIgnoreCase(DBSStringBuilder sb, String from, String to) {
+		sb.replace(from, to, true, false);
 	}
 
-	private void concretizeFromSavedRecords(StringBuilder2 sql, Context context) {
+	private void concretizeFromSavedRecords(DBSStringBuilder sql, Context context) {
 		if (context == null)
 			return;
 		if (context.dataSet == null)
@@ -578,7 +575,7 @@ public class StringConcretizer extends Concretizer {
 		}
 	}
 
-	private void concretizeFromSavedRecord(StringBuilder2 sql, Context context, String recordName) {
+	private void concretizeFromSavedRecord(DBSStringBuilder sql, Context context, String recordName) {
 		if (context == null)
 			return;
 
@@ -594,14 +591,14 @@ public class StringConcretizer extends Concretizer {
 		}
 	}
 
-	private void concretizeRef(StringBuilder2 sql, String ref, Getable<String> g) {
+	private void concretizeRef(DBSStringBuilder sql, String ref, Getable<String> g) {
 		if (containsIgnoreCase(sql, ref)) {
 			String value = g.get();
 			replaceIgnoreCase(sql, ref, value);
 		}
 	}
 
-	private void concretizeVariables(StringBuilder2 sql, Macro engine) {
+	private void concretizeVariables(DBSStringBuilder sql, Macro engine) {
 		if (engine == null)
 			return;
 
@@ -621,7 +618,7 @@ public class StringConcretizer extends Concretizer {
 		}
 	}
 
-	private void concretizeSystemVars(StringBuilder2 sql, Macro engine) {
+	private void concretizeSystemVars(DBSStringBuilder sql, Macro engine) {
 		if (engine == null)
 			return;
 
@@ -649,7 +646,7 @@ public class StringConcretizer extends Concretizer {
 		}
 	}
 
-	private void concretizePrimaryKey(StringBuilder2 sql, String prefix, Context context) {
+	private void concretizePrimaryKey(DBSStringBuilder sql, String prefix, Context context) {
 		if (performer == null)
 			return;
 		if (context == null)
@@ -677,7 +674,7 @@ public class StringConcretizer extends Concretizer {
 		return pkc;
 	}
 
-	private void concretizeAll(StringBuilder2 sql, Context context) {
+	private void concretizeAll(DBSStringBuilder sql, Context context) {
 		subBlock.scrambleLiteralBlocks(sql);
 		
 		concretizeFileName(sql, context);
@@ -691,13 +688,13 @@ public class StringConcretizer extends Concretizer {
 		subBlock.unscrambleLiteralBlocks(sql);
 	}
 
-	private void concretizeSubBlocks(StringBuilder2 sql, Performer performer, Context context) {
+	private void concretizeSubBlocks(DBSStringBuilder sql, Performer performer, Context context) {
 		if (!concretizeSubBlocks)
 			return;
 		subBlock.concretizeBlocks(sql, performer, context);
 	}
 
-	private void concretizeFileName(StringBuilder2 sql, Context context) {
+	private void concretizeFileName(DBSStringBuilder sql, Context context) {
 		if (context == null)
 			return;
 		if (context.dataSet == null)
@@ -712,7 +709,7 @@ public class StringConcretizer extends Concretizer {
 		}
 	}
 
-	void concretizeReferences(StringBuilder2 sql, Context context, UndefinedArgAction undefinedArgAction) {
+	void concretizeReferences(DBSStringBuilder sql, Context context, UndefinedArgAction undefinedArgAction) {
 		concretizeInvokerData(sql, context);
 		concretizeTableAttributes(sql, context);
 		concretizeArgs(sql, undefinedArgAction);
@@ -720,7 +717,7 @@ public class StringConcretizer extends Concretizer {
 		concretizeSystemVars(sql, engine);
 	}
 
-	private void concretizeTableAttributes(StringBuilder2 sql, Context context) {
+	private void concretizeTableAttributes(DBSStringBuilder sql, Context context) {
 		if (performer == null)
 			return;
 
@@ -754,22 +751,22 @@ public class StringConcretizer extends Concretizer {
 
 	public static final String regexVar = "(?<var>" + Pattern.quote("@#") + Util.regexIdentifier + ")";
 
-	private void clearUnkownVarReferences(StringBuilder2 sql) {
+	private void clearUnkownVarReferences(DBSStringBuilder sql) {
 		if (containsRegex(sql, regexVar))
 			replaceRegex(sql, regexVar, "");
 	}
 
-	private static void replaceRegex(StringBuilder2 sb, String regex, String replacement) {
+	private static void replaceRegex(DBSStringBuilder sb, String regex, String replacement) {
 		// TODO avaliar performance
 		Util.replaceRegex(sb.getOriginalBuilder(), regex, replacement);
 	}
 
-	private static boolean containsRegex(StringBuilder2 sb, String regex) {
+	private static boolean containsRegex(DBSStringBuilder sb, String regex) {
 		// TODO avaliar performance
 		return Util.containsRegex(sb.getOriginalBuilder(), regex);
 	}
 
-	private void concretizeArgs(StringBuilder2 sql, UndefinedArgAction action) {
+	private void concretizeArgs(DBSStringBuilder sql, UndefinedArgAction action) {
 
 		if (!containsIgnoreCase(sql, "@arg"))
 			return;
@@ -799,7 +796,7 @@ public class StringConcretizer extends Concretizer {
 		throw new RuntimeException("Argumento mal-formado: " + argPlaceHolder);
 	}
 
-	private void concretizeArgsByName(StringBuilder2 sql, UndefinedArgAction action) {
+	private void concretizeArgsByName(DBSStringBuilder sql, UndefinedArgAction action) {
 		final String regex = "@arg\\[[a-zA-Z0-9._ ]+\\]";
 		String[] as = sql.find(regex);
 		for (String placeHolder : as) {
@@ -810,7 +807,7 @@ public class StringConcretizer extends Concretizer {
 
 	}
 
-	private void concretizeArgByName(StringBuilder2 sql, UndefinedArgAction action, Argument arg) {
+	private void concretizeArgByName(DBSStringBuilder sql, UndefinedArgAction action, Argument arg) {
 		if (arg == null)
 			return; // foi ignorado
 
@@ -824,7 +821,7 @@ public class StringConcretizer extends Concretizer {
 		replaceIgnoreCase(sql, ref, v);
 	}
 
-	private void concretizeArgsByIndex(StringBuilder2 sql, UndefinedArgAction action) {
+	private void concretizeArgsByIndex(DBSStringBuilder sql, UndefinedArgAction action) {
 		for (int i = 1; i <= 50; i++) {
 			if (!containsIgnoreCase(sql, "@arg")) // evita ir até o fim do loop desnecessariamente
 				return;
@@ -836,7 +833,7 @@ public class StringConcretizer extends Concretizer {
 		}
 	}
 
-	private void concretizeArgByIndex(StringBuilder2 sql, int index, UndefinedArgAction action, Argument arg) {
+	private void concretizeArgByIndex(DBSStringBuilder sql, int index, UndefinedArgAction action, Argument arg) {
 		if (arg == null)
 			return; // foi ignorado
 
@@ -878,7 +875,7 @@ public class StringConcretizer extends Concretizer {
 
 		do {
 			prev = s;
-			StringBuilder2 sb = new StringBuilder2(s);
+			DBSStringBuilder sb = newStringBuilder(s);
 			concretizeAll(sb, context);
 			s = sb.toString();
 			sb.setLength(0);
@@ -927,7 +924,7 @@ public class StringConcretizer extends Concretizer {
 
 		String s = text;
 
-		StringBuilder2 sb = new StringBuilder2(s);
+		DBSStringBuilder sb = newStringBuilder(s);
 		concretizeArgs(sb, Argument.undefinedAction);
 		s = sb.toString();
 		sb.setLength(0);
@@ -952,13 +949,21 @@ public class StringConcretizer extends Concretizer {
 	}
 
 	boolean concretizeAsBoolean(String booleanRef, Context context) {
-		StringBuilder2 sb = new StringBuilder2(booleanRef);
+		DBSStringBuilder sb = newStringBuilder(booleanRef);
 		concretizeReferences(sb, context, Argument.undefinedAction);
 		Boolean b = parseAsBoolean(sb);
 		return b;
 	}
 
-	private Boolean parseAsBoolean(StringBuilder2 sb) {
+	DBSStringBuilder newStringBuilder(String s) {
+		return new StringBuilder2(s);
+	}
+
+	DBSStringBuilder newStringBuilder() {
+		return new StringBuilder2();
+	}
+
+	private Boolean parseAsBoolean(DBSStringBuilder sb) {
 		String s = sb.toString();
 		if (s.equals("null"))
 			return null;
@@ -1026,7 +1031,7 @@ public class StringConcretizer extends Concretizer {
 		return r;
 	}
 
-	static void replaceFirst(StringBuilder2 sb, String from, String to) {
+	static void replaceFirst(DBSStringBuilder sb, String from, String to) {
 		// TODO avaliar performance
 		Util.replaceFirst(sb.getOriginalBuilder(), from, to);
 	}

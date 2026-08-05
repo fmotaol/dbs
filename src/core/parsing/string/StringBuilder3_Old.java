@@ -1,4 +1,4 @@
-package core.parsing.replace;
+package core.parsing.string;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,63 +11,25 @@ import java.util.regex.Pattern;
 
 import util.Util;
 
-public class StringBuilder3 {
+public class StringBuilder3_Old {
+	
+	private StringBuilder2 content;
 
-	public StringBuilder3() {
-		original = new StringBuilder();
-		lowerCase = new StringBuilder();
+	public StringBuilder3_Old() {
+		content = new StringBuilder2();
 	}
 
-	public StringBuilder3(String s) {
-		original = new StringBuilder(s);
-		lowerCase = new StringBuilder(s.toLowerCase());
+	public StringBuilder3_Old(String s) {
+		content = new StringBuilder2(s);
 	}
-
-	private StringBuilder original;
-
-	private StringBuilder lowerCase;
 
 	@Override
 	public String toString() {
-		return original.toString();
+		return content.toString();
 	}
 
 	public int length() {
-		return original.length();
-	}
-
-	public class ChangeHistory {
-
-		private Map<String, String> replacements = new HashMap<>();
-
-		private ArrayList<String> additions = new ArrayList<>();
-
-		private ArrayList<String> exclusions = new ArrayList<>();
-
-		public Map<String, String> getReplacements() {
-			return Collections.unmodifiableMap(replacements);
-		}
-
-		public List<String> getAdditions() {
-			return Collections.unmodifiableList(additions);
-		}
-
-		public List<String> getExclusions() {
-			return Collections.unmodifiableList(exclusions);
-		}
-
-		private void add(String s) {
-			additions.add(s);
-		}
-
-		private void remove(String s) {
-			exclusions.add(s);
-		}
-
-		private void replace(String from, String to) {
-			replacements.put(from, to);
-		}
-
+		return content.length();
 	}
 
 	private ChangeHistory history = new ChangeHistory();
@@ -97,9 +59,9 @@ public class StringBuilder3 {
 	}
 
 	public void setLength(int length) {
+		history.remove(this.toString());
 		original.setLength(0);
 		lowerCase.setLength(0);
-		history.remove(this.toString());
 	}
 
 	public void insert(int offset, String s) {
@@ -150,46 +112,11 @@ public class StringBuilder3 {
 		return original;
 	}
 
-	public StringBuilder2 clone() {
-		StringBuilder2 cloned = new StringBuilder2();
+	public StringBuilder3_Old copy() {
+		StringBuilder3_Old cloned = new StringBuilder3_Old();
 		cloned.original = new StringBuilder(this.original);
 		cloned.lowerCase = new StringBuilder(this.lowerCase);
 		return cloned;
-	}
-
-	public void replaceIgnoreCase(final String from, final String to) {
-		replaceIgnoreCase(from, to, false);
-	}
-
-	public void replaceFirst(String from, String to) {
-		Util.replaceFirst(original, from, to);
-		lowerCase = new StringBuilder(original.toString().toLowerCase());
-		history.replace(from, to);
-	}
-
-	private void unmanagedReplaceString(String from, String to, boolean ignoreCase, boolean onlyFirst) {
-		int idx = 0;
-		if (to == null)
-			throw new RuntimeException("argumento nulo");
-
-		String targetLower = from.toLowerCase();
-		while ((idx = lowerCase.indexOf(targetLower, idx)) != -1) {
-			original.replace(idx, idx + from.length(), to);
-			lowerCase.replace(idx, idx + from.length(), to);
-
-			if (onlyFirst)
-				break;
-		}
-		
-	}
-
-	private void replaceString(String from, String to, boolean ignoreCase, boolean onlyFirst) {
-		if (activeTransaction != null) {
-			to = activeTransaction.replaceString(from, to, ignoreCase, onlyFirst);
-			return;
-		}
-
-		history.replace(from, to); //Só terá uma entrada mesmo
 	}
 
 	public boolean contains(String s) {
@@ -213,20 +140,50 @@ public class StringBuilder3 {
 		return matches.toArray(new String[0]);
 	}
 
-	private void unmanagedReplaceString(String from, String to) {
+	private void unmanagedReplaceString(String from, String to, boolean ignoreCase, boolean onlyFirst) {
+		int idx = 0;
+		if (to == null)
+			throw new RuntimeException("argumento nulo");
+
+		String targetLower = from.toLowerCase();
+		
+		StringBuilder stream = original;
+		if (ignoreCase)
+			stream = lowerCase;
+		
+		while ((idx = stream.indexOf(targetLower, idx)) != -1) {
+			original.replace(idx, idx + from.length(), to);
+			lowerCase.replace(idx, idx + from.length(), to.toLowerCase());
+			history.replace(from, to);
+			if (onlyFirst)
+				break;
+		}
+	}
+
+	private void replaceString(String from, String to, boolean ignoreCase, boolean onlyFirst) {
+		if (activeTransaction != null) {
+			to = activeTransaction.replace(from, to, ignoreCase, onlyFirst);
+			return;s
+		}
+
+		unmanagedReplaceString(from, to, ignoreCase, onlyFirst);
+		history.replace(from, to);
+	}
+
+	private void unmanagedReplace(String from, String to) {
 		String s = original.toString();
 		s = s.replace(from, to);
 		original = new StringBuilder(s);
 		lowerCase = new StringBuilder(s.toLowerCase());
 	}
 
-	public void replaceString(String from, String to) {
+	public void replace(String from, String to) {
 		if (activeTransaction != null) {
-			to = activeTransaction.replaceString(from, to);
+			to = activeTransaction.replace(from, to);
 			return;
 		}
 		
-		unmanagedReplaceString(from, to);
+		unmanagedReplace(from, to);
 		history.replace(from, to);
 	}
 
@@ -254,12 +211,12 @@ public class StringBuilder3 {
 			if (toText == null)
 				throw new RuntimeException("Texto nulo");
 
-//			if (activeTransaction != null)
-//				toText = activeTransaction.scramble(fromText, toText);
-			
-			resultOriginal.append(toText);
-
-			history.replace(fromText, toText);
+			if (activeTransaction != null) {
+				activeTransaction.replaceString(fromText, toText);
+			} else {			
+				resultOriginal.append(toText);			
+				history.replace(fromText, toText);
+			}
 
 			lastEnd = matcher.end();
 		}
@@ -276,7 +233,13 @@ public class StringBuilder3 {
 	}
 
 	public class Transaction {
-
+		
+		public enum State {ACTIVE, COMMITED, CANCELLED};
+		
+		private State state = State.ACTIVE;
+		
+		private String originalString;
+		
 		private Map<String, String> fromMap = new HashMap<>();
 		private Map<String, String> toMap = new HashMap<>();
 
@@ -284,15 +247,35 @@ public class StringBuilder3 {
 			for (String k : toMap.keySet()) {
 				String from = fromMap.get(k);
 				String to = toMap.get(k);
-				if (from != null && to != null) {
-					StringBuilder3.this.unmanagedReplaceString(from, to);
-					StringBuilder3.this.history.replacements.put(from, to);
-				} else if (from != null && to != null) {
-					StringBuilder3.this.unmanagedAppend(from, to);
-					StringBuilder3.this.history.replacements.put(from, to);
+				if (from != null && to != null) { //replace
+					
+					StringBuilder3_Old.this.unmanagedReplaceString(k, to);
+					StringBuilder3_Old.this.history.replacements.put(from, to);
+					
+				} else if (to != null) { //insert ou append
+					
+					StringBuilder3_Old.this.unmanagedReplaceString(k, to);
+					StringBuilder3_Old.this.history.additions.add(to);
+					
+				} else if (from != null) { //remove
+					
+					StringBuilder3_Old.this.history.exclusions.add(from);
+					
 				}
 			}
-			throw new RuntimeException("ainda não implementado");
+			
+			state = State.COMMITED;
+			StringBuilder3_Old.this.activeTransaction = null;
+		}
+
+		public void rollback() {
+			StringBuilder3_Old.this.original = new StringBuilder(originalString);
+			StringBuilder3_Old.this.lowerCase = new StringBuilder(originalString.toLowerCase());
+			state = State.CANCELLED;
+		}
+		
+		public State getState() {
+			return state;
 		}
 
 		public String scrambleKey(String fromText, String toText) {
@@ -304,10 +287,6 @@ public class StringBuilder3 {
 			return k;
 		}
 
-		public void rollback() {
-			throw new RuntimeException("Rollback não suportado");
-		}
-
 		private String generateScrambleKey() {
 			String r = null;
 			int i = 1;
@@ -315,7 +294,7 @@ public class StringBuilder3 {
 				String rand = (Math.random() + "").replace("0.", "");
 				r = "##_SCRAMBLE_" + rand + "_SCRAMBLE_##";
 				i++;
-			} while (scrambleMap.get(r) != null && i < 500);
+			} while (fromMap.get(r) != null && toMap.get(r) != null && i < 500);
 
 			if (i >= 500)
 				throw new RuntimeException("Erro interno. Repetição de chave SCRAMBLE");

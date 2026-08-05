@@ -3,7 +3,8 @@ package core.parsing.replace;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import util.StringBuilder2;
+import core.parsing.string.DBSStringBuilder;
+import core.parsing.string.StringBuilder2;
 import util.Util;
 
 public class MultiOpTranslator {
@@ -17,7 +18,7 @@ public class MultiOpTranslator {
 	private static Pattern mainPattern = Pattern.compile(regexMultiOp, Pattern.DOTALL
 			| Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
 
-	public static void translate(final StringBuilder2 sql) {
+	public static void translate(final DBSStringBuilder sql) {
 
 		Matcher matcher = mainPattern.matcher(sql.toString());
 
@@ -99,9 +100,9 @@ public class MultiOpTranslator {
 			
 			String opg = op.replace("=", "");
 
-			StringBuilder2 exp = new StringBuilder2();
+			DBSStringBuilder exp = newStringBuilder();
 			for (int i = 0; i < fs1.length; i++) {
-				StringBuilder2 sub = new StringBuilder2();
+				DBSStringBuilder sub = newStringBuilder();
 				for (int j = 0; j <= i; j++) {
 					String s = null;
 					if (i != j)
@@ -131,6 +132,10 @@ public class MultiOpTranslator {
 
 		throw new RuntimeException("Operador não suportado: " + op);
 
+	}
+
+	private static DBSStringBuilder newStringBuilder() {
+		return new StringBuilder2();
 	}
 
 	private static String[] generatePairExpressions(String[] fs1, String[] fs2, String separator) {

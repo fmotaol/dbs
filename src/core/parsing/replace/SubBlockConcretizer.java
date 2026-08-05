@@ -10,10 +10,10 @@ import core.args.UndefinedArgAction;
 import core.dataset.DataSet;
 import core.dataset.Field;
 import core.dataset.Record;
+import core.parsing.string.DBSStringBuilder;
 import core.performer.Context;
 import core.performer.Performer;
 import util.Colls;
-import util.StringBuilder2;
 import util.Util;
 
 public class SubBlockConcretizer {
@@ -24,11 +24,11 @@ public class SubBlockConcretizer {
 		this.main = main;
 	}
 
-	private void concretizeMultiOpTranslation(StringBuilder2 sql) {
-		if (!sql.containsIgnoreCase("@$"))
+	private void concretizeMultiOpTranslation(DBSStringBuilder sql) {
+		if (!sql.contains("@$", true))
 			return;
 
-		if (sql.containsIgnoreCase("@$MULTIOP{"))
+		if (sql.contains("@$MULTIOP{", true))
 			MultiOpTranslator.translate(sql);
 	}
 
@@ -39,7 +39,7 @@ public class SubBlockConcretizer {
 	private static final Pattern patternSubQuery = Pattern.compile(regexSubQuery,
 			Pattern.DOTALL | Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
 
-	private void concretizeSubQuery(StringBuilder2 sql, Performer performer, Context context) {
+	private void concretizeSubQuery(DBSStringBuilder sql, Performer performer, Context context) {
 //		if (!concretizeSubqueries)
 //			return;
 		if (performer == null)
@@ -58,8 +58,8 @@ public class SubBlockConcretizer {
 
 		while (matcher.find()) {
 
-			String pattern = matcher.group(0);
-			String lowerPattern = pattern.toLowerCase();
+			String found = matcher.group(0);
+			String lowerPattern = found.toLowerCase();
 
 			if (lowerPattern.startsWith("@query=") || lowerPattern.startsWith("@query{")) {
 
@@ -76,7 +76,7 @@ public class SubBlockConcretizer {
 				if (f != null)
 					field = f;
 
-			} else if (pattern.startsWith("@previousquery")) {
+			} else if (found.startsWith("@previousquery")) {
 
 				if (!hasPreviousQuery)
 					throw new RuntimeException("Não existe query referida para @previousquery");
@@ -95,13 +95,13 @@ public class SubBlockConcretizer {
 
 			String rowSep = performer.getSubqueryRowSeparator();
 			String colSep = performer.getSubqueryColumnSeparator();
-			concretizeSubqueryResult(sql, pattern, ds, field, isNative, rowSep, colSep);
+			concretizeSubqueryResult(sql, found, ds, field, isNative, rowSep, colSep);
 
 		}
 
 	}
 
-	private void concretizeSubqueryResult(StringBuilder2 sql, String pattern, DataSet result, String field,
+	private void concretizeSubqueryResult(DBSStringBuilder sql, String substring, DataSet result, String field,
 			boolean isNative, String rowSeparator, String colSeparator) {
 		// field = null >> todos os campos
 		int cols = 1;
@@ -135,7 +135,7 @@ public class SubBlockConcretizer {
 			r += s;
 		}
 
-		sql.replaceFirst(pattern, r);
+		sql.replace(substring, r);
 	}
 
 	private String getSubqueryFieldValues(Record record, String field, boolean isNative, String colSeparator) {
@@ -164,7 +164,7 @@ public class SubBlockConcretizer {
 	private static final Pattern patternCondBlock = Pattern.compile(regexCondBlock,
 			Pattern.DOTALL | Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
 
-	private void concretizeConditionalBlocks(StringBuilder2 sql, Context context) {
+	private void concretizeConditionalBlocks(DBSStringBuilder sql, Context context) {
 
 		sql.replace(patternCondBlock, (matcher) -> {
 			String type = matcher.group("type");
@@ -193,7 +193,7 @@ public class SubBlockConcretizer {
 	}
 
 	private String activatedConditionalBlock(String type, String ifblock, String elseblock, Context context) {
-		StringBuilder2 ifb = new StringBuilder2(ifblock);
+		DBSStringBuilder ifb = main.newStringBuilder(ifblock);
 		main.concretizeReferences(ifb, context, UndefinedArgAction.NULL); // precisa ser NULL, pra identificar
 																			// argumentos indefinidos
 
@@ -239,7 +239,7 @@ public class SubBlockConcretizer {
 		return type.substring(start + 1, end);
 	}
 
-	public void concretizeBlocks(StringBuilder2 sql, Performer performer, Context context) {
+	public void concretizeBlocks(DBSStringBuilder sql, Performer performer, Context context) {
 		concretizeMultiOpTranslation(sql);
 		concretizeConditionalBlocks(sql, context);
 		concretizeSubQuery(sql, performer, context);
@@ -252,7 +252,7 @@ public class SubBlockConcretizer {
 	
 	private Map<String, String> scrambleMap = new HashMap<>();
 	
-	public void scrambleLiteralBlocks(StringBuilder2 sql) { 
+	public void scrambleLiteralBlocks(DBSStringBuilder sql) { 
 		sql.replace(patternLiteralBlock, (matcher) -> {
 			String content = matcher.group("content");
 			String key = generateScrambleKey();
@@ -278,10 +278,10 @@ public class SubBlockConcretizer {
 		return r;
 	}
 
-	public void unscrambleLiteralBlocks(StringBuilder2 sql) {
+	public void unscrambleLiteralBlocks(DBSStringBuilder sql) {
 		for (String key : scrambleMap.keySet()) {
 			String content = scrambleMap.get(key);
-			sql.replaceString(key, content);
+			sql.replace(key, content);
 		}
 	}	
 

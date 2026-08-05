@@ -9,13 +9,13 @@ import core.args.UndefinedArgAction;
 import core.dataset.DataSet;
 import core.dataset.Field;
 import core.dataset.Record;
+import core.parsing.string.StringBuilder2;
 import core.parsing.tree.CompositeString;
 import core.parsing.tree.EnclosedBlock;
 import core.parsing.tree.StringUnit;
 import core.performer.Context;
 import core.performer.Performer;
 import util.Colls;
-import util.StringBuilder2;
 import util.Util;
 
 @Deprecated //PROJETO INACABADO - TENTATIVA DE FAZER SUBBLOCKS SEREM RECURSIVOS
@@ -36,10 +36,10 @@ public class SubBlockConcretizer2 {
 	}
 	
 	private void concretizeMultiOpTranslation(StringBuilder2 sql) {
-		if (!sql.containsIgnoreCase("@$"))
+		if (!sql.contains("@$"))
 			return;
 
-		if (sql.containsIgnoreCase("@$MULTIOP{"))
+		if (sql.contains("@$MULTIOP{", true))
 			MultiOpTranslator.translate(sql);
 	}
 
@@ -201,7 +201,7 @@ public class SubBlockConcretizer2 {
 			r += s;
 		}
 
-		sql.replaceFirst(pattern, r);
+		sql.replace(pattern, r, false, true);
 	}
 
 	private String getSubqueryFieldValues(Record record, String field, boolean isNative, String colSeparator) {
