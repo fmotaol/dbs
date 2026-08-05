@@ -78,7 +78,7 @@ public class SubBlockConcretizer2 {
 				
 				bend = start - 1;
 				for (int i = bstart; i <= bend; i++)
-					b.add(parts[i]);
+					b.add(null); //parts[i]);
 			
 				b.add(ie.block());
 				bstart = ie.end;
@@ -88,9 +88,9 @@ public class SubBlockConcretizer2 {
 		
 		if (start > 0) {
 			for (int i = from + 1; i <= bend; i++)
-				b.add(parts[i]);
+				b.add(null); //parts[i]);
 		}
-		EnclosedBlock c = new EnclosedBlock(parts[0], b, parts[parts.length - 1]);
+//		EnclosedBlock c = new EnclosedBlock(parts[0], b, parts[parts.length - 1]);
 		//return new IndexedEnclosedBlock(c, );
 		return null;
 	}
@@ -266,7 +266,7 @@ public class SubBlockConcretizer2 {
 		main.concretizeReferences(ifb, context, UndefinedArgAction.NULL); //precisa ser NULL, pra identificar argumentos indefinidos
 
 		if (type.equalsIgnoreCase("ifhas") || type.equalsIgnoreCase("ifhasany")) {
-			List<String> nulls = listRefsByNullCondition(ifb.getReplacements(), true, false);
+			List<String> nulls = listRefsByNullCondition(ifb.history().getReplacements(), true, false);
 			if (nulls.isEmpty())
 				return ifblock; // tanto ifhas quanto ifhasany
 			
@@ -276,7 +276,7 @@ public class SubBlockConcretizer2 {
 				return elseblock;
 			// passou daqui, é ifhasany
 
-			List<String> notNulls = listRefsByNullCondition(ifb.getReplacements(), false, true);
+			List<String> notNulls = listRefsByNullCondition(ifb.history().getReplacements(), false, true);
 			if (notNulls.isEmpty())
 				return elseblock;
 			else

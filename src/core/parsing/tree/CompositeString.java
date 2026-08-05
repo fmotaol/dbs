@@ -21,13 +21,13 @@ public class CompositeString implements StringItem {
 		 this.items.add(item);
 	}
 
-	public void add(String s) {
-		add(new StringUnit(s));
-	}
-
-	public StringUnit convertToBlock() {
-		String s = this.toString();
-		return new StringUnit(s);
-	}
+//	public void add(String s) {
+//		add(new StringBuilder2(s));
+//	}
+//
+//	public StringUnit convertToBlock() {
+//		String s = this.toString();
+//		return new StringUnit(s);
+//	}
 	
 }

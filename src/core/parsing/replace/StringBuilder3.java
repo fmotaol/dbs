@@ -1,4 +1,4 @@
-package util;
+package core.parsing.replace;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,20 +9,16 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class StringBuilder2 {
+import util.Util;
 
-	private Map<String, String> replacements = new HashMap<>(); 
+public class StringBuilder3 {
 
-	private ArrayList<String> additions = new ArrayList<>(); 
-
-	private ArrayList<String> exclusions = new ArrayList<>(); 
-
-	public StringBuilder2() {
+	public StringBuilder3() {
 		original = new StringBuilder();
 		lowerCase = new StringBuilder();
 	}
 
-	public StringBuilder2(String s) {
+	public StringBuilder3(String s) {
 		original = new StringBuilder(s);
 		lowerCase = new StringBuilder(s.toLowerCase());
 	}
@@ -40,30 +36,85 @@ public class StringBuilder2 {
 		return original.length();
 	}
 
+	public class ChangeHistory {
+
+		private Map<String, String> replacements = new HashMap<>();
+
+		private ArrayList<String> additions = new ArrayList<>();
+
+		private ArrayList<String> exclusions = new ArrayList<>();
+
+		public Map<String, String> getReplacements() {
+			return Collections.unmodifiableMap(replacements);
+		}
+
+		public List<String> getAdditions() {
+			return Collections.unmodifiableList(additions);
+		}
+
+		public List<String> getExclusions() {
+			return Collections.unmodifiableList(exclusions);
+		}
+
+		private void add(String s) {
+			additions.add(s);
+		}
+
+		private void remove(String s) {
+			exclusions.add(s);
+		}
+
+		private void replace(String from, String to) {
+			replacements.put(from, to);
+		}
+
+	}
+
+	private ChangeHistory history = new ChangeHistory();
+
+	private Transaction activeTransaction;
+
 	public void append(String s) {
+		if (activeTransaction != null) {
+			activeTransaction.append(s);
+			return;
+		}
+
+		unmanagedAppend(s);
+		history.add(s);
+	}
+
+	private void unmanagedAppend(String s) {
 		original.append(s);
 		lowerCase.append(s.toLowerCase());
-		additions.add(s);
 	}
-	
+
 	public void appendIfNotEmpty(final String separator, final String s2) {
 		if (length() > 0)
 			append(separator);
 		if (s2 != null)
 			append(s2);
 	}
-	
 
 	public void setLength(int length) {
 		original.setLength(0);
 		lowerCase.setLength(0);
-		exclusions.add(this.toString());
+		history.remove(this.toString());
 	}
 
 	public void insert(int offset, String s) {
+		if (activeTransaction != null) {
+			activeTransaction.insert(offset, s);
+			return;
+		}
+		
+		unmanagedInsert(offset, s);
+		history.add(s);
+	}
+
+	private void unmanagedInsert(int offset, String s) {
 		original.insert(offset, s);
 		lowerCase.insert(offset, s.toLowerCase());
-		additions.add(s);
 	}
 
 	public void trimToSize() {
@@ -71,25 +122,11 @@ public class StringBuilder2 {
 		lowerCase.trimToSize();
 	}
 
-	// private HashMap<String, Boolean> containsCheckCache = new HashMap<String,
-	// Boolean>();
-
 	public boolean containsIgnoreCase(String s) {
-
-		// Boolean r = containsCheckCache.get(s);
-		// if (r != null) {
-		// return r;
-		// } else {
 		s = s.toLowerCase();
 		boolean r = contains(lowerCase, s);
-		// containsCheckCache.put(s, r);
-		// }
-
 		return r;
 	}
-
-	// private static HashMap<String, String> temp = new HashMap<String,
-	// String>();
 
 	// private static int counter = 0;
 
@@ -109,21 +146,17 @@ public class StringBuilder2 {
 		return r;
 	}
 
-	// public StringBuilder getLowerCaseBuilder() {
-	// return lowerCase;
-	// }
-
 	public StringBuilder getOriginalBuilder() {
 		return original;
 	}
-	
+
 	public StringBuilder2 clone() {
-	    StringBuilder2 cloned = new StringBuilder2();
-	    cloned.original = new StringBuilder(this.original);
-	    cloned.lowerCase = new StringBuilder(this.lowerCase);
-	    return cloned;
+		StringBuilder2 cloned = new StringBuilder2();
+		cloned.original = new StringBuilder(this.original);
+		cloned.lowerCase = new StringBuilder(this.lowerCase);
+		return cloned;
 	}
-	
+
 	public void replaceIgnoreCase(final String from, final String to) {
 		replaceIgnoreCase(from, to, false);
 	}
@@ -131,26 +164,32 @@ public class StringBuilder2 {
 	public void replaceFirst(String from, String to) {
 		Util.replaceFirst(original, from, to);
 		lowerCase = new StringBuilder(original.toString().toLowerCase());
-		replacements.put(from, to);
-	}	
-
-	public void replaceFirstIgnoreCase(String from, String to) {
-		replaceIgnoreCase(from, to, true);
+		history.replace(from, to);
 	}
 
-	private void replaceIgnoreCase(final String target, String replacement, final boolean onlyFirst) {
+	private void unmanagedReplaceString(String from, String to, boolean ignoreCase, boolean onlyFirst) {
 		int idx = 0;
-		if (replacement == null)
+		if (to == null)
 			throw new RuntimeException("argumento nulo");
 
-		String targetLower = target.toLowerCase();
+		String targetLower = from.toLowerCase();
 		while ((idx = lowerCase.indexOf(targetLower, idx)) != -1) {
-			original.replace(idx, idx + target.length(), replacement);
-			lowerCase.replace(idx, idx + target.length(), replacement);
-			replacements.put(target, replacement);
+			original.replace(idx, idx + from.length(), to);
+			lowerCase.replace(idx, idx + from.length(), to);
+
 			if (onlyFirst)
 				break;
 		}
+		
+	}
+
+	private void replaceString(String from, String to, boolean ignoreCase, boolean onlyFirst) {
+		if (activeTransaction != null) {
+			to = activeTransaction.replaceString(from, to, ignoreCase, onlyFirst);
+			return;
+		}
+
+		history.replace(from, to); //Só terá uma entrada mesmo
 	}
 
 	public boolean contains(String s) {
@@ -161,7 +200,7 @@ public class StringBuilder2 {
 		Pattern pattern = Pattern.compile(regex, 0);
 		return find(pattern);
 	}
-	
+
 	public String[] find(Pattern pattern) {
 		String content = original.toString();
 		Matcher matcher = pattern.matcher(content);
@@ -174,70 +213,120 @@ public class StringBuilder2 {
 		return matches.toArray(new String[0]);
 	}
 
-	public void replaceString(String from, String to) {
+	private void unmanagedReplaceString(String from, String to) {
 		String s = original.toString();
 		s = s.replace(from, to);
 		original = new StringBuilder(s);
 		lowerCase = new StringBuilder(s.toLowerCase());
 	}
-	
-	
+
+	public void replaceString(String from, String to) {
+		if (activeTransaction != null) {
+			to = activeTransaction.replaceString(from, to);
+			return;
+		}
+		
+		unmanagedReplaceString(from, to);
+		history.replace(from, to);
+	}
+
 	public void replace(String regex, Function<Matcher, String> replacement) {
 		Pattern pattern = Pattern.compile(regex, 0);
-	    replace(pattern, replacement);
+		replace(pattern, replacement);
 	}
-	
+
 	public void replace(Pattern pattern, Function<Matcher, String> replacement) {
-	    String content = original.toString();
-	    Matcher matcher = pattern.matcher(content);
+		String content = original.toString();
+		Matcher matcher = pattern.matcher(content);
 
-	    StringBuilder resultOriginal = new StringBuilder();
-	    StringBuilder resultLowerCase = new StringBuilder();
-	    
-	    int lastEnd = 0;
-	    
-	    while (matcher.find()) {
-	        // Adiciona o trecho antes da correspondência
-	        String beforeMatch = content.substring(lastEnd, matcher.start());
-	        resultOriginal.append(beforeMatch);
-	        resultLowerCase.append(beforeMatch.toLowerCase());
-	        
-	        // Aplica a função de substituição
-	        String fromText = matcher.group();
-	        String toText = replacement.apply(matcher);
-	        if (toText == null)
-	            throw new RuntimeException("Texto nulo");
-	        
-			this.replacements.put(fromText, toText);
-	        
-	        resultOriginal.append(toText);
-	        resultLowerCase.append(toText.toLowerCase());
-	        
-	        lastEnd = matcher.end();
-	    }
-	    
-	    // Adiciona o restante do texto
-	    if (lastEnd < content.length()) {
-	        String remaining = content.substring(lastEnd);
-	        resultOriginal.append(remaining);
-	        resultLowerCase.append(remaining.toLowerCase());
-	    }
-	    
-	    // Substitui os StringBuilders internos
-	    original = resultOriginal;
-	    lowerCase = resultLowerCase;
-	}
-	
-	public Map<String, String> getReplacements() {
-	    return Collections.unmodifiableMap(replacements);
+		StringBuilder resultOriginal = new StringBuilder();
+
+		int lastEnd = 0;
+
+		while (matcher.find()) {
+			// Adiciona o trecho antes da correspondência
+			String beforeMatch = content.substring(lastEnd, matcher.start());
+			resultOriginal.append(beforeMatch);
+
+			// Aplica a função de substituição
+			String fromText = matcher.group();
+			String toText = replacement.apply(matcher);
+			if (toText == null)
+				throw new RuntimeException("Texto nulo");
+
+//			if (activeTransaction != null)
+//				toText = activeTransaction.scramble(fromText, toText);
+			
+			resultOriginal.append(toText);
+
+			history.replace(fromText, toText);
+
+			lastEnd = matcher.end();
+		}
+
+		// Adiciona o restante do texto
+		if (lastEnd < content.length()) {
+			String remaining = content.substring(lastEnd);
+			resultOriginal.append(remaining);
+		}
+
+		// Substitui os StringBuilders internos
+		original = resultOriginal;
+		lowerCase = new StringBuilder(original.toString().toLowerCase());
 	}
 
-	public List<String> getAdditions() {
-	    return Collections.unmodifiableList(additions);
+	public class Transaction {
+
+		private Map<String, String> fromMap = new HashMap<>();
+		private Map<String, String> toMap = new HashMap<>();
+
+		public void commit() {
+			for (String k : toMap.keySet()) {
+				String from = fromMap.get(k);
+				String to = toMap.get(k);
+				if (from != null && to != null) {
+					StringBuilder3.this.unmanagedReplaceString(from, to);
+					StringBuilder3.this.history.replacements.put(from, to);
+				} else if (from != null && to != null) {
+					StringBuilder3.this.unmanagedAppend(from, to);
+					StringBuilder3.this.history.replacements.put(from, to);
+				}
+			}
+			throw new RuntimeException("ainda não implementado");
+		}
+
+		public String scrambleKey(String fromText, String toText) {
+			String k = generateScrambleKey();
+			if (fromText != null)
+				fromMap.put(k, fromText);
+			if (toText != null)
+				toMap.put(k, toText);
+			return k;
+		}
+
+		public void rollback() {
+			throw new RuntimeException("Rollback não suportado");
+		}
+
+		private String generateScrambleKey() {
+			String r = null;
+			int i = 1;
+			do {
+				String rand = (Math.random() + "").replace("0.", "");
+				r = "##_SCRAMBLE_" + rand + "_SCRAMBLE_##";
+				i++;
+			} while (scrambleMap.get(r) != null && i < 500);
+
+			if (i >= 500)
+				throw new RuntimeException("Erro interno. Repetição de chave SCRAMBLE");
+
+			return r;
+		}
+
 	}
 
-	public List<String> getExclusions() {
-	    return Collections.unmodifiableList(exclusions);
+	public ChangeHistory history() {
+		return history;
 	}
 
 }

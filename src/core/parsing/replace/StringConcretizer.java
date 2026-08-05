@@ -375,6 +375,8 @@ public class StringConcretizer extends Concretizer {
 		//QUANDO O CONTEÚDO DE UM FIELD CONTÉM @outrofield, ele age como se fosse RECURSIVE_REFERENCE. PRECISA tratar 
 		//isso, porque senão o @ignore{} não vale de nada. 
 	}
+	
+	
 
 	private void concretizeFieldsByAliasAndName(StringBuilder2 sql, String prefix, Record record, Context context) {
 		if (context == null)

@@ -198,7 +198,7 @@ public class SubBlockConcretizer {
 																			// argumentos indefinidos
 
 		if (type.equalsIgnoreCase("ifhas") || type.equalsIgnoreCase("ifhasany")) {
-			List<String> nulls = listRefsByNullCondition(ifb.getReplacements(), true, false);
+			List<String> nulls = listRefsByNullCondition(ifb.history().getReplacements(), true, false);
 			if (nulls.isEmpty())
 				return ifblock; // tanto ifhas quanto ifhasany
 
@@ -208,7 +208,7 @@ public class SubBlockConcretizer {
 				return elseblock;
 			// passou daqui, é ifhasany
 
-			List<String> notNulls = listRefsByNullCondition(ifb.getReplacements(), false, true);
+			List<String> notNulls = listRefsByNullCondition(ifb.history().getReplacements(), false, true);
 			if (notNulls.isEmpty())
 				return elseblock;
 			else

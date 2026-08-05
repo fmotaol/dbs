@@ -6,12 +6,12 @@ public class EnclosedBlock implements StringItem {
 	private StringItem block;
 	private StringUnit close;
 
-	public EnclosedBlock(String open, StringItem block, String close) {
-		super();
-		this.open = new StringUnit(open);
-		this.block = block;
-		this.close = new StringUnit(close);
-	}
+//	public EnclosedBlock(String open, StringItem block, String close) {
+//		super();
+//		this.open = new StringUnit(open);
+//		this.block = block;
+//		this.close = new StringUnit(close);
+//	}
 	
 	public EnclosedBlock(StringUnit open, StringItem block, StringUnit close) {
 		super();
