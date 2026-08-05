@@ -4,7 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import core.parsing.string.DBSStringBuilder;
-import core.parsing.string.StringBuilder2;
+import core.parsing.string.StringBuilder3;
 import util.Util;
 
 public class MultiOpTranslator {
@@ -135,7 +135,7 @@ public class MultiOpTranslator {
 	}
 
 	private static DBSStringBuilder newStringBuilder() {
-		return new StringBuilder2();
+		return new StringBuilder3();
 	}
 
 	private static String[] generatePairExpressions(String[] fs1, String[] fs2, String separator) {

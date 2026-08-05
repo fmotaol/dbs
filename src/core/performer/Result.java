@@ -8,7 +8,7 @@ public class Result {
 		super();
 		if (affectedRows < 0)
 			affectedRows = 0;
-//			throw new RuntimeException("Número de linhas afetadas negativo");
+//			throw new RuntimeException("NÃºmero de linhas afetadas negativo");
 		this.affectedRows = affectedRows;
 	}
 

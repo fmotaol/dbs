@@ -123,7 +123,7 @@ public class Argument {
 
 	public void setName(String name) {
 //		if (Util.isNumber(name))
-//			throw new RuntimeException("Nome de argumento n�o pode ser puramente num�rico");
+//			throw new RuntimeException("Nome de argumento não pode ser puramente numérico");
 		this.name = name;
 	}
 

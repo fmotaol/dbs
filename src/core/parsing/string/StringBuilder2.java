@@ -1,8 +1,11 @@
 package core.parsing.string;
 
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import core.parsing.string.StringBuilder3.Transaction;
 
 public class StringBuilder2 implements DBSStringBuilder {
 
@@ -186,6 +189,11 @@ public class StringBuilder2 implements DBSStringBuilder {
 		// Substitui os StringBuilders internos
 		original = resultOriginal;
 		lowerCase = resultLowerCase;
+	}
+
+	@Override
+	public Transaction newTransaction(Predicate<String> newValueCriteria) {
+		return null;
 	}
 
 }

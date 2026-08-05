@@ -278,7 +278,7 @@ public abstract class Performer implements SlavePerformer, SavePointRestoreable 
 				return null;
 
 		if (getProgram().usePreparedStatements)
-			throw new RuntimeException("ainda n�o implementado");
+			throw new RuntimeException("ainda não implementado");
 		// TODO implementar
 
 		return executeTemplate(command, context);
@@ -363,7 +363,7 @@ public abstract class Performer implements SlavePerformer, SavePointRestoreable 
 		if (action == null)
 			return false;
 
-//		show("Executando a��o de contorno - erro do tipo ", exception.getClass().getSimpleName(), ": ",
+//		show("Executando ação de contorno - erro do tipo ", exception.getClass().getSimpleName(), ": ",
 //				Util.abrev(exception.getMessage(), 50));
 
 		lockExceptionTreatment(exception);
@@ -840,7 +840,7 @@ public abstract class Performer implements SlavePerformer, SavePointRestoreable 
 			return;
 		}
 		if (actionByError.containsKey(error))
-			throw new RuntimeException("Declara��o #iferror duplicada");
+			throw new RuntimeException("Declaração #iferror duplicada");
 
 		actionByError.put(error, actionIfError);
 
@@ -933,7 +933,7 @@ public abstract class Performer implements SlavePerformer, SavePointRestoreable 
 		if (var.equalsIgnoreCase("EVENT")) {
 			String[] ss = value.split(":");
 			if (ss.length > 2)
-				throw new RuntimeException("Especifica��o de evento incorreta");
+				throw new RuntimeException("Especificação de evento incorreta");
 
 			String eventType = ss[0].trim();
 			String params = null;
@@ -1100,7 +1100,7 @@ public abstract class Performer implements SlavePerformer, SavePointRestoreable 
 //			return;
 //		}
 
-		throw new RuntimeException("Vari�vel n�o reconhecida: " + var);
+		throw new RuntimeException("Variável não reconhecida: " + var);
 	}
 
 //	@Deprecated
@@ -1153,7 +1153,7 @@ public abstract class Performer implements SlavePerformer, SavePointRestoreable 
 		this.autoCommit = autoCommit;
 		try {
 			if (isDynamicConnection())
-				throw new RuntimeException("Propriedade autocommit n�o permitida para conex�es din�micas");
+				throw new RuntimeException("Propriedade autocommit não permitida para conexões dinâmicas");
 
 			getConnection().setAutoCommit(autoCommit);
 			
@@ -1169,7 +1169,7 @@ public abstract class Performer implements SlavePerformer, SavePointRestoreable 
 
 	public void assignEvent(String eventType, String params) {
 		if (event != null)
-			throw new RuntimeException("J� existe um evento associado a este performer");
+			throw new RuntimeException("Já existe um evento associado a este performer");
 
 		Event e = Event.create(eventType, (SourcePerformer) getInvoker());
 
@@ -1250,7 +1250,7 @@ public abstract class Performer implements SlavePerformer, SavePointRestoreable 
 			int f = foundRecordsThreshold;
 			if (f != threshold)
 				throw new RuntimeException(
-						"Diverg�ncia no limiar de registros encontrados entre #iffound e #ifnotfound");
+						"Divergência no limiar de registros encontrados entre #iffound e #ifnotfound");
 		} else
 			foundRecordsThreshold = threshold;
 	}
@@ -1264,7 +1264,7 @@ public abstract class Performer implements SlavePerformer, SavePointRestoreable 
 			int f = foundRecordsThreshold;
 			if (f != threshold)
 				throw new RuntimeException(
-						"Diverg�ncia no limiar de registros encontrados entre #iffound e #ifnotfound");
+						"Divergência no limiar de registros encontrados entre #iffound e #ifnotfound");
 		} else
 			foundRecordsThreshold = threshold;
 	}
@@ -1442,7 +1442,7 @@ public abstract class Performer implements SlavePerformer, SavePointRestoreable 
 	public abstract void setRepeat(boolean repeat);
 
 	public void defaultImportRow(DataSet source, Record bufferedRecord) {
-		// Nada. Apenas TargetPerformer possui implementa��o.
+		// Nada. Apenas TargetPerformer possui implementação.
 	}
 
 	public abstract void performDefaultStartImportingData(DataSet dataSet, Context context);
@@ -1621,7 +1621,7 @@ public abstract class Performer implements SlavePerformer, SavePointRestoreable 
 			println("Performance em ", a, ": \t" + t, rec.operationsRateText(currentTime), "\t",
 					rec.recordsRateText(currentTime));
 		else
-			println("Performance em ", a, ": em apura��o");
+			println("Performance em ", a, ": em apuração");
 	}
 
 	private class PerformanceRecord {
@@ -1684,7 +1684,7 @@ public abstract class Performer implements SlavePerformer, SavePointRestoreable 
 
 		private String timeRateText(double r, String unit) {
 			if (r <= 0.0)
-				return "(imposs�vel calcular)";
+				return "(impossível calcular)";
 			if (r >= 10.0)
 				return String.format("%.1f " + unit + "/s", r);
 			r = r * 60;
@@ -1889,7 +1889,7 @@ public abstract class Performer implements SlavePerformer, SavePointRestoreable 
 				sl = (Device) actionByError.get(ss[1]);
 				prefixLength += ss[1].length() + 1;
 			} else {
-				throw new RuntimeException("iferror sem especifica��o do erro");
+				throw new RuntimeException("iferror sem especificação do erro");
 			}
 
 		if (sl == null)
@@ -1998,7 +1998,7 @@ public abstract class Performer implements SlavePerformer, SavePointRestoreable 
 		if (templateCommand instanceof StaticCommand)
 			templateCommand = new StaticCommand(this, command);
 		if (templateCommand instanceof ConditionalCommand)
-			throw new RuntimeException("Imposs�vel reverter um ConditionalCommand para StaticCommand");
+			throw new RuntimeException("Impossível reverter um ConditionalCommand para StaticCommand");
 	}
 
 	public void addConditionalCommand(String command, Expression<Boolean> condition) {

@@ -746,7 +746,7 @@ public class SourcePerformer extends Performer implements SavePointRestoreable {
 		if ((a instanceof Comparable) && (b instanceof Comparable))
 			return ((Comparable) b).compareTo((Comparable) a);
 
-		throw new RuntimeException("Valores n�o compar�veis: " + a + " e " + b);
+		throw new RuntimeException("Valores não comparáveis: " + a + " e " + b);
 	}
 
 	public ArrayList<SlavePerformer> getSlaves() {

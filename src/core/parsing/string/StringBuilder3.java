@@ -2,6 +2,7 @@ package core.parsing.string;
 
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,6 +28,15 @@ public class StringBuilder3 implements DBSStringBuilder {
 	}
 
 	private Transaction activeTransaction;
+	
+	public Transaction newTransaction() {
+		return newTransaction(null);
+	}
+
+	public Transaction newTransaction(Predicate<String> newValueCriteria) {
+		activeTransaction = new Transaction(newValueCriteria);
+		return activeTransaction;
+	}
 
 	public void append(String s) {
 		if (activeTransaction != null)
@@ -118,6 +128,22 @@ public class StringBuilder3 implements DBSStringBuilder {
 		private ChangeHistory firstChange = new ChangeHistory(); //I=insert(sk), R=replace(from, sk), D=remove(from)
 		private ChangeHistory lastChange = new ChangeHistory(); //I=replace(sk, to), R=replace(sk, to), D=-
 		private ChangeHistory finalHistory = new ChangeHistory(); //I=insert (to), R=replace(from, to), D=remove(from)
+		
+		private Predicate<String> newValueCriteria;
+		
+		public Transaction(Predicate<String> newValueCriteria) {
+			this.newValueCriteria = newValueCriteria;
+		}
+
+		public Predicate<String> getValueCriteria() {
+			return newValueCriteria;
+		}
+
+		public boolean manages(String newValue) {
+			if (newValueCriteria == null)
+				return true;
+			return newValueCriteria.test(newValue);
+		}
 
 		public void append(String s) {
 			String k = generateScrambleKey();

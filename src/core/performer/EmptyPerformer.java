@@ -13,7 +13,7 @@ public class EmptyPerformer implements SimplePerformer, Device {
 
 	@Override
 	public void showTree() {
-		System.out.println("(sem ação)");
+		System.out.println("(sem aÃ§Ã£o)");
 	}
 
 	@Override

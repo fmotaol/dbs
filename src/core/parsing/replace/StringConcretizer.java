@@ -15,7 +15,8 @@ import core.file.FileDataSet;
 import core.file.FileListDataSet;
 import core.parsing.Concretizer;
 import core.parsing.string.DBSStringBuilder;
-import core.parsing.string.StringBuilder2;
+import core.parsing.string.StringBuilder3;
+import core.parsing.string.StringBuilder3.Transaction;
 import core.performer.Context;
 import core.performer.Performer;
 import core.performer.TargetPerformer;
@@ -27,7 +28,7 @@ import util.logical.Check;
 
 public class StringConcretizer extends Concretizer {
 
-	public boolean cascadeReference = true; //TODO não está compatível com a DOC
+	public boolean cascadeReference = true; // TODO não está compatível com a DOC
 
 	private static final String DEFAULT_REF_SYMBOL = "@";
 
@@ -372,8 +373,6 @@ public class StringConcretizer extends Concretizer {
 		for (Field field : fields)
 			concretizeField(sql, prefix, field, field.getName(), context);
 	}
-	
-	
 
 	private void concretizeFieldsByAliasAndName(DBSStringBuilder sql, String prefix, Record record, Context context) {
 		if (context == null)
@@ -402,14 +401,13 @@ public class StringConcretizer extends Concretizer {
 		return Util.containsIgnoreCase(list, string);
 	}
 
-	private void concretizeRecordField(DBSStringBuilder sql, String prefix, Field field, String fieldRef, Record record) {
+	private void concretizeRecordField(DBSStringBuilder sql, String prefix, Field field, String fieldRef,
+			Record record) {
 		if (!contains(sql, prefix))
 			return;
 		if (record == null)
 			return;
-//		if (concretizePostFix) {
-//			concretizeFieldWithLevel(sql, prefix, field, fieldRef, context, level);
-//		}
+
 		concretizeWithPreAndPostFix(sql, record, field, fieldRef, prefix, "");
 	}
 
@@ -418,9 +416,7 @@ public class StringConcretizer extends Concretizer {
 			return;
 		if (context == null)
 			return;
-//		if (concretizePostFix) {
-//			concretizeFieldWithLevel(sql, prefix, field, fieldRef, record, context);
-//		}
+
 		concretizeWithPreAndPostFix(sql, context, field, fieldRef, prefix, "");
 	}
 
@@ -431,8 +427,8 @@ public class StringConcretizer extends Concretizer {
 		concretizeWithPreAndPostFix(sql, record, field, fieldRef, prefix, postfix);
 	}
 
-	private void concretizeWithPreAndPostFix(DBSStringBuilder sql, FieldValueSource source, Field field, String fieldRef,
-			String prefix, String postfix) {
+	private void concretizeWithPreAndPostFix(DBSStringBuilder sql, FieldValueSource source, Field field,
+			String fieldRef, String prefix, String postfix) {
 
 		String fm = prefix + fieldRef + postfix;
 
@@ -675,8 +671,9 @@ public class StringConcretizer extends Concretizer {
 	}
 
 	private void concretizeAll(DBSStringBuilder sql, Context context) {
+		Transaction t = sql.newTransaction((s) -> s.contains("@"));
 		subBlock.scrambleLiteralBlocks(sql);
-		
+
 		concretizeFileName(sql, context);
 		concretizeSubBlocks(sql, performer, context);
 		concretizeFromSavedRecords(sql, context);
@@ -686,6 +683,8 @@ public class StringConcretizer extends Concretizer {
 				clearUnkownVarReferences(sql);
 
 		subBlock.unscrambleLiteralBlocks(sql);
+		if (t != null)
+			t.commit();
 	}
 
 	private void concretizeSubBlocks(DBSStringBuilder sql, Performer performer, Context context) {
@@ -956,11 +955,11 @@ public class StringConcretizer extends Concretizer {
 	}
 
 	DBSStringBuilder newStringBuilder(String s) {
-		return new StringBuilder2(s);
+		return new StringBuilder3(s);
 	}
 
 	DBSStringBuilder newStringBuilder() {
-		return new StringBuilder2();
+		return new StringBuilder3();
 	}
 
 	private Boolean parseAsBoolean(DBSStringBuilder sb) {
@@ -1063,7 +1062,7 @@ public class StringConcretizer extends Concretizer {
 	public void setCascadeReference(boolean cascadeReference) {
 		this.cascadeReference = cascadeReference;
 	}
-	
+
 	public DBS getProgram() {
 		return program;
 	}

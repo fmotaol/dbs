@@ -1,8 +1,11 @@
 package core.parsing.string;
 
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import core.parsing.string.StringBuilder3.Transaction;
 
 public interface DBSStringBuilder {
 
@@ -38,6 +41,13 @@ public interface DBSStringBuilder {
 	public void replace(String regex, Function<Matcher, String> replacement);
 
 	public void replace(Pattern pattern, Function<Matcher, String> replacement);
+	
+	
+	public Transaction newTransaction(Predicate<String> newValueCriteria);
+	
+	//public void commit();
+	
+	//public void rollback();
 	
 	
 	
