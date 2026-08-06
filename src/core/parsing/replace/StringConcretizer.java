@@ -671,8 +671,9 @@ public class StringConcretizer extends Concretizer {
 	}
 
 	private void concretizeAll(Block sql, Context context) {
+
 		subBlock.scrambleLiteralBlocks(sql);
-		
+
 		Transaction t = sql.newTransaction((s) -> s.contains("@"));
 		concretizeFileName(sql, context);
 		concretizeSubBlocks(sql, performer, context);

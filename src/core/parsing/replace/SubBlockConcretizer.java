@@ -243,6 +243,7 @@ public class SubBlockConcretizer {
 		concretizeMultiOpTranslation(sql);
 		concretizeConditionalBlocks(sql, context);
 		concretizeSubQuery(sql, performer, context);
+		concretizeLiteralBlocks(sql);
 	}
 
 	public static final String regexLiteralBlock = "@literal\\{(?<content>[^}]*)\\}";
@@ -258,10 +259,18 @@ public class SubBlockConcretizer {
 			String key = generateScrambleKey();
 			scrambleMap.put(key, content);
 			return key;
-			//return "@literal\\{" + key + "\\}";
 		});
 		
 	}
+	
+	void concretizeLiteralBlocks(Block sql) { 
+		sql.replace(patternLiteralBlock, (matcher) -> {
+			String content = matcher.group("content");
+			return content;
+		});
+		
+	}
+	
 	
 	private String generateScrambleKey() {
 		String r = null;

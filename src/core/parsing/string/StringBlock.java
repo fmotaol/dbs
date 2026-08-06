@@ -116,13 +116,15 @@ public class StringBlock implements Block {
 		if (to == null)
 			throw new RuntimeException("argumento nulo");
 
-		String targetLower = from.toLowerCase();
+		String target = from;
+		if (ignoreCase)
+			target = from.toLowerCase();
 
 		StringBuilder stream = original;
 		if (ignoreCase)
 			stream = lowerCase;
 
-		while ((idx = stream.indexOf(targetLower, idx)) != -1) {
+		while ((idx = stream.indexOf(target, idx)) != -1) {
 			original.replace(idx, idx + from.length(), to);
 			lowerCase.replace(idx, idx + from.length(), to.toLowerCase());
 			history.replace(from, to);
