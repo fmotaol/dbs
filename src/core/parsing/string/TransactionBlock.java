@@ -6,16 +6,16 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class StringBuilder3 implements DBSStringBuilder {
-	
-	private StringBuilder2 content;
+public class TransactionBlock implements Block {
 
-	public StringBuilder3() {
-		content = new StringBuilder2();
+	private StringBlock content;
+
+	public TransactionBlock() {
+		content = new StringBlock();
 	}
 
-	public StringBuilder3(String s) {
-		content = new StringBuilder2(s);
+	public TransactionBlock(String s) {
+		content = new StringBlock(s);
 	}
 
 	@Override
@@ -28,7 +28,7 @@ public class StringBuilder3 implements DBSStringBuilder {
 	}
 
 	private Transaction activeTransaction;
-	
+
 	public Transaction newTransaction() {
 		return newTransaction(null);
 	}
@@ -87,14 +87,10 @@ public class StringBuilder3 implements DBSStringBuilder {
 		return content.getOriginalBuilder();
 	}
 
-	public StringBuilder3 copy() {
-		StringBuilder3 r = new StringBuilder3();
+	public TransactionBlock copy() {
+		TransactionBlock r = new TransactionBlock();
 		r.content = this.content.copy();
 		return r;
-	}
-
-	public String[] find(String regex) {
-		return content.find(regex);
 	}
 
 	public String[] find(Pattern pattern) {
@@ -102,15 +98,10 @@ public class StringBuilder3 implements DBSStringBuilder {
 	}
 
 	public void replace(String from, String to, boolean ignoreCase, boolean onlyFirst) {
-		content.replace(from, to, ignoreCase, onlyFirst);
-	}
-
-	public void replace(String from, String to) {
-		content.replace(from, to);
-	}
-
-	public void replace(String regex, Function<Matcher, String> replacement) {
-		content.replace(regex, replacement);
+		if (activeTransaction != null)
+			activeTransaction.replace(from, to, ignoreCase, onlyFirst);
+		else
+			content.replace(from, to, ignoreCase, onlyFirst);
 	}
 
 	public void replace(Pattern pattern, Function<Matcher, String> replacement) {
@@ -118,19 +109,21 @@ public class StringBuilder3 implements DBSStringBuilder {
 	}
 
 	public class Transaction {
-		
-		public enum State {ACTIVE, COMMITED, CANCELLED};
-		
+
+		public enum State {
+			ACTIVE, COMMITED, CANCELLED
+		};
+
 		private State state = State.ACTIVE;
-		
+
 		private String originalString;
-		
-		private ChangeHistory firstChange = new ChangeHistory(); //I=insert(sk), R=replace(from, sk), D=remove(from)
-		private ChangeHistory lastChange = new ChangeHistory(); //I=replace(sk, to), R=replace(sk, to), D=-
-		private ChangeHistory finalHistory = new ChangeHistory(); //I=insert (to), R=replace(from, to), D=remove(from)
-		
+
+		private ChangeHistory firstChange = new ChangeHistory(); // I=insert(sk), R=replace(from, sk), D=remove(from)
+		private ChangeHistory lastChange = new ChangeHistory(); // I=replace(sk, to), R=replace(sk, to), D=-
+		private ChangeHistory finalHistory = new ChangeHistory(); // I=insert (to), R=replace(from, to), D=remove(from)
+
 		private Predicate<String> newValueCriteria;
-		
+
 		public Transaction(Predicate<String> newValueCriteria) {
 			this.newValueCriteria = newValueCriteria;
 		}
@@ -145,24 +138,46 @@ public class StringBuilder3 implements DBSStringBuilder {
 			return newValueCriteria.test(newValue);
 		}
 
+		public void replace(String from, String to, boolean ignoreCase, boolean onlyFirst) {
+			finalHistory.replace(from, to);
+			if (!newValueCriteria.test(to)) {
+				content.replace(from, to, ignoreCase, onlyFirst);
+			} else {
+				String k = generateScrambleKey();
+				content.replace(from, k, ignoreCase, onlyFirst);
+				firstChange.replace(from, k);
+				lastChange.replace(k, to);
+			}
+		}
+
 		public void append(String s) {
-			String k = generateScrambleKey();
-			firstChange.add(k);
-			lastChange.replace(k, s);
 			finalHistory.add(s);
+			if (!newValueCriteria.test(s)) {
+				content.append(s);
+			} else {
+				String k = generateScrambleKey();
+				content.append(k);
+				firstChange.add(k);
+				lastChange.replace(k, s);
+			}
 		}
 
 		public void setLength(int length) {
-			throw new RuntimeException("ainda não implementado");
+			content.setLength(length);
 		}
 
 		public void insert(int offset, String s) {
-			String k = generateScrambleKey();
-			firstChange.add(k);
-			lastChange.replace(k, s);
 			finalHistory.add(s);
+			if (!newValueCriteria.test(s)) {
+				content.append(s);
+			} else {
+				String k = generateScrambleKey();
+				content.insert(offset, k);
+				firstChange.add(k);
+				lastChange.replace(k, s);
+			}
 		}
-		
+
 		public void commit() {
 			Map<String, String> lastHM = lastChange.getReplacements();
 			for (String k : lastHM.keySet()) {
@@ -175,10 +190,10 @@ public class StringBuilder3 implements DBSStringBuilder {
 		}
 
 		public void rollback() {
-			StringBuilder3.this.content = new StringBuilder2(originalString);
+			TransactionBlock.this.content = new StringBlock(originalString);
 			state = State.CANCELLED;
 		}
-		
+
 		public State getState() {
 			return state;
 		}

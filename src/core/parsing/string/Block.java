@@ -5,9 +5,9 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import core.parsing.string.StringBuilder3.Transaction;
+import core.parsing.string.TransactionBlock.Transaction;
 
-public interface DBSStringBuilder {
+public interface Block {
 
 	public StringBuilder getOriginalBuilder();
 	
@@ -16,7 +16,10 @@ public interface DBSStringBuilder {
 	
 	public boolean contains(String s, boolean ignoreCase);
 	
-	public String[] find(String regex);
+	default public String[] find(String regex) {
+		Pattern pattern = Pattern.compile(regex, 0);
+		return find(pattern);
+	}
 	
 	public String[] find(Pattern pattern);
 	
@@ -34,11 +37,15 @@ public interface DBSStringBuilder {
 
 	public void trimToSize();
 	
-	public void replace(String from, String to);
+	default public void replace(String from, String to) {
+		replace(from, to, false, false);
+	}
 	
 	public void replace(String from, String to, boolean ignoreCase, boolean onlyFirst);
 	
-	public void replace(String regex, Function<Matcher, String> replacement);
+	default public void replace(String regex, Function<Matcher, String> replacement) {
+		replace(Pattern.compile(regex), replacement);
+	}
 
 	public void replace(Pattern pattern, Function<Matcher, String> replacement);
 	
@@ -58,4 +65,5 @@ public interface DBSStringBuilder {
 	public void append(String s);
 	
 
+	
 }

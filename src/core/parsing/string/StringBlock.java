@@ -5,9 +5,9 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import core.parsing.string.StringBuilder3.Transaction;
+import core.parsing.string.TransactionBlock.Transaction;
 
-public class StringBuilder2 implements DBSStringBuilder {
+public class StringBlock implements Block {
 
 	private ChangeHistory history = new ChangeHistory();
 
@@ -19,12 +19,12 @@ public class StringBuilder2 implements DBSStringBuilder {
 		this.history = h;
 	}
 
-	public StringBuilder2() {
+	public StringBlock() {
 		original = new StringBuilder();
 		lowerCase = new StringBuilder();
 	}
 
-	public StringBuilder2(String s) {
+	public StringBlock(String s) {
 		original = new StringBuilder(s);
 		lowerCase = new StringBuilder(s.toLowerCase());
 	}
@@ -76,8 +76,8 @@ public class StringBuilder2 implements DBSStringBuilder {
 		return original;
 	}
 
-	public StringBuilder2 copy() {
-		StringBuilder2 cloned = new StringBuilder2();
+	public StringBlock copy() {
+		StringBlock cloned = new StringBlock();
 		cloned.original = new StringBuilder(this.original);
 		cloned.lowerCase = new StringBuilder(this.lowerCase);
 		return cloned;
@@ -94,10 +94,10 @@ public class StringBuilder2 implements DBSStringBuilder {
 			return original.indexOf(s) != -1;
 	}
 
-	public String[] find(String regex) {
-		Pattern pattern = Pattern.compile(regex, 0);
-		return find(pattern);
-	}
+//	public String[] find(String regex) {
+//		Pattern pattern = Pattern.compile(regex, 0);
+//		return find(pattern);
+//	}
 
 	public String[] find(Pattern pattern) {
 		String content = original.toString();
@@ -109,10 +109,6 @@ public class StringBuilder2 implements DBSStringBuilder {
 		}
 
 		return matches.toArray(new String[0]);
-	}
-
-	public void replace(String from, String to) {
-		replace(from, to, false, false);
 	}
 
 	public void replace(String from, String to, boolean ignoreCase, boolean onlyFirst) {
@@ -135,10 +131,10 @@ public class StringBuilder2 implements DBSStringBuilder {
 		}
 	}
 
-	public void replace(String regex, Function<Matcher, String> replacement) {
-		Pattern pattern = Pattern.compile(regex, 0);
-		replace(pattern, replacement);
-	}
+//	public void replace(String regex, Function<Matcher, String> replacement) {
+//		Pattern pattern = Pattern.compile(regex, 0);
+//		replace(pattern, replacement);
+//	}
 
 //	@Deprecated
 //	public void replace(String regex, int flags, Function<Matcher, String> replacement) {

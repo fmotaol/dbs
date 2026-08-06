@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import core.parsing.string.StringBuilder2;
+import core.parsing.string.StringBlock;
 
 public class ArgByNameParser {
 
@@ -17,7 +17,7 @@ public class ArgByNameParser {
 	private static Pattern mainPattern = Pattern.compile(regexArgByName, Pattern.DOTALL
 			| Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
 
-	public static String[] listArgNames(final StringBuilder2 sql) {
+	public static String[] listArgNames(final StringBlock sql) {
 
 		ArrayList<String> a = new ArrayList<String>(); 
 		

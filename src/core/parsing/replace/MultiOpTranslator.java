@@ -3,8 +3,8 @@ package core.parsing.replace;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import core.parsing.string.DBSStringBuilder;
-import core.parsing.string.StringBuilder3;
+import core.parsing.string.Block;
+import core.parsing.string.TransactionBlock;
 import util.Util;
 
 public class MultiOpTranslator {
@@ -18,7 +18,7 @@ public class MultiOpTranslator {
 	private static Pattern mainPattern = Pattern.compile(regexMultiOp, Pattern.DOTALL
 			| Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
 
-	public static void translate(final DBSStringBuilder sql) {
+	public static void translate(final Block sql) {
 
 		Matcher matcher = mainPattern.matcher(sql.toString());
 
@@ -100,9 +100,9 @@ public class MultiOpTranslator {
 			
 			String opg = op.replace("=", "");
 
-			DBSStringBuilder exp = newStringBuilder();
+			Block exp = newStringBuilder();
 			for (int i = 0; i < fs1.length; i++) {
-				DBSStringBuilder sub = newStringBuilder();
+				Block sub = newStringBuilder();
 				for (int j = 0; j <= i; j++) {
 					String s = null;
 					if (i != j)
@@ -134,8 +134,8 @@ public class MultiOpTranslator {
 
 	}
 
-	private static DBSStringBuilder newStringBuilder() {
-		return new StringBuilder3();
+	private static Block newStringBuilder() {
+		return new TransactionBlock();
 	}
 
 	private static String[] generatePairExpressions(String[] fs1, String[] fs2, String separator) {

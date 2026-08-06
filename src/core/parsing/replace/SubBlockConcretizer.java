@@ -10,7 +10,7 @@ import core.args.UndefinedArgAction;
 import core.dataset.DataSet;
 import core.dataset.Field;
 import core.dataset.Record;
-import core.parsing.string.DBSStringBuilder;
+import core.parsing.string.Block;
 import core.performer.Context;
 import core.performer.Performer;
 import util.Colls;
@@ -24,7 +24,7 @@ public class SubBlockConcretizer {
 		this.main = main;
 	}
 
-	private void concretizeMultiOpTranslation(DBSStringBuilder sql) {
+	private void concretizeMultiOpTranslation(Block sql) {
 		if (!sql.contains("@$", true))
 			return;
 
@@ -39,7 +39,7 @@ public class SubBlockConcretizer {
 	private static final Pattern patternSubQuery = Pattern.compile(regexSubQuery,
 			Pattern.DOTALL | Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
 
-	private void concretizeSubQuery(DBSStringBuilder sql, Performer performer, Context context) {
+	private void concretizeSubQuery(Block sql, Performer performer, Context context) {
 //		if (!concretizeSubqueries)
 //			return;
 		if (performer == null)
@@ -101,7 +101,7 @@ public class SubBlockConcretizer {
 
 	}
 
-	private void concretizeSubqueryResult(DBSStringBuilder sql, String substring, DataSet result, String field,
+	private void concretizeSubqueryResult(Block sql, String substring, DataSet result, String field,
 			boolean isNative, String rowSeparator, String colSeparator) {
 		// field = null >> todos os campos
 		int cols = 1;
@@ -164,7 +164,7 @@ public class SubBlockConcretizer {
 	private static final Pattern patternCondBlock = Pattern.compile(regexCondBlock,
 			Pattern.DOTALL | Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
 
-	private void concretizeConditionalBlocks(DBSStringBuilder sql, Context context) {
+	private void concretizeConditionalBlocks(Block sql, Context context) {
 
 		sql.replace(patternCondBlock, (matcher) -> {
 			String type = matcher.group("type");
@@ -193,7 +193,7 @@ public class SubBlockConcretizer {
 	}
 
 	private String activatedConditionalBlock(String type, String ifblock, String elseblock, Context context) {
-		DBSStringBuilder ifb = main.newStringBuilder(ifblock);
+		Block ifb = main.newStringBuilder(ifblock);
 		main.concretizeReferences(ifb, context, UndefinedArgAction.NULL); // precisa ser NULL, pra identificar
 																			// argumentos indefinidos
 
@@ -239,7 +239,7 @@ public class SubBlockConcretizer {
 		return type.substring(start + 1, end);
 	}
 
-	public void concretizeBlocks(DBSStringBuilder sql, Performer performer, Context context) {
+	public void concretizeBlocks(Block sql, Performer performer, Context context) {
 		concretizeMultiOpTranslation(sql);
 		concretizeConditionalBlocks(sql, context);
 		concretizeSubQuery(sql, performer, context);
@@ -252,7 +252,7 @@ public class SubBlockConcretizer {
 	
 	private Map<String, String> scrambleMap = new HashMap<>();
 	
-	public void scrambleLiteralBlocks(DBSStringBuilder sql) { 
+	public void scrambleLiteralBlocks(Block sql) { 
 		sql.replace(patternLiteralBlock, (matcher) -> {
 			String content = matcher.group("content");
 			String key = generateScrambleKey();
@@ -278,7 +278,7 @@ public class SubBlockConcretizer {
 		return r;
 	}
 
-	public void unscrambleLiteralBlocks(DBSStringBuilder sql) {
+	public void unscrambleLiteralBlocks(Block sql) {
 		for (String key : scrambleMap.keySet()) {
 			String content = scrambleMap.get(key);
 			sql.replace(key, content);
