@@ -4,7 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import core.parsing.string.Block;
-import core.parsing.string.TransactionBlock;
+import core.parsing.string.ScrambleBlock;
 import util.Util;
 
 public class MultiOpTranslator {
@@ -135,7 +135,7 @@ public class MultiOpTranslator {
 	}
 
 	private static Block newStringBuilder() {
-		return new TransactionBlock();
+		return new ScrambleBlock();
 	}
 
 	private static String[] generatePairExpressions(String[] fs1, String[] fs2, String separator) {

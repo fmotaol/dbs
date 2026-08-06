@@ -5,8 +5,6 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import core.parsing.string.TransactionBlock.Transaction;
-
 public interface Block {
 
 	public StringBuilder getOriginalBuilder();

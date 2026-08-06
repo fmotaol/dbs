@@ -80,7 +80,6 @@ if errorlevel 1 (
     echo.
     echo ERRO: Falha no push --all!
     pause
-    exit /b
 )
 
 git push --tags
@@ -88,7 +87,6 @@ if errorlevel 1 (
     echo.
     echo ERRO: Falha no push --tags!
     pause
-    exit /b
 )
 
 echo ==========================================

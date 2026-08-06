@@ -6,15 +6,15 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class TransactionBlock implements Block {
+public class ScrambleBlock implements Block {
 
 	private StringBlock content;
 
-	public TransactionBlock() {
+	public ScrambleBlock() {
 		content = new StringBlock();
 	}
 
-	public TransactionBlock(String s) {
+	public ScrambleBlock(String s) {
 		content = new StringBlock(s);
 	}
 
@@ -27,14 +27,14 @@ public class TransactionBlock implements Block {
 		return content.length();
 	}
 
-	private Transaction activeTransaction;
+	private BlockTransaction activeTransaction;
 
 	public Transaction newTransaction() {
 		return newTransaction(null);
 	}
 
 	public Transaction newTransaction(Predicate<String> newValueCriteria) {
-		activeTransaction = new Transaction(newValueCriteria);
+		activeTransaction = new BlockTransaction(newValueCriteria);
 		return activeTransaction;
 	}
 
@@ -70,11 +70,6 @@ public class TransactionBlock implements Block {
 		content.trimToSize();
 	}
 
-//	public static boolean contains(StringBuilder sb, String s) {
-//		boolean r = sb.indexOf(s) >= 0;
-//		return r;
-//	}
-
 	public boolean contains(String s) {
 		return content.contains(s);
 	}
@@ -87,8 +82,8 @@ public class TransactionBlock implements Block {
 		return content.getOriginalBuilder();
 	}
 
-	public TransactionBlock copy() {
-		TransactionBlock r = new TransactionBlock();
+	public ScrambleBlock copy() {
+		ScrambleBlock r = new ScrambleBlock();
 		r.content = this.content.copy();
 		return r;
 	}
@@ -108,11 +103,7 @@ public class TransactionBlock implements Block {
 		content.replace(pattern, replacement);
 	}
 
-	public class Transaction {
-
-		public enum State {
-			ACTIVE, COMMITED, CANCELLED
-		};
+	public class BlockTransaction implements Transaction {
 
 		private State state = State.ACTIVE;
 
@@ -124,7 +115,7 @@ public class TransactionBlock implements Block {
 
 		private Predicate<String> newValueCriteria;
 
-		public Transaction(Predicate<String> newValueCriteria) {
+		public BlockTransaction(Predicate<String> newValueCriteria) {
 			this.newValueCriteria = newValueCriteria;
 		}
 
@@ -190,7 +181,7 @@ public class TransactionBlock implements Block {
 		}
 
 		public void rollback() {
-			TransactionBlock.this.content = new StringBlock(originalString);
+			ScrambleBlock.this.content = new StringBlock(originalString);
 			state = State.CANCELLED;
 		}
 

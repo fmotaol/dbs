@@ -5,7 +5,7 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import core.parsing.string.TransactionBlock.Transaction;
+import core.parsing.string.ScrambleBlock.BlockTransaction;
 
 public class StringBlock implements Block {
 
@@ -190,7 +190,7 @@ public class StringBlock implements Block {
 	}
 
 	@Override
-	public Transaction newTransaction(Predicate<String> newValueCriteria) {
+	public BlockTransaction newTransaction(Predicate<String> newValueCriteria) {
 		return null;
 	}
 
