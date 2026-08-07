@@ -16,7 +16,7 @@ import core.file.FileListDataSet;
 import core.parsing.Concretizer;
 import core.parsing.string.Block;
 import core.parsing.string.ScrambleBlock;
-import core.parsing.string.ScrambleBlock.BlockTransaction;
+import core.parsing.string.Transaction;
 import core.performer.Context;
 import core.performer.Performer;
 import core.performer.TargetPerformer;
@@ -674,7 +674,7 @@ public class StringConcretizer extends Concretizer {
 
 		subBlock.scrambleLiteralBlocks(sql);
 
-		BlockTransaction t = sql.newTransaction((s) -> s.contains("@"));
+		Transaction t = sql.newTransaction((s) -> s.contains("@"));
 		concretizeFileName(sql, context);
 		concretizeSubBlocks(sql, performer, context);
 		concretizeFromSavedRecords(sql, context);

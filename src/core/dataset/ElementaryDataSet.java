@@ -1,7 +1,4 @@
-package core;
-
-import core.dataset.Header;
-import core.dataset.SingleRowDataSet;
+package core.dataset;
 
 public class ElementaryDataSet extends SingleRowDataSet {
 

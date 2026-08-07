@@ -3,6 +3,7 @@ package core;
 import java.sql.SQLException;
 
 import core.dataset.DataSet;
+import core.dataset.ElementaryDataSet;
 import core.performer.Batch;
 import core.performer.Context;
 import core.performer.DBSConnection;

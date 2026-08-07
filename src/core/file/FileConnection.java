@@ -16,8 +16,8 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 
 import core.DBS;
-import core.ElementaryDataSet;
 import core.dataset.DataSet;
+import core.dataset.ElementaryDataSet;
 import core.dataset.Field;
 import core.dataset.Record;
 import core.parsing.CommandParser;

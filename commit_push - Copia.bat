@@ -23,67 +23,56 @@ git add %arquivos%
 
 
 echo.
-echo ULTIMAS 8 TAGS DO BRANCH ATUAL:
-
-REM Lista as 8 últimas tags sem filtro
-set contador=0
-for /f "delims=" %%i in ('git tag --sort=-v:refname') do (
-    echo %%i
-    set /a contador+=1
-    if !contador! GEQ 8 goto :fim_lista
-)
-:fim_lista
+echo TAGS EXISTENTES:
+git tag
 echo.
 
-REM Pega a primeira tag (mais recente)
-set "ultima_tag="
-for /f "delims=" %%i in ('git tag --sort=-v:refname') do (
+REM Pega a última tag e incrementa a versão
+for /f "delims=" %%i in ('git tag --sort=-v:refname ^| findstr /r "v[0-9]*\.[0-9]*\.[0-9]*" ^| more +0') do (
     set "ultima_tag=%%i"
     goto :sair_loop
 )
 :sair_loop
 
-if not defined ultima_tag (
+if defined ultima_tag (
+    REM Extrai os números da versão
+    for /f "tokens=1,2,3 delims=v." %%a in ("%ultima_tag%") do (
+        set "major=%%a"
+        set "minor=%%b"
+        set "patch=%%c"
+    )
+    
+    REM Remove zeros à esquerda e incrementa
+    set /a patch=100%patch% %% 100
+    set /a patch+=1
+    
+    REM Formata patch com dois dígitos
+    if %patch% LSS 10 (
+        set "patch=0%patch%"
+    )
+    
+    set "sugestao_tag=v%major%.%minor%.%patch%"
+    echo Ultima tag: %ultima_tag%
+    echo Sugestao: %sugestao_tag%
+    echo.
+    
+    set /p tagv="Digite a tag da versao (%sugestao_tag%): "
+    if "%tagv%"=="" set tagv=%sugestao_tag%
+) else (
     echo Nenhuma tag encontrada. Usando versao inicial v0.0.01
     set /p tagv="Digite a tag da versao (v0.0.01): "
-    if "!tagv!"=="" set tagv=v0.0.01
-    goto :loop_mensagem
+    if "%tagv%"=="" set tagv=v0.0.01
 )
-
-echo Ultima tag encontrada: %ultima_tag%
-
-REM Extrai os números da versão
-for /f "tokens=1,2,3 delims=v." %%a in ("%ultima_tag%") do (
-    set "major=%%a"
-    set "minor=%%b"
-    set "patch=%%c"
-)
-
-REM Remove zeros à esquerda e incrementa
-set /a patch=100%patch% %% 100
-set /a patch+=1
-
-REM Formata patch com dois dígitos
-if %patch% LSS 10 (
-    set "patch=0%patch%"
-)
-
-set "sugestao_tag=v%major%.%minor%.%patch%"
-echo Sugestao: %sugestao_tag%
-echo.
-
-set /p tagv="Digite a tag da versao (%sugestao_tag%): "
-if "!tagv!"=="" set tagv=%sugestao_tag%
 
 :loop_mensagem
 set /p mensagem="Digite a mensagem do commit: "
-if "!mensagem!"=="" (
+if "%mensagem%"=="" (
     echo ERRO: Mensagem nao pode estar vazia!
     goto loop_mensagem
 )
 
-git commit -m "!mensagem!"
-git tag !tagv!
+git commit -m "%mensagem%"
+git tag %tagv%
 
 :push
 echo.
