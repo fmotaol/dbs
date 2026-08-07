@@ -25,55 +25,110 @@ git add %arquivos%
 echo.
 echo ULTIMAS 8 TAGS DO BRANCH ATUAL:
 
-REM Lista as 8 últimas tags sem filtro
-set contador=0
-for /f "delims=" %%i in ('git tag --sort=-v:refname') do (
-    echo %%i
-    set /a contador+=1
-    if !contador! GEQ 8 goto :fim_lista
+REM Mostra as últimas 8 tags
+set count=0
+for /f "delims=" %%i in ('git tag --sort=v:refname') do (
+    set /a count+=1
 )
-:fim_lista
+
+set start=0
+set /a start=count-8
+if !start! LSS 0 set start=0
+
+set idx=0
+for /f "delims=" %%i in ('git tag --sort=v:refname') do (
+    if !idx! GEQ !start! (
+        echo %%i
+    )
+    set /a idx+=1
+)
 echo.
 
-REM Pega a primeira tag (mais recente)
+REM Pega a última tag (mais recente)
 set "ultima_tag="
-for /f "delims=" %%i in ('git tag --sort=-v:refname') do (
+for /f "delims=" %%i in ('git tag --sort=v:refname') do (
     set "ultima_tag=%%i"
-    goto :sair_loop
 )
-:sair_loop
 
 if not defined ultima_tag (
     echo Nenhuma tag encontrada. Usando versao inicial v0.0.01
-    set /p tagv="Digite a tag da versao (v0.0.01): "
-    if "!tagv!"=="" set tagv=v0.0.01
-    goto :loop_mensagem
+    set "sugestao_tag=v0.0.01"
+    set "tagv=!sugestao_tag!"
+    goto :pular_validacao
 )
 
-echo Ultima tag encontrada: %ultima_tag%
+echo Ultima tag: %ultima_tag%
 
-REM Extrai os números da versão
+REM Extrai os números da versão e possível letra
 for /f "tokens=1,2,3 delims=v." %%a in ("%ultima_tag%") do (
     set "major=%%a"
     set "minor=%%b"
-    set "patch=%%c"
+    set "patch_full=%%c"
 )
 
-REM Remove zeros à esquerda e incrementa
-set /a patch=100%patch% %% 100
-set /a patch+=1
-
-REM Formata patch com dois dígitos
-if %patch% LSS 10 (
-    set "patch=0%patch%"
+REM Verifica se tem letra no patch
+set "letra="
+set "patch_num="
+echo !patch_full! | findstr /r "[a-z]$" >nul
+if not errorlevel 1 (
+    REM Tem letra: pega número e letra separadamente
+    set "patch_num=!patch_full:~0,-1!"
+    set "letra=!patch_full:~-1!"
+    
+    REM Converte letra para código ASCII e incrementa
+    set "ascii=0"
+    for /f "delims=" %%L in ('powershell -command "[int][char]'!letra!'"') do set "ascii=%%L"
+    set /a ascii+=1
+    for /f "delims=" %%C in ('powershell -command "[char]!ascii!"') do set "proxima_letra=%%C"
+    
+    REM Formata patch com dois dígitos e letra incrementada
+    if !patch_num! LSS 10 (
+        set "patch_formatado=0!patch_num!"
+    ) else (
+        set "patch_formatado=!patch_num!"
+    )
+    set "sugestao_tag=v%major%.%minor%.!patch_formatado!!proxima_letra!"
+) else (
+    REM Não tem letra: apenas incrementa o número
+    set "patch_num=!patch_full!"
+    
+    REM Remove zeros à esquerda para incrementar corretamente
+    for /f "tokens=* delims=0" %%n in ("!patch_num!") do set "patch_clean=%%n"
+    if "!patch_clean!"=="" set "patch_clean=0"
+    
+    set /a patch_clean+=1
+    
+    REM Formata patch com dois dígitos
+    if !patch_clean! LSS 10 (
+        set "patch_formatado=0!patch_clean!"
+    ) else (
+        set "patch_formatado=!patch_clean!"
+    )
+    set "sugestao_tag=v%major%.%minor%.!patch_formatado!"
 )
 
-set "sugestao_tag=v%major%.%minor%.%patch%"
 echo Sugestao: %sugestao_tag%
 echo.
 
+:loop_tag
+set "tagv="
 set /p tagv="Digite a tag da versao (%sugestao_tag%): "
-if "!tagv!"=="" set tagv=%sugestao_tag%
+
+REM Se o usuário pressionar Enter sem digitar nada, usa a sugestão
+if "!tagv!"=="" (
+    set "tagv=!sugestao_tag!"
+    echo Usando tag sugerida: !tagv!
+    echo.
+)
+
+REM PULA A VALIDAÇÃO COMPLETAMENTE
+echo Tag escolhida: !tagv!
+echo.
+goto :loop_mensagem
+
+:pular_validacao
+echo Usando tag inicial: !tagv!
+echo.
 
 :loop_mensagem
 set /p mensagem="Digite a mensagem do commit: "
@@ -105,3 +160,4 @@ if errorlevel 1 (
 echo ==========================================
 echo Processo concluido!
 pause
+goto :eof
