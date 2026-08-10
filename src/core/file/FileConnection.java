@@ -350,18 +350,18 @@ public class FileConnection extends DBSConnection {
 		return r;
 	}
 
-	@Deprecated
-	private String[] extractParams_Old(int prefixLength, String fullCommand, Integer maxParams) {
-		String ps = fullCommand.trim();
-		ps = ps.substring(prefixLength).trim();
-		String[] r;
-		String regex = "\\s+";
-		if (maxParams != null)
-			r = ps.split(regex, maxParams);
-		else
-			r = ps.split(regex);
-		return r;
-	}
+//	@Deprecated
+//	private String[] extractParams_Old(int prefixLength, String fullCommand, Integer maxParams) {
+//		String ps = fullCommand.trim();
+//		ps = ps.substring(prefixLength).trim();
+//		String[] r;
+//		String regex = "\\s+";
+//		if (maxParams != null)
+//			r = ps.split(regex, maxParams);
+//		else
+//			r = ps.split(regex);
+//		return r;
+//	}
 
 	private String[] extractParams(int prefixLength, String fullCommand, Integer maxParams) {
 		String ps = fullCommand.trim();

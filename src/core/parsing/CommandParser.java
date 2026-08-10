@@ -7,9 +7,7 @@ import java.util.HashMap;
 import core.DBS;
 import core.Device;
 import core.Macro;
-import core.events.ElseEvent;
 import core.events.Event;
-import core.events.IfEvent;
 import core.join.MatchJoin;
 import core.parsing.expression.Comparison;
 import core.parsing.expression.Constant;
@@ -264,7 +262,7 @@ public class CommandParser {
 
 				TargetPerformer t = assignTarget(true);
 				t.assignEvent(currentContextType, currentContextParam);
-				treatEvent(t, previousPerformer);
+				// treatEvent(t, previousPerformer); 
 
 			} else if (currentContextType.equalsIgnoreCase("ifnotfound")) {
 
@@ -372,15 +370,15 @@ public class CommandParser {
 		return null;
 	}
 
-	private void treatEvent(TargetPerformer current, Performer previous) throws ParseException {
-		if (current.getEvent() instanceof ElseEvent) {
-			Event pe = previous.getEvent();
-			if ((pe == null) || (!(pe instanceof IfEvent)))
-				throw new ParseException("Evento 'else' deve acompanhar um 'if'", 0);
-			ElseEvent ee = (ElseEvent) current.getEvent();
-			ee.setIfEvent((IfEvent) pe);
-		}
-	}
+//	private void treatEvent(TargetPerformer current, Performer previous) throws ParseException {
+//		if (current.getEvent() instanceof ElseEvent) {
+//			Event pe = previous.getEvent();
+//			if ((pe == null) || (!(pe instanceof IfEvent)))
+//				throw new ParseException("Evento 'else' deve acompanhar um 'if'", 0);
+//			ElseEvent ee = (ElseEvent) current.getEvent();
+//			ee.setIfEvent((IfEvent) pe);
+//		}
+//	}
 
 	private void assignConfigVars() {
 		if (configVars.size() > 0) {

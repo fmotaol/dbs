@@ -1,7 +1,8 @@
 package core.performer;
 
+import java.sql.SQLException;
+
 import core.dataset.DataSet;
-import core.jdbc.JDBCConnection;
 import core.sql.Language;
 
 public abstract class DBSConnection {
@@ -19,11 +20,6 @@ public abstract class DBSConnection {
 	public abstract Result execute(String sql, Performer invoker, Context context);
 
 	public abstract Batch createBatch(Performer performer);
-
-	@Deprecated
-	public JDBCConnection getJDBCConnection() {
-		throw new RuntimeException("Conexão não é JDBC");
-	}
 
 	public abstract void defaultStartImportingData(TargetPerformer target);
 
@@ -49,6 +45,14 @@ public abstract class DBSConnection {
 
 	public Result executeBatch(Batch batch) throws Exception {
 		throw new RuntimeException("Execução de batch não suportada pela classe " + getClass());
+	}
+
+	public String[] getFieldsByTable(String tableName) {
+		throw new RuntimeException("Operação não suportada");
+	}
+
+	public String[] getPrimaryKeyFields(String tableName) throws SQLException {
+		throw new RuntimeException("Operação não suportada");
 	}
 
 }

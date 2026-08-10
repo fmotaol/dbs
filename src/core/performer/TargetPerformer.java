@@ -1,7 +1,6 @@
 package core.performer;
 
 import java.io.File;
-import java.sql.SQLException;
 import java.util.function.Predicate;
 
 import core.DBS;
@@ -9,7 +8,6 @@ import core.Device;
 import core.Macro;
 import core.dataset.DataSet;
 import core.dataset.Record;
-import core.jdbc.JDBCConnection;
 import core.parsing.CommandParser;
 import core.savepoint.SavePoint;
 import util.logical.Assert;
@@ -17,8 +15,6 @@ import util.logical.Assert;
 public class TargetPerformer extends Performer implements SimplePerformer {
 
 	private Integer batchSize;
-
-	private String tableName;
 
 	private boolean ignoreUnknownFields = false;
 
@@ -36,30 +32,6 @@ public class TargetPerformer extends Performer implements SimplePerformer {
 		super(engine, connectionId, invoker);
 		this.ignoreUnknownFields = getProgram().ignoreUnknownFields;
 		
-	}
-
-	private void setDefaultImport(String templateSQL) {
-		templateSQL = templateSQL.trim();
-		if (templateSQL == null)
-			return;
-		if (isDefaultImport(templateSQL)) {
-//			isDefaultImport = true;
-			templateSQL = templateSQL.substring("default import".length());
-			if (templateSQL.endsWith(";"))
-				templateSQL = templateSQL.substring(0, templateSQL.length() - 1);
-
-			tableName = templateSQL.trim();
-			if (tableName.isEmpty())
-				tableName = null;
-		}
-	}
-
-	private boolean isDefaultImport(String command) {
-		if (command == null)
-			return false;
-		command = command.trim();
-		command = CommandParser.clearCommentedLines(command);
-		return command.startsWith("default import");
 	}
 
 	@Override
@@ -102,6 +74,11 @@ public class TargetPerformer extends Performer implements SimplePerformer {
 		setDefaultImport(command);
 	}
 
+	void setDefaultImport(String templateSQL) {
+		tableData.setDefaultImport(templateSQL);
+	}
+
+	
 	@Override
 	public void restoreSavePointProperty(String property, String value) {
 		if ("$appendingFile".equals(property))
@@ -110,6 +87,8 @@ public class TargetPerformer extends Performer implements SimplePerformer {
 		super.restoreSavePointProperty(property, value);
 	}
 
+	final static String DEFAULT_IMPORT = "default import";
+	
 	@Override
 	protected Result executeCommand(String command, Context context) {
 		if (isDefaultImport(command)) {
@@ -328,6 +307,14 @@ public class TargetPerformer extends Performer implements SimplePerformer {
 		c.defaultStartImportingData(this);
 	}
 
+	static boolean isDefaultImport(String command) {
+		if (command == null)
+			return false;
+		command = command.trim();
+		command = CommandParser.clearCommentedLines(command);
+		return command.startsWith(DEFAULT_IMPORT);
+	}
+
 	private boolean isDefaultImport(Context context) {
 		return isDefaultImport(getTemplateCommand(context));
 	}
@@ -339,58 +326,6 @@ public class TargetPerformer extends Performer implements SimplePerformer {
 
 		DBSConnection c = getConnection(context);
 		c.defaultEndImportingData(this);
-	}
-
-	@Override
-	public String[] getFieldsToFilter(Context context) {
-		if (ignoreUnknownFields) {
-			JDBCConnection c = getJDBCConnection();
-			// if (c.isInsertOrUpdateCommand(getTemplateCommand()))
-			if (hasTableName(context))
-				return c.getTableFieldsByTableName(getTableName(context));
-
-		}
-		return null;
-
-	}
-
-	private boolean hasTableName(Context context) {
-		if (tableName != null)
-			return true;
-
-		String templateCommand = getTemplateCommand(context);
-		if (getJDBCConnection().isInsertOrUpdateCommand(templateCommand))
-			return true;
-
-		return false;
-	}
-
-	public String getTableName(Context context) {
-		JDBCConnection c = getJDBCConnection();
-		if (tableName == null) {
-			tableName = c.inferTableName(getTemplateCommand(context));
-		}
-		return tableName;
-	}
-
-	public String[] getTableFields(Context context) {
-		try {
-			JDBCConnection c = getJDBCConnection();
-			String t = getTableName(context);
-			return c.getTableFields(t);
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	public String[] getPrimaryKeyFields(Context context) {
-		try {
-			JDBCConnection c = getJDBCConnection();
-			String t = getTableName(context);
-			return c.getPrimaryKeyFields(t);
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 	@Override
@@ -427,6 +362,8 @@ public class TargetPerformer extends Performer implements SimplePerformer {
 	}
 
 	private Batch currentBatch;
+
+	private TableData tableData = new TableData(this);
 
 	public Result executeBatch(Context context) {
 		if (currentBatch == null)
@@ -540,5 +477,19 @@ public class TargetPerformer extends Performer implements SimplePerformer {
 	protected String baseForSimpleName() {
 		return "t";
 	}
+
+	@Override
+	public String[] getFieldsToFilter(Context context) {
+		if (ignoreUnknownFields)
+			return tableData.getFieldsToFilter(context);
+		
+		return null;
+
+	}
+
+	public TableData getTableData() {
+		return tableData;
+	}
+
 
 }

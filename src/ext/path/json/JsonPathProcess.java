@@ -64,10 +64,10 @@ public class JsonPathProcess extends PathProcess {
 		if (element instanceof List) {
 			List<Object> ls = (List) element;
 			for (Object row : ls) {
-				// Aqui é recebido cada objeto como um Map de propriedades com valores
+				// Aqui ï¿½ recebido cada objeto como um Map de propriedades com valores
 
 				if (!(row instanceof Map))
-					throw new RuntimeException("Objeto não é um Map<String, Object>");
+					throw new RuntimeException("Objeto nï¿½o ï¿½ um Map<String, Object>");
 
 				Map<String, Object> rec = (Map<String, Object>) row;
 				detectColumns(rec);
@@ -75,7 +75,7 @@ public class JsonPathProcess extends PathProcess {
 
 			for (Object row : ls) {
 				if (!(row instanceof Map))
-					throw new RuntimeException("Objeto não é um Map<String, Object>");
+					throw new RuntimeException("Objeto nï¿½o ï¿½ um Map<String, Object>");
 
 				Map<String, Object> rec = (Map<String, Object>) row;
 				addRow(rec);
@@ -90,11 +90,11 @@ public class JsonPathProcess extends PathProcess {
 		if (values == null)
 			throw new RuntimeException("Erro interno: objeto nulo");
 
-		if (values instanceof List)
-			return (List) values;
+		if (values instanceof List l)
+			return l;
 
-		if (values instanceof Collection)
-			return new ArrayList<>((Collection) values);
+		if (values instanceof Collection c)
+			return new ArrayList<>(c);
 
 		if (values instanceof Map) {
 			Map<String, Object> map = (Map<String, Object>) values;
@@ -107,7 +107,7 @@ public class JsonPathProcess extends PathProcess {
 				return new ArrayList<>(map.values());
 			
 		} else if (property != null)
-			throw new RuntimeException("Propriedade " + property + " não suportada em " + values.getClass());
+			throw new RuntimeException("Propriedade " + property + " nï¿½o suportada em " + values.getClass());
 
 		if (values instanceof Map) {
 			Map<String, Object> m = (Map<String, Object>) values;
@@ -115,7 +115,7 @@ public class JsonPathProcess extends PathProcess {
 			return new ArrayList<>(s);
 		}
 
-		throw new RuntimeException("Objeto não foi reconhecido como uma lista: " + values.getClass());
+		throw new RuntimeException("Objeto nï¿½o foi reconhecido como uma lista: " + values.getClass());
 	}
 
 }

@@ -154,7 +154,7 @@ public class StringConcretizer extends Concretizer {
 			throw new RuntimeException("Impossível obter chave primária a não ser de um target");
 
 		TargetPerformer t = (TargetPerformer) performer;
-		String[] pkFields = t.getPrimaryKeyFields(context);
+		String[] pkFields = t.getTableData().getPrimaryKeyFields(context);
 		return pkFields;
 	}
 
@@ -723,19 +723,19 @@ public class StringConcretizer extends Concretizer {
 
 		if (containsIgnoreCase(sql, "@#tablename")) {
 			TargetPerformer target = getTargetPerformer();
-			replaceIgnoreCase(sql, "@#tablename", target.getTableName(context));
+			replaceIgnoreCase(sql, "@#tablename", target.getTableData().getTableName(context));
 		}
 
 		if (containsIgnoreCase(sql, "@#tablefields")) {
 			TargetPerformer target = getTargetPerformer();
-			String[] fs = target.getTableFields(context);
+			String[] fs = target.getTableData().getTableFields(context);
 			String s = Util.concat(fs, ", ");
 			replaceIgnoreCase(sql, "@#tablefields", s);
 		}
 
 		if (containsIgnoreCase(sql, "@#tablepk")) {
 			TargetPerformer target = getTargetPerformer();
-			String[] fs = target.getPrimaryKeyFields(context);
+			String[] fs = target.getTableData().getPrimaryKeyFields(context);
 			String s = Util.concat(fs, ", ");
 			replaceIgnoreCase(sql, "@#tablepk", s);
 		}

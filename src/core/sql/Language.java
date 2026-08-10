@@ -110,7 +110,7 @@ public abstract class Language implements DataTypeLanguage {
 		if (typeName.startsWith("_"))
 			return stringValueAsSQL(value.toString());
 
-		throw new RuntimeException("Tipo não suportado: " + typeName);
+		throw new RuntimeException("Tipo nï¿½o suportado: " + typeName);
 	}
 
 	private String treatNumber(final Object value) {
@@ -167,11 +167,11 @@ public abstract class Language implements DataTypeLanguage {
 			}
 		}
 
-		throw new RuntimeException("Tipo não suportado: " + value.getClass().getName());
+		throw new RuntimeException("Tipo nï¿½o suportado: " + value.getClass().getName());
 	}
 
 	public String stringValueAsSQL(String value) {
-//		value = value.replace("\\", "\\\\"); // tem que ser nesta ordem, senão ele duplica os "\"
+//		value = value.replace("\\", "\\\\"); // tem que ser nesta ordem, senï¿½o ele duplica os "\"
 		value = value.replace("'", "''");
 		return Util.concat("'", value, "'");
 	}
@@ -273,7 +273,7 @@ public abstract class Language implements DataTypeLanguage {
 		if (v instanceof Timestamp)
 			return "timestamp";
 
-		throw new RuntimeException("Tipo de dados não identificado para : " + v.getClass());
+		throw new RuntimeException("Tipo de dados nï¿½o identificado para : " + v.getClass());
 	}
 
 	public String inferDateTimeType(String value) {
@@ -428,12 +428,12 @@ public abstract class Language implements DataTypeLanguage {
 		if (typeName.startsWith("_"))
 			return value;
 
-		throw new RuntimeException("Tipo não suportado: " + typeName);
+		throw new RuntimeException("Tipo nï¿½o suportado: " + typeName);
 	}
 
 	protected Object parseTimestamp(String value) {
 		return value;
-		// throw new RuntimeException("ainda não implementado");
+		// throw new RuntimeException("ainda nï¿½o implementado");
 		// TODO Auto-generated method stub
 	}
 
@@ -667,5 +667,44 @@ public abstract class Language implements DataTypeLanguage {
 		r = match(a, vb) && match(b, va);
 		return r;
 	}
+
+	public boolean isInsertOrUpdateCommand(String sql) {
+		String s = sql.toLowerCase().trim();
+		if (s.startsWith("update"))
+			return true;
+		if (s.startsWith("insert"))
+			return true;
+
+		return false;
+	}
+
+	public String inferTableName(String sql) {
+		sql = sql.trim();
+		if (Util.startsWithIgnoreCase(sql, "update"))
+			return inferTableNameFromUpdate(sql);
+		if (Util.startsWithIgnoreCase(sql, "insert"))
+			return inferTableNameFromInsert(sql);
+
+		throw new RuntimeException("NÃ£o foi possÃ­vel inferir o nome da tabela em " + sql);
+	}
+
+	private String inferTableNameFromUpdate(String sql) {
+		String[] ss = sql.split("^update\\s|\\sset\\s");
+		if (ss.length < 2)
+			throw new RuntimeException("NÃ£o foi possÃ­vel inferir o nome da tabela");
+
+		String r = ss[1].trim();
+		return r;
+	}
+
+	private String inferTableNameFromInsert(String sql) {
+		String[] ss = sql.split("^insert\\sinto\\s|\\s");
+		if (ss.length < 2)
+			throw new RuntimeException("NÃ£o foi possÃ­vel inferir o nome da tabela");
+
+		String r = ss[1].trim();
+		return r;
+	}
+
 
 }

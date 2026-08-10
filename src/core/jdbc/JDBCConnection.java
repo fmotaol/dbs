@@ -24,7 +24,6 @@ import core.sql.Language;
 import ext.db.DriverSupport;
 import ext.db.db2.DB2Dialet;
 import ext.db.pgsql.PostgreSQLDialet;
-import util.Util;
 
 public class JDBCConnection extends DBSConnection {
 
@@ -181,7 +180,7 @@ public class JDBCConnection extends DBSConnection {
 		connection.setAutoCommit(autoCommit);
 	}
 
-	private String[] loadFieldsByTableName(String tableName) {
+	private String[] loadFieldsByTable(String tableName) {
 		ArrayList<String> list = new ArrayList<String>();
 		String sql = "select column_name, data_type from information_schema.columns\r\n" + "where table_name = '"
 				+ tableName + "' order by ordinal_position";
@@ -370,15 +369,17 @@ public class JDBCConnection extends DBSConnection {
 		connect();
 	}
 
-	public String[] getTableFieldsByTableName(String tableName) {
+	@Override
+	public String[] getFieldsByTable(String tableName) {
 		String[] fields = fieldsByTable.get(tableName);
 		if (fields == null) {
-			fields = loadFieldsByTableName(tableName);
+			fields = loadFieldsByTable(tableName);
 			fieldsByTable.put(tableName, fields);
 		}
 		return fields;
 	}
 
+	@Override
 	public String[] getPrimaryKeyFields(String tableName) throws SQLException {
 		if ((tableName == null) || (tableName.trim().isEmpty()))
 			throw new RuntimeException("Nome da tabela vazio");
@@ -393,53 +394,15 @@ public class JDBCConnection extends DBSConnection {
 		return pkFields;
 	}
 
-	public String inferTableName(String sql) {
-		sql = sql.trim();
-		if (Util.startsWithIgnoreCase(sql, "update"))
-			return inferTableNameFromUpdate(sql);
-		if (Util.startsWithIgnoreCase(sql, "insert"))
-			return inferTableNameFromInsert(sql);
+//	public String[] getTableFields(String tableName) {
+//		return getFieldsByTableName(tableName);
+//	}
 
-		throw new RuntimeException("Não foi possível inferir o nome da tabela em " + sql);
-	}
-
-	private String inferTableNameFromUpdate(String sql) {
-		String[] ss = sql.split("^update\\s|\\sset\\s");
-		if (ss.length < 2)
-			throw new RuntimeException("Não foi possível inferir o nome da tabela");
-
-		String r = ss[1].trim();
-		return r;
-	}
-
-	private String inferTableNameFromInsert(String sql) {
-		String[] ss = sql.split("^insert\\sinto\\s|\\s");
-		if (ss.length < 2)
-			throw new RuntimeException("Não foi possível inferir o nome da tabela");
-
-		String r = ss[1].trim();
-		return r;
-	}
-
-	public String[] getTableFields(String tableName) throws SQLException {
-		return getTableFieldsByTableName(tableName);
-	}
-
-	public boolean isInsertOrUpdateCommand(String sql) {
-		String s = sql.toLowerCase().trim();
-		if (s.startsWith("update"))
-			return true;
-		if (s.startsWith("insert"))
-			return true;
-
-		return false;
-	}
-
-	@Deprecated
-	@Override
-	public JDBCConnection getJDBCConnection() {
-		return this;
-	}
+//	@Deprecated
+//	@Override
+//	public JDBCConnection getJDBCConnection() {
+//		return this;
+//	}
 
 	@Override
 	public void defaultStartImportingData(TargetPerformer performer) {

@@ -1408,23 +1408,6 @@ public abstract class Performer implements SlavePerformer, SavePointRestoreable 
 		return execution;
 	}
 
-	@Deprecated
-	public JDBCConnection getJDBCConnection() {
-		DBSConnection c;
-		c = getConnection();
-		return c.getJDBCConnection();
-	}
-
-	// public String[] getFieldsToFilter(String sql, DataSet source, String
-	// recordName)
-	// {
-	// String[] r = null;
-	// if (isInsertOrUpdateCommand(sql))
-	// if (ignoreUnknownFields)
-	// r = getTableFields(sql, source);
-	// return r;
-	// }
-
 	protected abstract boolean showDataRow();
 
 	public abstract void recursivelyGenerateImplicitSlaves();
