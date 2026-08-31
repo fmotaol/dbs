@@ -22,7 +22,7 @@ public class Argument {
 
 	public Origin origin = null;
 
-	public static UndefinedArgAction undefinedAction = UndefinedArgAction.ERROR;
+	public static UndefinedArgAction undefinedAction = UndefinedArgAction.ASK;
 
 	public Argument(DBS program) {
 		this.program = program;
